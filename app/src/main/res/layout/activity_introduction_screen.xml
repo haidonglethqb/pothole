@@ -1,0 +1,106 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/main"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal"
+        android:fitsSystemWindows="true">
+
+        <!-- Logo dự án -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <ImageView
+                android:id="@+id/ivProjectLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="2sp"
+                android:contentDescription="Project Logo"
+                android:src="@drawable/imageuit"
+                android:padding="8dp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Thông tin dự án -->
+        <TextView
+            android:id="@+id/tvProjectInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="A project of NT118.P11"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <!-- Tiêu đề chào mừng -->
+        <TextView
+            android:id="@+id/tvWelcomeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="Welcome to\nPOTHOLE PATROL by NT118"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Hình ảnh mô tả -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="297dp"
+            android:layout_height="329dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <ImageView
+                android:id="@+id/ivIllustration"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Illustration of pothole detection"
+                android:src="@drawable/pothole_funny"
+                android:scaleType="centerCrop" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Thông điệp giới thiệu -->
+        <TextView
+            android:id="@+id/tvIntroductionMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:text="An app with the ability to detect and \nreport potholes on the streets"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <!-- Nút Get Started -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGetStarted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_button"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:text="GET STARTED"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

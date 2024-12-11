@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    android:background="@color/white">
+
+    <!-- Tiêu đề đăng nhập -->
+    <TextView
+        android:id="@+id/tvLoginTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login here"
+        android:paddingTop="8dp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#1F41BB"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Thông điệp chào mừng -->
+    <TextView
+        android:id="@+id/tvWelcomeMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome back!\nLet's discover what you've missed!"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Trường nhập Email -->
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="360dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_input_field"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:padding="12dp" />
+
+    <!-- Trường nhập Password -->
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="360dp"
+        android:layout_height="50dp"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp"
+        android:background="@drawable/rounded_input_field" />
+
+    <!-- Liên kết quên mật khẩu -->
+    <TextView
+        android:id="@+id/tvForgotPassword"
+        android:layout_width="159dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginBottom="24dp"
+        android:text="Forgot your password?"
+        android:textColor="#1F41BB"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <!-- Nút Đăng nhập -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSignIn"
+        android:layout_width="360dp"
+        android:layout_height="50dp"
+        android:text="Sign in"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/white"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Liên kết tạo tài khoản mới -->
+    <TextView
+        android:id="@+id/tvCreateAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create new account"
+        android:textColor="#626262"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Hoặc tiếp tục với -->
+    <TextView
+        android:id="@+id/tvContinueWith"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Or continue with"
+        android:textColor="#1F41BB"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Nút Google và Facebook -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <!-- Nút Google -->
+        <RelativeLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/login_button_background">
+
+            <ImageView
+                android:id="@+id/google_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/google"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGoogle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:contentDescription="Sign in with Google" />
+        </RelativeLayout>
+
+        <!-- Nút Facebook -->
+        <RelativeLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/login_button_background">
+
+            <ImageView
+                android:id="@+id/facebook_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/facebook"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnFacebook"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:contentDescription="Sign in with Facebook"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

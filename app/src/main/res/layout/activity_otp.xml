@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Title Text -->
+    <TextView
+        android:id="@+id/tvOtpTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please Verify Your Email"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textSize="24sp"
+        android:textColor="#1F41BB"
+        android:textStyle="bold"/>
+
+    <!-- Message Text -->
+    <TextView
+        android:id="@+id/tvOtpMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="An email has been sent to your email address."
+        android:textSize="16sp"
+        android:textColor="#626262"/>
+
+    <!-- GIF ImageView -->
+    <ImageView
+        android:id="@+id/verifyGif"
+        android:layout_width="222dp"
+        android:layout_height="212dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/verify" />
+
+
+    <!-- Confirm Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnConfirmOtp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm Email Verified"
+        android:textSize="16sp"
+        android:background="@drawable/rounded_button"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>

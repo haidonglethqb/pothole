@@ -1,0 +1,35 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Pothole</string>
+    <string name="language_title">Language</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="english">English</string>
+
+
+    <!-- Edit Profile Screen -->
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="name">Name</string>
+    <string name="name_hint">Enter your name</string>
+    <string name="email">Email</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="phone_number">Phone number</string>
+    <string name="phone_number_hint">Enter your phone number</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="date_of_birth_hint">DD/MM/YYYY</string>
+    <string name="country_region">Country/Region</string>
+    <string name="save_changes">Save changes</string>
+
+    <!-- Setting Screen -->
+
+    <string name="notification">Notifications</string>
+    <string name="setting_title">Settings</string>
+    <string name="actions">Actions</string>
+    <string name="report_problem">Report a problem</string>
+    <string name="add_account">Add account</string>
+    <string name="log_out">Log out</string>
+    <string name="free_up_space">Free up space</string>
+    <string name="data_saver">Data saver</string>
+
+
+    <string name="web_id">AIzaSyC6Peem6i09cCErVZCnWikWUJtVsIX3Tl4</string>
+    <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
+</resources>

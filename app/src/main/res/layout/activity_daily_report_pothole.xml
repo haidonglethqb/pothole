@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <!-- Thanh công cụ -->
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1F41BB"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/out"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Pothole Report"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <!-- Bộ lọc Vị trí và Thời gian -->
+    <LinearLayout
+        android:id="@+id/filters_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp">
+
+        <!-- Location Filter -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/rounded_input_field"
+            android:padding="8dp"
+            android:paddingVertical="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location:"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/location_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:entries="@array/locations" />
+
+            <ImageView
+                android:id="@+id/location_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrowback" />
+        </LinearLayout>
+
+        <!-- Timeframe Filter -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/rounded_input_field"
+            android:padding="8dp"
+            android:paddingVertical="16dp"
+            android:layout_marginTop="8dp"> <!-- Thêm khoảng cách ở đây -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Timeframe:"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/timeframe_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:entries="@array/timeframes" />
+
+            <ImageView
+                android:id="@+id/timeframe_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrowback" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <!-- Tóm tắt Báo cáo Hằng ngày  -->
+    <LinearLayout
+        android:id="@+id/daily_report_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filters_layout"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/daily_report_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Daily/Weekly Report"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/daily_report_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/daily_report_layout"
+        android:layout_marginTop="24dp"
+        android:columnCount="2"
+        android:paddingHorizontal="16dp"
+        android:rowCount="2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:background="#E9EDF0"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/total_potholes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total pothole\n8"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:background="#E9EDF0"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/road_quality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Road quality\nGood"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:background="#E9EDF0"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/large_potholes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Large pothole\n6"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:background="#E9EDF0"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/medium_small_potholes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medium &amp; small\n1"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </GridLayout>
+
+    <!-- Hình ảnh minh họa -->
+    <LinearLayout
+        android:id="@+id/visualization_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/daily_report_summary"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp">
+
+        <TextView android:id="@+id/visualization_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Visualization"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/pothole_pie_chart"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/potholereport" />
+    </LinearLayout>
+
+    <!-- Thanh điều hướng dưới cùng -->
+    <LinearLayout
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="#E4E6FF"
+        android:padding="8dp"
+        android:weightSum="4"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <ImageButton
+            android:id="@+id/home_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null" />
+
+        <ImageButton
+            android:id="@+id/maps_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:src="@drawable/maps"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null" />
+
+        <ImageButton
+            android:id="@+id/history_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:src="@drawable/history"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null" />
+
+        <ImageButton
+            android:id="@+id/settings_icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:src="@drawable/settings"
+            android:background="@android:color/transparent"
+            app:tint="@color/black"
+            android:contentDescription="@null" />
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>
+

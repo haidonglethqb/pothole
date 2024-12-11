@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Hiển thị thông tin cảm biến -->
+    <TextView
+        android:id="@+id/sensorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensor Name: "
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/sensorType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensor Type: "
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/maxRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max Range: "
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/resolution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resolution: "
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Giá trị hiện tại của gia tốc -->
+    <TextView
+        android:id="@+id/currentX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current X: 0.0"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/currentY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Y: 0.0"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/currentZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Z: 0.0"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Giá trị lớn nhất của gia tốc -->
+    <TextView
+        android:id="@+id/combinedDelta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Combined Delta :0" />
+
+    <TextView
+        android:id="@+id/maxX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max X: 0.0"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/maxY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max Y: 0.0"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/maxZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max Z: 0.0"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Nút đặt lại -->
+    <TextView
+        android:id="@+id/potholeTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pothole: 0" />
+
+    <TextView
+        android:id="@+id/minorPothole"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Minor: 0" />
+
+    <TextView
+        android:id="@+id/mediumPothole"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Medium: 0" />
+
+    <TextView
+        android:id="@+id/severePothole"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Severe: 0" />
+
+    <Button
+        android:id="@+id/buttonReset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset"
+        android:textSize="16sp" />
+
+</LinearLayout>
