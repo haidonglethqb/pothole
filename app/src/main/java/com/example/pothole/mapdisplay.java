@@ -5,9 +5,14 @@ import static com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListene
 import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
 import static com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.getLocationComponent;
 import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.applyDefaultNavigationOptions;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.navigation.core.routealternatives.AlternativeRouteMetadata;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.LineString;
+import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
+import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
 
@@ -27,10 +32,13 @@ import android.graphics.drawable.VectorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -156,6 +164,7 @@ import com.google.android.material.button.MaterialButton;
 
 public class mapdisplay extends AppCompatActivity {
     private Style mapStyle;
+    private static final String TAG = "mapdisplay";
     MapView mapView;
     MaterialButton setRoute;
     FloatingActionButton focusLocationBtn;
@@ -168,6 +177,10 @@ public class mapdisplay extends AppCompatActivity {
     // duong dan
     List<Point> points=new ArrayList<>();
 
+    private List<Pair<Double, Double>> potholeLocations;
+    private DatabaseReference database;
+    private MapboxManeuverView maneuverView;
+    private MapboxManeuverApi maneuverApi;
 
 
 
@@ -179,8 +192,12 @@ public class mapdisplay extends AppCompatActivity {
 
 
 
+
+
     //
     private PointAnnotationManager pointAnnotationManager;
+
+
 
 
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
@@ -253,12 +270,14 @@ public class mapdisplay extends AppCompatActivity {
             }
         }
     });
+    private boolean notificationShown = false;
     private void checkProximityToPothole(Point userLocation, Point pothole) {
         double distance = TurfMeasurement.distance(userLocation, pothole);
         double thresholdDistance = 0.05; // 50 meters
-        if (distance < thresholdDistance) {
+        if (distance < thresholdDistance && !notificationShown) {
             showNotification("Pothole Alert", "Slow down, you are approaching a pothole.");
             Toast.makeText(mapdisplay.this, "Slow down", Toast.LENGTH_SHORT).show();
+            notificationShown = true;
         }
     }
 
@@ -269,11 +288,13 @@ public class mapdisplay extends AppCompatActivity {
             NotificationChannel channel = new NotificationChannel(channelId, "Pothole Notifications", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
+        Uri soundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sound1);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.bell)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setSound(soundUri)
                 .setAutoCancel(true);
         notificationManager.notify(1, builder.build());
     }
@@ -287,7 +308,7 @@ public class mapdisplay extends AppCompatActivity {
                 if (mapStyle != null) {
                     routeLineView.renderRouteLineUpdate(mapStyle, result);
                 }
-                checkProximityToPothole(point, pothole);
+//                checkProximityToPothole(point, pothole);
             }
         }
     };
@@ -379,9 +400,44 @@ public class mapdisplay extends AppCompatActivity {
             return insets;
         });
 
+        if (database == null) {
+            FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
+            //databaseInstance.setPersistenceEnabled(true);
+            database = databaseInstance.getReference();
+            Log.d(TAG, "Firebase initialized");
 
-        points.add(pothole);
-        points.add(pothole2);
+        }
+        potholeLocations = new ArrayList<>();
+        LocationRetriever locationRetriever = new LocationRetriever(this);
+        locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
+            @Override
+            public void onLocationsRetrieved(List<Pair<Double, Double>> locations) {
+                // Log the retrieved locations
+                if (locations.isEmpty()) {
+                    Log.d(TAG, "No locations retrieved from local storage.");
+                } else {
+                    Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
+                    for (Pair<Double, Double> location : locations) {
+                        Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
+                    }
+                }
+
+                // get locations
+                potholeLocations = locations;
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e(TAG, "Failed to retrieve locations", e);
+            }
+        });
+
+
+
+
+
+
+
 
 
 
@@ -450,6 +506,14 @@ public class mapdisplay extends AppCompatActivity {
                 }
             }
         });
+
+
+
+
+
+
+
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(mapdisplay.this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -554,9 +618,19 @@ public class mapdisplay extends AppCompatActivity {
 
 
 
-                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
-                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+                pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+                for (Pair<Double, Double> location : potholeLocations) {
+                    Point point = Point.fromLngLat(location.second, location.first);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+                    PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
+                            .withTextAnchor(TextAnchor.CENTER)
+                            .withIconSize(0.05)
+                            .withIconImage(bitmap)
+                            .withPoint(point);
+                    pointAnnotationManager.create(pointAnnotationOptions);
+                }
 
 
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
@@ -602,15 +676,14 @@ public class mapdisplay extends AppCompatActivity {
                         pointAnnotationManager.create(pointAnnotationOptions);
                         updateCamera(placeAutocompleteSuggestion.getCoordinate(), 0.0);
                         destination=placeAutocompleteSuggestion.getCoordinate();
-                        pothole=Point.fromLngLat(106.796219, 10.881042);
-                        PointAnnotationOptions potholeAnnotationOptions = new PointAnnotationOptions()
-                                .withTextAnchor(TextAnchor.CENTER)
-                                .withIconImage(bitmap)
-                                .withPoint(pothole);
-                        pointAnnotationManager.create(potholeAnnotationOptions);
+//                        pothole=Point.fromLngLat(106.796219, 10.881042);
+//                        PointAnnotationOptions potholeAnnotationOptions = new PointAnnotationOptions()
+//                                .withTextAnchor(TextAnchor.CENTER)
+//                                .withIconImage(bitmap)
+//                                .withPoint(pothole);
+//                        pointAnnotationManager.create(potholeAnnotationOptions);
 
-                        pothole2=Point.fromLngLat(106.782932, 10.884670);
-                        pothole3=Point.fromLngLat(106.784763, 10.880544);
+
 
                         setRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -653,12 +726,8 @@ public class mapdisplay extends AppCompatActivity {
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
 
-                Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-                PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
-                        .withTextAnchor(TextAnchor.CENTER)
-                        .withIconImage(bitmap)
-                        .withPoint(pothole2);
-                pointAnnotationManager.create(potholeAnnotationOptions2);
+
+
 
                 builder.alternatives(true);
 
@@ -673,40 +742,21 @@ public class mapdisplay extends AppCompatActivity {
 
                         mapboxNavigation.setNavigationRoutes(list);
                         checkedRoute = list.get(0);
-                        if(isPointOnRoute2(pothole2,checkedRoute)){
-                            Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-                            PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
-                                    .withTextAnchor(TextAnchor.CENTER)
-                                    .withIconImage(bitmap)
-                                    .withPoint(pothole2);
-                            pointAnnotationManager.create(potholeAnnotationOptions2);
+
+//                        if(isPointOnRoute2(pothole,checkedRoute)){
+//                            Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
+//                            PointAnnotationOptions potholeAnnotationOptions3 = new PointAnnotationOptions()
+//                                    .withTextAnchor(TextAnchor.CENTER)
+//                                    .withIconImage(bitmap)
+//                                    .withPoint(pothole);
+//                            pointAnnotationManager.create(potholeAnnotationOptions3);
+//
+//
+//                        }
 
 
 
-                        }
-                        if(isPointOnRoute2(pothole3,checkedRoute)){
-                            Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-                            PointAnnotationOptions potholeAnnotationOptions3 = new PointAnnotationOptions()
-                                    .withTextAnchor(TextAnchor.CENTER)
-                                    .withIconImage(bitmap)
-                                    .withPoint(pothole3);
-                            pointAnnotationManager.create(potholeAnnotationOptions3);
 
-
-                        }
-
-
-
-                        if(isPointOnRoute2(pothole,checkedRoute)){
-                            Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-                            PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
-                                    .withTextAnchor(TextAnchor.CENTER)
-                                    .withIconImage(bitmap)
-                                    .withPoint(pothole);
-                            pointAnnotationManager.create(potholeAnnotationOptions2);
-
-
-                        }
                         focusLocationBtn.performClick();
                         setRoute.setEnabled(true);
 
@@ -734,40 +784,50 @@ public class mapdisplay extends AppCompatActivity {
                                 mapboxNavigation.setNavigationRoutes(list);
                                 checkedRoute=alternativeRoute;
                                 pointAnnotationManager.deleteAll();
-                                if(isPointOnRoute2(pothole2,checkedRoute)){
-                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-                                    PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
-                                            .withTextAnchor(TextAnchor.CENTER)
-                                            .withIconImage(bitmap)
-                                            .withPoint(pothole2);
-                                    pointAnnotationManager.create(potholeAnnotationOptions2);
 
-
-
-                                }
-                                if(isPointOnRoute2(pothole3,checkedRoute)){
-                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-                                    PointAnnotationOptions potholeAnnotationOptions3 = new PointAnnotationOptions()
-                                            .withTextAnchor(TextAnchor.CENTER)
-                                            .withIconImage(bitmap)
-                                            .withPoint(pothole3);
-                                    pointAnnotationManager.create(potholeAnnotationOptions3);
-
-
+                                for (Pair<Double, Double> location : potholeLocations)
+                                {
+                                    if(isPointOnRoute2(Point.fromLngLat(location.second, location.first),checkedRoute)){
+                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
+                                                .withPoint(Point.fromLngLat(location.second, location.first));
+                                        pointAnnotationManager.create(pointAnnotationOptions);
+                                    }
                                 }
 
+//                                if(isPointOnRoute2(pothole,checkedRoute)){
+//                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
+//                                    PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
+//                                            .withTextAnchor(TextAnchor.CENTER)
+//                                            .withIconImage(bitmap)
+//                                            .withPoint(pothole);
+//                                    pointAnnotationManager.create(potholeAnnotationOptions2);
+//
+//
+//
+//                                }
+//                                if(isPointOnRoute2(pothole,checkedRoute)){
+//                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
+//                                    PointAnnotationOptions potholeAnnotationOptions3 = new PointAnnotationOptions()
+//                                            .withTextAnchor(TextAnchor.CENTER)
+//                                            .withIconImage(bitmap)
+//                                            .withPoint(pothole);
+//                                    pointAnnotationManager.create(potholeAnnotationOptions3);
+//
+//
+//                                }
 
 
-                                if(isPointOnRoute2(pothole,checkedRoute)){
-                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-                                    PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
-                                            .withTextAnchor(TextAnchor.CENTER)
-                                            .withIconImage(bitmap)
-                                            .withPoint(pothole);
-                                    pointAnnotationManager.create(potholeAnnotationOptions2);
 
-
-                                }
+//                                if(isPointOnRoute2(pothole,checkedRoute)){
+//                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
+//                                    PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
+//                                            .withTextAnchor(TextAnchor.CENTER)
+//                                            .withIconImage(bitmap)
+//                                            .withPoint(pothole);
+//                                    pointAnnotationManager.create(potholeAnnotationOptions2);
+//
+//
+//                                }
 
 
 
