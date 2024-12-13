@@ -94,6 +94,21 @@
         android:text="Max Z: 0.0"
         android:textSize="16sp"
         android:layout_marginBottom="16dp" />
+    <TextView
+        android:id="@+id/latitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Latitude: 0.0"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/longtitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Longtitude: 0.0"
+        android:textSize="16sp" />
 
     <!-- Nút đặt lại -->
     <TextView

@@ -1,4 +1,4 @@
-package com.example.pothole;
+package com.example.pothole.Other;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.pothole.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +33,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Accelerometer extends Activity implements SensorEventListener {
+import android.location.LocationListener;
+
+public class Accelerometer extends Activity implements SensorEventListener , LocationListener {
 
     private static final String TAG = "AccelerometerApp";
 
@@ -43,7 +46,7 @@ public class Accelerometer extends Activity implements SensorEventListener {
     private float deltaX, deltaY, deltaZ;
     private String severity;
 
-    private TextView currentX, currentY, currentZ, maxX, maxY, maxZ;
+    private TextView currentX, currentY, currentZ, maxX, maxY, maxZ, latitudeText, longitudeText;
     private TextView potholeTotal, minorPothole, mediumPothole, severePothole, combinedDelta;
 
     private float deltaXMax = 0, deltaYMax = 0, deltaZMax = 0;
@@ -88,6 +91,9 @@ public class Accelerometer extends Activity implements SensorEventListener {
         maxY = findViewById(R.id.maxY);
         maxZ = findViewById(R.id.maxZ);
 
+        latitudeText = findViewById(R.id.latitude);
+        longitudeText = findViewById(R.id.longtitude);
+
         potholeTotal = findViewById(R.id.potholeTotal);
         minorPothole = findViewById(R.id.minorPothole);
         mediumPothole = findViewById(R.id.mediumPothole);
@@ -116,12 +122,32 @@ public class Accelerometer extends Activity implements SensorEventListener {
             return;
         }
 
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location != null) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
         }
     }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        Log.d(TAG, "Updated Location: Latitude: " + latitude + ", Longitude: " + longitude);
+
+
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {}
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {}
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -223,6 +249,8 @@ public class Accelerometer extends Activity implements SensorEventListener {
         mediumPothole.setText("Medium: " + mediumCount);
         severePothole.setText("Severe: " + severeCount);
         combinedDelta.setText("Combined Delta: " + (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+        latitudeText.setText("Latitude: " + latitude);
+        longitudeText.setText("Longitude: " + longitude);
     }
 
     private void displayCurrentValues() {
@@ -295,13 +323,15 @@ public class Accelerometer extends Activity implements SensorEventListener {
 
         updateUI();  // Cập nhật UI với các giá trị đã lưu
     }
-    private void showConfirmDialog(final String severity, final float deltaX, final float deltaY, final float deltaZ, final float combinedDelta, final double latitude, final double longitude) {
+    private void showConfirmDialog(final String severity, final float deltaX, final float deltaY, final float deltaZ, final float combinedDelta,final double latitude, final double longitude) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm Pothole Detection")
                 .setMessage("Do you want to save the pothole data?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        initializeLocation();
                         // Nếu người dùng xác nhận, lưu dữ liệu
                         // Cộng thêm các chỉ số nếu lưu thành công
                         saveToFirebase(severity, deltaX, deltaY, deltaZ,combinedDelta ,latitude ,longitude);

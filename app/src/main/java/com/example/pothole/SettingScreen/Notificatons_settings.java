@@ -1,4 +1,4 @@
-package com.example.pothole;
+package com.example.pothole.SettingScreen;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -6,13 +6,15 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.pothole.R;
+import com.example.pothole.Other.TestActivity;
 
 public class Notificatons_settings extends AppCompatActivity {
     ImageView ivBack;

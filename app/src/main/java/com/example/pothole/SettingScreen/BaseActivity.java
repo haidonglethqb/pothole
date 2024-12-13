@@ -1,4 +1,4 @@
-package com.example.pothole;
+package com.example.pothole.SettingScreen;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;

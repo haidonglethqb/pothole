@@ -1,4 +1,4 @@
-package com.example.pothole;
+package com.example.pothole.Other;
 
 public class PotholeData {
     private int potholeCount;

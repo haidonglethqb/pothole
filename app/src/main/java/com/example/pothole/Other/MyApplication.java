@@ -1,4 +1,4 @@
-package com.example.pothole;
+package com.example.pothole.Other;
 
 
 import android.app.Application;

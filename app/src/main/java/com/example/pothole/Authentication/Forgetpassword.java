@@ -1,4 +1,4 @@
-package com.example.pothole;
+package com.example.pothole.Authentication;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.pothole.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class Forgetpassword extends AppCompatActivity {
