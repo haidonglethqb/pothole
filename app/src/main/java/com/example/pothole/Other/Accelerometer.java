@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.example.pothole.R;
 import com.google.firebase.database.DataSnapshot;
@@ -55,7 +56,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     private int minorCount = 0;
     private int mediumCount = 0;
     private int severeCount = 0;
-
+    private LocationManager locationManager;
     private long lastDetectionTime = 0;
     private static final long DETECTION_THRESHOLD_MS = 1000;
 
@@ -170,25 +171,35 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         if (combinedDelta > 10) {
             long currentTime = System.currentTimeMillis();
 
-            if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
-                lastDetectionTime = currentTime;
+            // Check if the phone is moving at a certain speed (e.g., greater than 5 m/s)
+            if (locationManager != null) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                String severity;
-                if (combinedDelta < 15) {
-                    severity = "Minor";
-                    //minorCount++;
-                } else if (combinedDelta < 20) {
-                    severity = "Medium";
-                    //mediumCount++;
-                } else {
-                    severity = "Severe";
-                    //severeCount++;
+                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (location != null && location.getSpeed() > 5) {
+                        if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
+                            lastDetectionTime = currentTime;
+
+                            if (combinedDelta < 15) {
+                                severity = "Minor";
+                            } else if (combinedDelta < 20) {
+                                severity = "Medium";
+                            } else {
+                                severity = "Severe";
+                            }
+                            initializeLocation();
+                            saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
+                            saveCountsToSharedPreferences();  // Lưu lại vào SharedPreferences
+
+                            showConfirmDialog(severity, deltaX, deltaY, deltaZ,combinedDelta, latitude, longitude);
+                            updateUI();
+
+                    }
                 }
-                //potholeCount++;
-                saveCountsToSharedPreferences();  // Lưu lại vào SharedPreferences
+            }
 
-                showConfirmDialog(severity, deltaX, deltaY, deltaZ,combinedDelta, latitude, longitude);
-                updateUI();
+
             }
         }
     }

@@ -1,4 +1,8 @@
 package com.example.pothole.MapScreen;
+import static android.content.ContentValues.TAG;
+
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import static com.mapbox.maps.plugin.animation.CameraAnimationsUtils.getCamera;
 import static com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListener;
@@ -6,7 +10,11 @@ import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
 import static com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.getLocationComponent;
 import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.applyDefaultNavigationOptions;
 
+import com.example.pothole.Other.AccelerometerService;
+import com.example.pothole.Other.PotholeData;
 import com.example.pothole.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.geojson.LineString;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
@@ -15,6 +23,7 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import android.Manifest;
@@ -36,9 +46,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -118,11 +133,13 @@ import com.mapbox.search.ui.adapter.autocomplete.PlaceAutocompleteUiAdapter;
 import com.mapbox.search.ui.view.CommonSearchViewConfiguration;
 import com.mapbox.search.ui.view.SearchResultsView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.util.Collections;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -144,6 +161,7 @@ public class mapdisplay extends AppCompatActivity {
     private Point pothole2;
     private Point pothole3;
 
+
     // duong dan
     List<Point> points=new ArrayList<>();
 
@@ -164,7 +182,73 @@ public class mapdisplay extends AppCompatActivity {
 
     private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
     private MapboxRouteLineView routeLineView;
+
     private MapboxRouteLineApi routeLineApi;
+
+    //haihh them service
+    private DatabaseReference databaseReference;
+    private double latitude, longitude;
+    private int potholeCount = 0;
+    private String severity;
+    private AccelerometerService accelerometerService;
+    private boolean isBound = false;
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            AccelerometerService.LocalBinder binder = (AccelerometerService.LocalBinder) service;
+            accelerometerService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            isBound = false;
+        }
+    };
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "PotholeDetectionChannel";
+            String description = "Channel for pothole detection notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("POTHOLE_DETECTION_CHANNEL", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+    private void showPotholeNotification(String severity, double latitude, double longitude) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // Request the permission if not granted
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+            return;
+        }
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "POTHOLE_DETECTION_CHANNEL")
+                .setSmallIcon(R.drawable.placeholder) // Replace with your app's icon
+                .setContentTitle("Pothole Detected")
+                .setContentText("Severity: " + severity + ", Location: (" + latitude + ", " + longitude + ")")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1, builder.build());
+    }
+    private final BroadcastReceiver potholeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String severity = intent.getStringExtra("severity");
+            double latitude = intent.getDoubleExtra("latitude", 0.0);
+            double longitude = intent.getDoubleExtra("longitude", 0.0);
+
+            Toast.makeText(mapdisplay.this, "New pothole", Toast.LENGTH_SHORT).show();
+            showPotholeNotification(severity, latitude, longitude);
+
+        }
+    };
+
+
+
+
+    //navigation
     private final LocationObserver locationObserver = new LocationObserver() {
         @Override
         public void onNewRawLocation(@NonNull Location location) {
@@ -357,7 +441,15 @@ public class mapdisplay extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        //haihh them
+        Intent intent = new Intent(this, AccelerometerService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
+        createNotificationChannel();
+
+        // Register broadcast receiver
+        IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
+        registerReceiver(potholeReceiver, filter);
 
         points.add(pothole);
         points.add(pothole2);
@@ -804,5 +896,11 @@ public class mapdisplay extends AppCompatActivity {
         if (mapboxNavigation != null) {
             mapboxNavigation.onDestroy();
         }
+        //haihh them
+        if (isBound) {
+            unbindService(serviceConnection);
+            isBound = false;
+        }
+        unregisterReceiver(potholeReceiver);
     }
 }
