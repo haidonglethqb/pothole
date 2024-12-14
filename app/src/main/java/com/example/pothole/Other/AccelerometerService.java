@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -48,6 +49,9 @@ public class AccelerometerService extends Service implements SensorEventListener
     private long lastDetectionTime = 0;
     private static final long DETECTION_THRESHOLD_MS = 1000;
 
+    private double totalDistance = 0.0; // Tổng quãng đường
+    private Location lastLocation = null; // Vị trí lần cuối
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -62,6 +66,11 @@ public class AccelerometerService extends Service implements SensorEventListener
 
 
         databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pothole-060104-default-rtdb.firebaseio.com/");
+        SharedPreferences prefs = getSharedPreferences("PotholeData", MODE_PRIVATE);
+
+        // Khởi tạo giá trị từ SharedPreferences
+        potholeCount = prefs.getInt("potholeCount", 0);
+        totalDistance = prefs.getFloat("totalDistance", 0.0f);
     }
 
     @Override
@@ -120,8 +129,19 @@ public class AccelerometerService extends Service implements SensorEventListener
                     severity = "Severe";
                     //severeCount++;
                 }
+
                 initializeLocation();
-                saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
+
+                // Tăng số lượng pothole và cập nhật quãng đường di chuyển
+                potholeCount++;
+                if (lastLocation != null) {
+                    totalDistance += lastLocation.distanceTo(new Location("currentLocation"));
+                }
+                // Lưu vào SharedPreferences
+                saveToPreferences("potholeCount", potholeCount);
+                saveToPreferences("totalDistance", (float) totalDistance);
+
+                saveToFirebase(potholeCount,severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
 
             }
 
@@ -130,12 +150,18 @@ public class AccelerometerService extends Service implements SensorEventListener
             intent.putExtra("severity", severity);
             intent.putExtra("latitude", latitude);
             intent.putExtra("longitude", longitude);
+            intent.putExtra("deltaX", deltaX);
+            intent.putExtra("deltaY", deltaY);
+            intent.putExtra("deltaZ", deltaZ);
             intent.putExtra("combinedDelta", combinedDelta);
             intent.putExtra("timestamp", System.currentTimeMillis());
             intent.putExtra("dateTime", getCurrentDateTime());
-            //intent.putExtra("potholeCount", ++potholeCount);
+            intent.putExtra("potholeCount", potholeCount);
+            intent.putExtra("totalDistance", totalDistance);
 
             sendBroadcast(intent);
+
+
         }
     }
 
@@ -169,7 +195,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-private void saveToFirebase(String severity, float deltaX, float deltaY, float deltaZ, float combinedDelta, double latitude, double longitude) {
+private void saveToFirebase(int potholeCount,String severity, float deltaX, float deltaY, float deltaZ, float combinedDelta, double latitude, double longitude) {
     // Check if database reference is initialized
     if (databaseReference == null) {
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -207,6 +233,32 @@ private void saveToFirebase(String severity, float deltaX, float deltaY, float d
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         return sdf.format(new Date());
     }
+    // Hàm lưu dữ liệu
+    private void saveToPreferences(String key, float value) {
+        getSharedPreferences("PotholeData", MODE_PRIVATE)
+                .edit()
+                .putFloat(key, value)
+                .apply();
+    }
+
+    private void saveToPreferences(String key, int value) {
+        getSharedPreferences("PotholeData", MODE_PRIVATE)
+                .edit()
+                .putInt(key, value)
+                .apply();
+    }
+
+    // Hàm đọc dữ liệu
+    private float getFloatFromPreferences(String key, float defaultValue) {
+        return getSharedPreferences("PotholeData", MODE_PRIVATE)
+                .getFloat(key, defaultValue);
+    }
+
+    private int getIntFromPreferences(String key, int defaultValue) {
+        return getSharedPreferences("PotholeData", MODE_PRIVATE)
+                .getInt(key, defaultValue);
+    }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}

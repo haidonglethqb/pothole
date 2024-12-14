@@ -121,7 +121,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/potcount"
+                        android:id="@+id/potholeCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="8"
@@ -161,12 +161,13 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/traveledDistance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3500m"
+                        android:text="0 m"
+                        android:textColor="#3abd5d"
                         android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:textColor="#3abd5d" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -254,7 +255,7 @@
                         android:id="@+id/acceleratorX"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.5"
+                        android:text="0.0"
                         android:textColor="#3abd5d"
                         android:textSize="32sp"
                         android:textStyle="bold" />
@@ -295,7 +296,7 @@
                         android:id="@+id/acceleratorY"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.5"
+                        android:text="0.0"
                         android:textColor="#3abd5d"
                         android:textSize="32sp"
                         android:textStyle="bold" />
@@ -337,8 +338,8 @@
                         android:id="@+id/acceleratorZ"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1.3"
-                        android:textColor="#FF0000"
+                        android:text="0.0"
+                        android:textColor="#3abd5d"
                         android:textSize="32sp"
                         android:textStyle="bold" />
 
@@ -376,10 +377,10 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/combineDelta"
+                        android:id="@+id/combinedDelta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.5"
+                        android:text="0.0"
                         android:textColor="#3abd5d"
                         android:textSize="32sp"
                         android:textStyle="bold" />
