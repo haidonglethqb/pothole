@@ -91,6 +91,16 @@
         android:layout_alignParentEnd="true"
         android:layout_above="@id/route_button" />
 
+    <com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView
+        android:id="@+id/maneuverView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        />
+
+
 
 
 

@@ -1,4 +1,10 @@
 package com.example.pothole.MapScreen;
+import com.mapbox.navigation.base.formatter.DistanceFormatterOptions;
+import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter;
+import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
+import com.mapbox.navigation.ui.maneuver.model.Maneuver;
+import com.mapbox.navigation.ui.maneuver.model.ManeuverError;
+import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
 import static android.content.ContentValues.TAG;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -421,6 +427,23 @@ public class mapdisplay extends AppCompatActivity {
             });
             Expected<InvalidPointError, UpdateManeuverArrowValue> updatedManeuverArrow = routeArrowApi.addUpcomingManeuverArrow(routeProgress);
             routeArrowView.renderManeuverUpdate(mapStyle, updatedManeuverArrow);
+
+            maneuverApi.getManeuvers(routeProgress).fold(new Expected.Transformer<ManeuverError, Object>() {
+                @NonNull
+                @Override
+                public Object invoke(@NonNull ManeuverError input) {
+                    return new Object();
+                }
+            }, new Expected.Transformer<List<Maneuver>, Object>() {
+                @NonNull
+                @Override
+                public Object invoke(@NonNull List<Maneuver> input) {
+                    maneuverView.setVisibility(View.VISIBLE);
+                    maneuverView.renderManeuvers(maneuverApi.getManeuvers(routeProgress));
+                    return new Object();
+                }
+            });
+
         }
     };
     private MapboxNavigationConsumer<SpeechAnnouncement> voiceInstructionsPlayerCallback = new MapboxNavigationConsumer<SpeechAnnouncement>() {
@@ -450,6 +473,7 @@ public class mapdisplay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_mapdisplay);
@@ -458,6 +482,7 @@ public class mapdisplay extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         if (database == null) {
             FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
             //databaseInstance.setPersistenceEnabled(true);
@@ -486,6 +511,8 @@ public class mapdisplay extends AppCompatActivity {
                 Log.e(TAG, "Failed to retrieve locations", e);
             }
         });
+
+
 
         //haihh them
         Intent intent = new Intent(this, AccelerometerService.class);
@@ -759,7 +786,13 @@ public class mapdisplay extends AppCompatActivity {
                 });
             }
         });
+// maneuver
+        maneuverView = findViewById(R.id.maneuverView);
+        maneuverApi = new MapboxManeuverApi(new MapboxDistanceFormatter(new DistanceFormatterOptions.Builder(mapdisplay.this).build()));
+        routeArrowView = new MapboxRouteArrowView(new RouteArrowOptions.Builder(mapdisplay.this).build());
     }
+
+
 
 
 
@@ -832,6 +865,9 @@ public class mapdisplay extends AppCompatActivity {
                         isRouteActive = true;
 
                         setRoute.setText("Clear route");
+                        maneuverView.setVisibility(View.VISIBLE);
+                        findViewById(R.id.search_bar).setVisibility(View.GONE);
+
                         addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                             @Override
                             public boolean onMapClick(@NonNull Point point) {
@@ -907,12 +943,14 @@ public class mapdisplay extends AppCompatActivity {
                                 setRoute.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        if (!isRouteActive)
+                                        if (!isRouteActive) {
                                             fetchRoute(destination);
-                                        else {
+                                        } else {
                                             isRouteActive = false;
                                             mapboxNavigation.setNavigationRoutes(Collections.emptyList());
                                             setRoute.setText("Set route");
+                                            maneuverView.setVisibility(View.GONE);
+                                            findViewById(R.id.search_bar).setVisibility(View.VISIBLE);// Hide the maneuver view
                                         }
                                     }
                                 });
