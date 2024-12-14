@@ -188,6 +188,7 @@ public class mapdisplay extends AppCompatActivity {
 
     //
     Bitmap bitmap;
+    Bitmap bitmap2;
     //map compoment
     private MapboxRouteArrowApi routeArrowApi;
     private MapboxRouteArrowView routeArrowView;
@@ -471,8 +472,10 @@ public class mapdisplay extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -699,6 +702,7 @@ public class mapdisplay extends AppCompatActivity {
 
 
                  bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
+
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
                  pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
@@ -803,7 +807,7 @@ public class mapdisplay extends AppCompatActivity {
                 .withTextAnchor(TextAnchor.CENTER)
                 .withIconSize(0.05)
                 .withPoint(potholePoint)
-                .withIconImage(bitmap);
+                .withIconImage( 2);
         pointAnnotationManager.create(pointAnnotationOptions);
     }
 
@@ -893,8 +897,10 @@ public class mapdisplay extends AppCompatActivity {
                                 {
                                     if(isPointOnRoute2(Point.fromLngLat(location.second, location.first),checkedRoute)){
                                         potholeonRoute++;
-                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
+                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
+                                                .withIconSize(0.05)
                                                 .withPoint(Point.fromLngLat(location.second, location.first));
+
                                         pointAnnotationManager.create(pointAnnotationOptions);
                                     }
                                 }
