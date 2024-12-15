@@ -6,11 +6,8 @@
     <solid android:color="#1F41BB" /> <!-- Thay đổi màu nếu cần -->
 
     <!-- Bo góc -->
-    <corners android:radius="16dp" />
+    <corners android:radius="32dp" />
 
     <!-- Viền (nếu cần) -->
-    <stroke
-        android:width="2dp"
-        android:color="#FFFFFF" /> <!-- Thay đổi màu viền nếu cần -->
 
 </shape>

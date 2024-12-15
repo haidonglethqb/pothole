@@ -3,6 +3,9 @@ package com.example.pothole.Authentication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +18,8 @@ import com.example.pothole.R;
 public class IntroductionScreen extends AppCompatActivity {
 
     Button btn_welcome;
+    ImageView intro_gif;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,5 +36,7 @@ public class IntroductionScreen extends AppCompatActivity {
             Intent intent = new Intent(IntroductionScreen.this, WelcomeScreen.class);
             startActivity(intent);
         });
+        intro_gif = findViewById(R.id.ivIllustration);
+        Glide.with(this).load(R.drawable.pothole_funny).into(intro_gif);
     }
 }

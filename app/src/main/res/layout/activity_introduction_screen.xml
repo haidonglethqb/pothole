@@ -5,22 +5,22 @@
     android:fillViewport="true"
     android:background="@color/white">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/main"
-        android:orientation="vertical"
         android:padding="24dp"
-        android:gravity="center_horizontal"
         android:fitsSystemWindows="true">
 
         <!-- Logo dự án -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/logoCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            android:layout_centerHorizontal="true">
 
             <ImageView
                 android:id="@+id/ivProjectLogo"
@@ -37,6 +37,8 @@
             android:id="@+id/tvProjectInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/logoCard"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:text="A project of NT118.P11"
             android:textColor="@color/black"
@@ -47,17 +49,22 @@
             android:id="@+id/tvWelcomeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_below="@id/tvProjectInfo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="32dp"
             android:gravity="center"
             android:text="Welcome to\nPOTHOLE PATROL by NT118"
-            android:textColor="@color/black"
+            android:textColor="@color/primary_blue"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <!-- Hình ảnh mô tả -->
         <androidx.cardview.widget.CardView
-            android:layout_width="297dp"
-            android:layout_height="329dp"
+            android:id="@+id/illustrationCard"
+            android:layout_width="290dp"
+            android:layout_height="290dp"
+            android:layout_below="@id/tvWelcomeTitle"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp">
@@ -67,8 +74,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="Illustration of pothole detection"
-                android:src="@drawable/pothole_funny"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/pothole_funny" />
         </androidx.cardview.widget.CardView>
 
         <!-- Thông điệp giới thiệu -->
@@ -76,6 +83,8 @@
             android:id="@+id/tvIntroductionMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/illustrationCard"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="32dp"
             android:gravity="center"
             android:text="An app with the ability to detect and \nreport potholes on the streets"
@@ -84,17 +93,20 @@
 
         <!-- Nút Get Started -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/getStartedCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnGetStarted"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_button"
+                android:background="@drawable/rounded_button_small"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
                 android:text="GET STARTED"
@@ -102,5 +114,5 @@
                 android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

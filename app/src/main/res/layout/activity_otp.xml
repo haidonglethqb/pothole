@@ -1,9 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center"
-    android:orientation="vertical"
     android:padding="24dp">
 
     <!-- Title Text -->
@@ -16,7 +14,9 @@
         android:padding="8dp"
         android:textSize="24sp"
         android:textColor="#1F41BB"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"/>
 
     <!-- Message Text -->
     <TextView
@@ -26,16 +26,20 @@
         android:padding="8dp"
         android:text="An email has been sent to your email address."
         android:textSize="16sp"
-        android:textColor="#626262"/>
+        android:textColor="#626262"
+        android:layout_below="@id/tvOtpTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"/>
 
     <!-- GIF ImageView -->
     <ImageView
         android:id="@+id/verifyGif"
-        android:layout_width="222dp"
-        android:layout_height="212dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/verify" />
-
+        android:src="@drawable/verify"
+        android:layout_below="@id/tvOtpMessage"
+        android:layout_centerHorizontal="true"/>
 
     <!-- Confirm Button -->
     <androidx.appcompat.widget.AppCompatButton
@@ -45,7 +49,9 @@
         android:text="Confirm Email Verified"
         android:textSize="16sp"
         android:background="@drawable/rounded_button"
-        android:layout_marginTop="16dp"
-        android:textColor="@android:color/white"/>
+        android:layout_marginTop="32dp"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/verifyGif"
+        android:layout_centerHorizontal="true"/>
 
-</LinearLayout>
+</RelativeLayout>
