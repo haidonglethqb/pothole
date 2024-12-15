@@ -163,6 +163,20 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class mapdisplay extends AppCompatActivity {
+    private void showPotholeInfoDialog(Point point) {
+        // Find the pothole information based on the point
+        for (Pair<Double, Double> location : potholeLocations) {
+            if (location.first == point.latitude() && location.second == point.longitude()) {
+                // Create and show the AlertDialog with pothole information
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Pothole Information");
+                builder.setMessage("Latitude: " + location.first + "\nLongitude: " + location.second);
+                builder.setPositiveButton("OK", null);
+                builder.show();
+                break;
+            }
+        }
+    }
     private static final String TAG = "mapdisplay";
     private Style mapStyle;
     MapView mapView;
@@ -723,6 +737,10 @@ public class mapdisplay extends AppCompatActivity {
                             .withPoint(point);
                     pointAnnotationManager.create(pointAnnotationOptions);
                 }
+                pointAnnotationManager.addClickListener(annotation -> {
+                    showPotholeInfoDialog(annotation.getPoint());
+                    return true;
+                });
 
 
                 addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
