@@ -204,6 +204,9 @@ public class mapdisplay extends AppCompatActivity {
     //
     Bitmap bitmap;
     Bitmap bitmap2;
+    Bitmap nang;
+    Bitmap trungbinh;
+    Bitmap nhe;
     //map compoment
     private MapboxRouteArrowApi routeArrowApi;
     private MapboxRouteArrowView routeArrowView;
@@ -497,6 +500,9 @@ public class mapdisplay extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+        nang = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+        trungbinh = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+        nhe = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -728,11 +734,25 @@ public class mapdisplay extends AppCompatActivity {
                  pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 for (Triple<Double, Double,String> location : potholeLocations) {
+                    double iconSize = 0.05;
                     Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+                    if(location.getThird().equals("Minor")){
+                        iconSize=0.05;
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+
+                    }
+                    if(location.getThird().equals("Medium")){
+                        iconSize=0.055;
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+                    }
+                    if(location.getThird().equals("Severe")){
+                        iconSize=0.06;
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+                    }
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                             .withTextAnchor(TextAnchor.CENTER)
-                            .withIconSize(0.05)
+                            .withIconSize(iconSize)
                             .withIconImage(bitmap)
                             .withPoint(point);
                     pointAnnotationManager.create(pointAnnotationOptions);
@@ -826,13 +846,30 @@ public class mapdisplay extends AppCompatActivity {
 
 
     private boolean isRouteActive = false;
-    private void addPotholeIcon(Point potholePoint) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution); // Replace with your icon resource
+    private void addPotholeIcon(Triple<Double, Double, String> location) {
+        double iconSize = 0.05;
+        Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+
+        String severity = location.getThird();
+        if (severity != null) {
+            if (severity.equals("Minor")) {
+                iconSize = 0.05;
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+            } else if (severity.equals("Medium")) {
+                iconSize = 0.055;
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+            } else if (severity.equals("Severe")) {
+                iconSize = 0.06;
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+            }
+        }
+
         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                 .withTextAnchor(TextAnchor.CENTER)
-                .withIconSize(0.05)
-                .withPoint(potholePoint)
-                .withIconImage(bitmap2);
+                .withIconSize(iconSize)
+                .withIconImage(bitmap)
+                .withPoint(point);
         pointAnnotationManager.create(pointAnnotationOptions);
     }
 
@@ -866,10 +903,10 @@ public class mapdisplay extends AppCompatActivity {
 
                         mapboxNavigation.setNavigationRoutes(list);
                         checkedRoute = list.get(0);
-                        for (Triple<Double, Double,String> location : potholeLocations) {
+                        for (Triple<Double, Double, String> location : potholeLocations) {
                             Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                             if (isPointOnRoute(potholePoint, checkedRoute)) {
-                                addPotholeIcon(potholePoint);
+                                addPotholeIcon(location); // Pass the Triple object directly
                             }
                         }
 
@@ -900,9 +937,19 @@ public class mapdisplay extends AppCompatActivity {
                         for (Triple<Double, Double,String> location : potholeLocations)
                         {
                             if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
+                                double iconsize=0.06;
+                                bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
                                 potholeonRoute2++;
+                                if(location.getThird().equals("Minor")){
+                                    iconsize = 0.05;
+                                    bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+                                }
+                                if(location.getThird().equals("Medium")){
+                                    iconsize = 0.055;
+                                    bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+                                }
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
-                                        .withIconSize(0.05)
+                                        .withIconSize(iconsize)
                                         .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
 
                                 pointAnnotationManager.create(pointAnnotationOptions);
@@ -935,9 +982,20 @@ public class mapdisplay extends AppCompatActivity {
                                 for (Triple<Double, Double,String> location : potholeLocations)
                                 {
                                     if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
+                                        Bitmap B1 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+                                        double iconsize=0.06;
+                                        if(location.getThird().equals("Minor")){
+                                            iconsize = 0.05;
+                                            B1 = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+                                        }
+                                        if(location.getThird().equals("Medium")){
+                                            iconsize = 0.055;
+                                            B1 = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+                                        }
+
                                         potholeonRoute++;
-                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
-                                                .withIconSize(0.05)
+                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(B1)
+                                                .withIconSize(iconsize)
                                                 .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
 
                                         pointAnnotationManager.create(pointAnnotationOptions);
