@@ -1,0 +1,99 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_item_background"
+    android:padding="12dp"
+    android:layout_marginVertical="8dp"
+    android:elevation="4dp">
+
+    <!-- Thời gian -->
+    <TextView
+        android:id="@+id/tvDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="19:27 - 04/11/2024"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp" />
+
+    <!-- Location -->
+    <LinearLayout
+        android:id="@+id/locationContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:layout_below="@id/tvDateTime"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_location"
+            android:contentDescription="Location" />
+
+        <TextView
+            android:id="@+id/tvLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="102.981, 291.340"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- User Reported (Tuỳ chọn) -->
+    <LinearLayout
+        android:id="@+id/userReportedContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:layout_below="@id/locationContainer"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_user"
+            android:contentDescription="User Reported" />
+
+        <TextView
+            android:id="@+id/tvTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="bearhunter291"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Severity Level -->
+    <LinearLayout
+        android:id="@+id/severityContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:layout_below="@id/userReportedContainer"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_severity"
+            android:contentDescription="Severity" />
+
+        <TextView
+            android:id="@+id/tvSeverity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Minor"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</RelativeLayout>

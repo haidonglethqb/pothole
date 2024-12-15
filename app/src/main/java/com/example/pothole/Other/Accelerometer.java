@@ -47,6 +47,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     private float deltaX, deltaY, deltaZ;
     private String severity;
 
+    private TextView sensorName, sensorType, maxRange, resolution;
     private TextView currentX, currentY, currentZ, maxX, maxY, maxZ, latitudeText, longitudeText;
     private TextView potholeTotal, minorPothole, mediumPothole, severePothole, combinedDelta;
 
@@ -84,6 +85,10 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     }
 
     private void initializeViews() {
+        sensorName = findViewById(R.id.sensorName);
+        sensorType = findViewById(R.id.sensorType);
+        maxRange = findViewById(R.id.maxRange);
+        resolution = findViewById(R.id.resolution);
         currentX = findViewById(R.id.currentX);
         currentY = findViewById(R.id.currentY);
         currentZ = findViewById(R.id.currentZ);
@@ -93,7 +98,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         maxZ = findViewById(R.id.maxZ);
 
         latitudeText = findViewById(R.id.latitude);
-        longitudeText = findViewById(R.id.longtitude);
+        longitudeText = findViewById(R.id.longitude);
 
         potholeTotal = findViewById(R.id.potholeTotal);
         minorPothole = findViewById(R.id.minorPothole);
@@ -109,11 +114,16 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         if (sensorManager != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            if (accelerometer != null) {
+                sensorName.setText("Sensor Name: " + accelerometer.getName());
+                sensorType.setText("Sensor Type: " + accelerometer.getStringType());
+                maxRange.setText("Max Range: " + accelerometer.getMaximumRange());
+                resolution.setText("Resolution: " + accelerometer.getResolution());
+            }
         } else {
             Log.e(TAG, "Accelerometer not available.");
         }
     }
-
     private void initializeLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 

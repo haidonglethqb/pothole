@@ -59,13 +59,13 @@
                 android:padding="16dp"
                 android:layout_marginBottom="16dp">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/user_avatar"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:src="@drawable/ic_profile_picture_placeholder"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:background="@drawable/rounded_white_background"
-                    app:shapeAppearanceOverlay="@style/CircleImageView"/>
+                    android:src="@drawable/ic_profile_picture_placeholder"
+                    app:shapeAppearanceOverlay="@style/CircleImageView" />
 
                 <TextView
                     android:id="@+id/user_welcome_message"
@@ -431,57 +431,10 @@
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#E4E6FF"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:weightSum="4">
-
-        <ImageButton
-            android:id="@+id/home_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null"
-            android:paddingTop="8dp"
-            android:src="@drawable/home" />
-
-        <ImageButton
-            android:id="@+id/maps_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null"
-            android:paddingTop="8dp"
-            android:src="@drawable/maps" />
-
-        <ImageButton
-            android:id="@+id/history_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null"
-            android:paddingTop="8dp"
-            android:src="@drawable/history" />
-
-        <ImageButton
-            android:id="@+id/settings_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null"
-            android:paddingTop="8dp"
-            android:src="@drawable/settings"
-            app:tint="@color/black" />
-    </LinearLayout>
+    <!-- Nav barr -->
+    <include
+        android:id="@+id/item_navigation_bar"
+        layout="@layout/item_navigation_bar" />
 
 
 </RelativeLayout>
