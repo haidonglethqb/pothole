@@ -907,7 +907,7 @@ public class mapdisplay extends AppCompatActivity {
                         checkedRoute = list.get(0);
                         for (Triple<Double, Double, String> location : potholeLocations) {
                             Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
-                            if (isPointOnRoute(potholePoint, checkedRoute)) {
+                            if (isPointOnRoute2(potholePoint, checkedRoute)) {
                                 addPotholeIcon(location); // Pass the Triple object directly
                             }
                         }
