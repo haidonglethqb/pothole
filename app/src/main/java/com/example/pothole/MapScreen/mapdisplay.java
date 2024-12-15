@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
 import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
+import kotlin.Triple;
 import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
@@ -165,12 +166,12 @@ import kotlin.jvm.functions.Function1;
 public class mapdisplay extends AppCompatActivity {
     private void showPotholeInfoDialog(Point point) {
         // Find the pothole information based on the point
-        for (Pair<Double, Double> location : potholeLocations) {
-            if (location.first == point.latitude() && location.second == point.longitude()) {
+        for (Triple<Double, Double, String> location : potholeLocations) {
+            if (location.getFirst() == point.latitude() && location.getSecond() == point.longitude()) {
                 // Create and show the AlertDialog with pothole information
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Pothole Information");
-                builder.setMessage("Latitude: " + location.first + "\nLongitude: " + location.second);
+                builder.setMessage("Latitude: " + location.getFirst() + "\nLongitude: " + location.getSecond() + "\nSeverity: " + location.getThird());
                 builder.setPositiveButton("OK", null);
                 builder.show();
                 break;
@@ -187,7 +188,7 @@ public class mapdisplay extends AppCompatActivity {
     private Point pothole;
     private Point pothole2;
     private Point pothole3;
-    private List<Pair<Double, Double>> potholeLocations;
+    private List<Triple<Double, Double, String>> potholeLocations;
     private DatabaseReference database;
     private MapboxManeuverView maneuverView;
     private MapboxManeuverApi maneuverApi;
@@ -349,14 +350,13 @@ public class mapdisplay extends AppCompatActivity {
             }
         }
     });
-    private void checkProximityToPothole(Point userLocation, Point pothole) {
+    private void checkProximityToPothole(Point userLocation, Point pothole, String severity) {
         double distance = TurfMeasurement.distance(userLocation, pothole);
         double thresholdDistance = 0.10; // 100 meters
         if (distance < thresholdDistance && !notificationShown) {
-            showNotification("Pothole Alert", "Slow down, you are approaching a pothole." );
+            showNotification("Pothole Alert", "Slow down, you are approaching a pothole with severity: " + severity);
             Toast.makeText(mapdisplay.this, "Pothole 100 meters ahead", Toast.LENGTH_SHORT).show();
             notificationShown = true;
-
         }
     }
 
@@ -388,10 +388,10 @@ public class mapdisplay extends AppCompatActivity {
                     routeLineView.renderRouteLineUpdate(mapStyle, result);
                 }
                 // Check proximity to all potholes on the route
-                for (Pair<Double, Double> location : potholeLocations) {
-                    Point potholePoint = Point.fromLngLat(location.second, location.first);
+                for (Triple<Double, Double, String> location : potholeLocations) {
+                    Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                     if (isPointOnRoute2(potholePoint, checkedRoute)) {
-                        checkProximityToPothole(point, potholePoint);
+                        checkProximityToPothole(point, potholePoint, location.getThird());
                     }
                 }
             }
@@ -517,14 +517,14 @@ public class mapdisplay extends AppCompatActivity {
         LocationRetriever locationRetriever = new LocationRetriever(this);
         locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
             @Override
-            public void onLocationsRetrieved(List<Pair<Double, Double>> locations) {
+            public void onLocationsRetrieved(List<Triple<Double, Double, String>> locations) {
                 // Log the retrieved locations
                 if (locations.isEmpty()) {
                     Log.d(TAG, "No locations retrieved from local storage.");
                 } else {
                     Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
-                    for (Pair<Double, Double> location : locations) {
-                        Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
+                    for (Triple<Double, Double, String> location : locations) {
+                        Log.d(TAG, "Latitude: " + location.getFirst() + ", Longitude: " + location.getSecond() + ", Severity: " + location.getThird());
                     }
                 }
                 // get locations
@@ -727,8 +727,8 @@ public class mapdisplay extends AppCompatActivity {
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
                  pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
-                for (Pair<Double, Double> location : potholeLocations) {
-                    Point point = Point.fromLngLat(location.second, location.first);
+                for (Triple<Double, Double,String> location : potholeLocations) {
+                    Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                             .withTextAnchor(TextAnchor.CENTER)
@@ -866,8 +866,8 @@ public class mapdisplay extends AppCompatActivity {
 
                         mapboxNavigation.setNavigationRoutes(list);
                         checkedRoute = list.get(0);
-                        for (Pair<Double, Double> location : potholeLocations) {
-                            Point potholePoint = Point.fromLngLat(location.second, location.first);
+                        for (Triple<Double, Double,String> location : potholeLocations) {
+                            Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                             if (isPointOnRoute(potholePoint, checkedRoute)) {
                                 addPotholeIcon(potholePoint);
                             }
@@ -897,13 +897,13 @@ public class mapdisplay extends AppCompatActivity {
                         maneuverView.setVisibility(View.VISIBLE);
                         findViewById(R.id.search_bar).setVisibility(View.GONE);
                         int potholeonRoute2 = 0;
-                        for (Pair<Double, Double> location : potholeLocations)
+                        for (Triple<Double, Double,String> location : potholeLocations)
                         {
-                            if(isPointOnRoute2(Point.fromLngLat(location.second, location.first),checkedRoute)){
+                            if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
                                 potholeonRoute2++;
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
                                         .withIconSize(0.05)
-                                        .withPoint(Point.fromLngLat(location.second, location.first));
+                                        .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
 
                                 pointAnnotationManager.create(pointAnnotationOptions);
                             }
@@ -932,13 +932,13 @@ public class mapdisplay extends AppCompatActivity {
                                 pointAnnotationManager.deleteAll();
 
                                 int potholeonRoute = 0;
-                                for (Pair<Double, Double> location : potholeLocations)
+                                for (Triple<Double, Double,String> location : potholeLocations)
                                 {
-                                    if(isPointOnRoute2(Point.fromLngLat(location.second, location.first),checkedRoute)){
+                                    if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
                                         potholeonRoute++;
                                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
                                                 .withIconSize(0.05)
-                                                .withPoint(Point.fromLngLat(location.second, location.first));
+                                                .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
 
                                         pointAnnotationManager.create(pointAnnotationOptions);
                                     }
