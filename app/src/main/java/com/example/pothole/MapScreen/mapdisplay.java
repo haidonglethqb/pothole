@@ -499,6 +499,7 @@ public class mapdisplay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
         nang = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
         trungbinh = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
@@ -802,7 +803,8 @@ public class mapdisplay extends AppCompatActivity {
 
                         pointAnnotationManager.deleteAll();
                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
-                                .withPoint(placeAutocompleteSuggestion.getCoordinate());
+                                .withPoint(placeAutocompleteSuggestion.getCoordinate())
+                                .withIconSize(0.49);
                         pointAnnotationManager.create(pointAnnotationOptions);
                         updateCamera(placeAutocompleteSuggestion.getCoordinate(), 0.0);
                         destination=placeAutocompleteSuggestion.getCoordinate();
