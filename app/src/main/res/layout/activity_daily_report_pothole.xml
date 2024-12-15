@@ -238,59 +238,9 @@
             android:src="@drawable/potholereport" />
     </LinearLayout>
 
-    <!-- Thanh điều hướng dưới cùng -->
-    <LinearLayout
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:background="#E4E6FF"
-        android:padding="8dp"
-        android:weightSum="4"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
-
-        <ImageButton
-            android:id="@+id/home_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:src="@drawable/home"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null" />
-
-        <ImageButton
-            android:id="@+id/maps_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:src="@drawable/maps"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null" />
-
-        <ImageButton
-            android:id="@+id/history_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:src="@drawable/history"
-            android:background="@android:color/transparent"
-            android:contentDescription="@null" />
-
-        <ImageButton
-            android:id="@+id/settings_icon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:src="@drawable/settings"
-            android:background="@android:color/transparent"
-            app:tint="@color/black"
-            android:contentDescription="@null" />
-    </LinearLayout>
+    <include
+        android:id="@+id/navigation_bar"
+        layout="@layout/item_navigation_bar" />
 
 
 
