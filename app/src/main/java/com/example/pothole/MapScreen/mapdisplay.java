@@ -48,6 +48,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -156,6 +157,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import android.widget.ImageView;
 
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
@@ -168,10 +170,27 @@ public class mapdisplay extends AppCompatActivity {
         // Find the pothole information based on the point
         for (Triple<Double, Double, String> location : potholeLocations) {
             if (location.getFirst() == point.latitude() && location.getSecond() == point.longitude()) {
-                // Create and show the AlertDialog with pothole information
+                // Inflate the custom layout
+                View dialogView = getLayoutInflater().inflate(R.layout.dialog_pothole_info, null);
+                ImageView potholeImage = dialogView.findViewById(R.id.pothole_image);
+                TextView potholeInfo = dialogView.findViewById(R.id.pothole_info);
+
+                // Set the pothole information
+                potholeInfo.setText("Latitude: " + location.getFirst() + "\nLongitude: " + location.getSecond() + "\nSeverity: " + location.getThird());
+
+                // Optionally, set the image resource based on severity or other criteria
+                if (location.getThird().equals("Minor")) {
+                    potholeImage.setImageResource(R.drawable.minor);
+                } else if (location.getThird().equals("Medium")) {
+                    potholeImage.setImageResource(R.drawable.medium);
+                } else if (location.getThird().equals("Severe")) {
+                    potholeImage.setImageResource(R.drawable.potholecaution);
+                }
+
+                // Create and show the AlertDialog with the custom layout
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Pothole Information");
-                builder.setMessage("Latitude: " + location.getFirst() + "\nLongitude: " + location.getSecond() + "\nSeverity: " + location.getThird());
+                builder.setView(dialogView);
                 builder.setPositiveButton("OK", null);
                 builder.show();
                 break;
