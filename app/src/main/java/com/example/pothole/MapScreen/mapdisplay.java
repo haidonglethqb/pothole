@@ -11,6 +11,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
 import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
 import kotlin.Triple;
+
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
@@ -166,6 +168,7 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class mapdisplay extends AppCompatActivity {
+    private boolean soundPlayed = false;
     private void showPotholeInfoDialog(Point point) {
         // Find the pothole information based on the point
         for (Triple<Double, Double, String> location : potholeLocations) {
@@ -229,6 +232,7 @@ public class mapdisplay extends AppCompatActivity {
     //map compoment
     private MapboxRouteArrowApi routeArrowApi;
     private MapboxRouteArrowView routeArrowView;
+    private MediaPlayer mediaPlayer;
 
 
 
@@ -379,6 +383,12 @@ public class mapdisplay extends AppCompatActivity {
             showNotification("Pothole Alert", "Slow down, you are approaching a pothole with severity: " + severity);
             Toast.makeText(mapdisplay.this, "Pothole 100 meters ahead", Toast.LENGTH_SHORT).show();
             notificationShown = true;
+
+            // Play warning sound only once
+            if (!soundPlayed && mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                mediaPlayer.start();
+                soundPlayed = true;
+            }
         }
     }
 
@@ -412,7 +422,7 @@ public class mapdisplay extends AppCompatActivity {
                 // Check proximity to all potholes on the route
                 for (Triple<Double, Double, String> location : potholeLocations) {
                     Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
-                    if (isPointOnRoute2(potholePoint, checkedRoute)) {
+                    if (checkedRoute != null && isPointOnRoute2(potholePoint, checkedRoute)) {
                         checkProximityToPothole(point, potholePoint, location.getThird());
                     }
                 }
@@ -428,6 +438,9 @@ public class mapdisplay extends AppCompatActivity {
         return distance < thresholdDistance;
     }
     private boolean isPointOnRoute2(Point point, NavigationRoute route) {
+        if (route == null) {
+            return false;
+        }
         LineString routeLineString = LineString.fromPolyline(route.getDirectionsRoute().geometry(), 6);
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
         double distance = TurfMeasurement.distance(point, nearestPoint);
@@ -518,6 +531,13 @@ public class mapdisplay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mediaPlayer = MediaPlayer.create(this, R.raw.warning); // Replace with your sound file
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.seekTo(0); // Reset the MediaPlayer to the beginning
+            }
+        });
 
         bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
         nang = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
