@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -59,6 +60,15 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
         registerReceiver(potholeReceiver, filter);
 
+
+        // Đọc dữ liệu từ SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PotholeData", MODE_PRIVATE);
+        int savedPotholeCount = prefs.getInt("potholeCount", 0);
+        float savedTravelDistance = prefs.getFloat("totalDistance", 0.0f);
+        // Hiển thị dữ liệu trên giao diện
+        tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
+        tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", savedTravelDistance));
+
         home_button.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "You are already on the home screen", Toast.LENGTH_SHORT).show();
         });
@@ -106,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Toast.makeText(MainActivity.this, "Failed to load data.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Failed to load data.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -128,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.combinedDelta.setText(String.format(Locale.getDefault(), "%.2f", combinedDelta));
                 tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", potholeCount));
                 tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
+
+//
             }
         }
     };
