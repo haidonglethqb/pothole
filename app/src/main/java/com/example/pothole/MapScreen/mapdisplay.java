@@ -337,11 +337,12 @@ public class mapdisplay extends AppCompatActivity {
     });
     private void checkProximityToPothole(Point userLocation, Point pothole) {
         double distance = TurfMeasurement.distance(userLocation, pothole);
-        double thresholdDistance = 0.05; // 50 meters
+        double thresholdDistance = 0.10; // 100 meters
         if (distance < thresholdDistance && !notificationShown) {
-            showNotification("Pothole Alert", "Slow down, you are approaching a pothole.");
-            Toast.makeText(mapdisplay.this, "Slow down", Toast.LENGTH_SHORT).show();
+            showNotification("Pothole Alert", "Slow down, you are approaching a pothole." );
+            Toast.makeText(mapdisplay.this, "Pothole 100 meters ahead", Toast.LENGTH_SHORT).show();
             notificationShown = true;
+
         }
     }
 
@@ -372,7 +373,13 @@ public class mapdisplay extends AppCompatActivity {
                 if (mapStyle != null) {
                     routeLineView.renderRouteLineUpdate(mapStyle, result);
                 }
-//                checkProximityToPothole(point, pothole);
+                // Check proximity to all potholes on the route
+                for (Pair<Double, Double> location : potholeLocations) {
+                    Point potholePoint = Point.fromLngLat(location.second, location.first);
+                    if (isPointOnRoute2(potholePoint, checkedRoute)) {
+                        checkProximityToPothole(point, potholePoint);
+                    }
+                }
             }
         }
     };
@@ -871,6 +878,19 @@ public class mapdisplay extends AppCompatActivity {
                         setRoute.setText("Clear route");
                         maneuverView.setVisibility(View.VISIBLE);
                         findViewById(R.id.search_bar).setVisibility(View.GONE);
+                        int potholeonRoute2 = 0;
+                        for (Pair<Double, Double> location : potholeLocations)
+                        {
+                            if(isPointOnRoute2(Point.fromLngLat(location.second, location.first),checkedRoute)){
+                                potholeonRoute2++;
+                                PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
+                                        .withIconSize(0.05)
+                                        .withPoint(Point.fromLngLat(location.second, location.first));
+
+                                pointAnnotationManager.create(pointAnnotationOptions);
+                            }
+                        }
+                        Toast.makeText(mapdisplay.this, "Number of potholes on route: " + potholeonRoute2, Toast.LENGTH_SHORT).show();
 
                         addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                             @Override
@@ -892,6 +912,7 @@ public class mapdisplay extends AppCompatActivity {
                                 mapboxNavigation.setNavigationRoutes(list);
                                 checkedRoute=alternativeRoute;
                                 pointAnnotationManager.deleteAll();
+
                                 int potholeonRoute = 0;
                                 for (Pair<Double, Double> location : potholeLocations)
                                 {
