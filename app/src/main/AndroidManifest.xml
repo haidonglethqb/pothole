@@ -3,15 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
 
     <application
         android:name=".Other.MyApplication"
@@ -24,74 +20,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pothole"
         tools:targetApi="31">
-        <activity
 
-            android:name=".Other.Accelerometer"
-            android:exported="false" />
-        <activity
-            android:name=".Other.TestActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SettingScreen.ChooseLanguge"
-            android:exported="false" />
-        <activity
+        <activity android:name=".Other.Accelerometer" android:exported="false" />
+        <activity android:name=".Other.TestActivity" android:exported="false" />
+        <activity android:name=".SettingScreen.ChooseLanguge" android:exported="false" />
+        <activity android:name=".MapScreen.mapdisplay" android:exported="false" />
+        <activity android:name=".Other.Maps" android:exported="false" />
+        <activity android:name=".DashboardScreen.DailyReportPothole" android:exported="false" />
 
-            android:name=".MapScreen.mapdisplay"
-            android:exported="false" />
-        <activity
-            android:name=".Other.Maps"
-            android:exported="false" />
-        <activity
-            android:name=".DashboardScreen.DailyReportPothole"
-            android:exported="false" />
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="your_api_key_here" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="your_api_key_here" />
-
-        <activity
-            android:name=".SettingScreen.Notificatons_settings"
-            android:exported="false" />
-
-        <activity
-            android:name=".Other.LanguageEnglish"
-            android:exported="false" />
-        <activity
-            android:name=".SettingScreen.EditProfile"
-            android:exported="false" />
-        <activity
-            android:name=".SettingScreen.Settings"
-            android:exported="false" />
-        <activity
-            android:name=".Authentication.WelcomeScreen"
-            android:exported="false" />
-        <activity
-            android:name=".DashboardScreen.MainActivity"
-            android:exported="true">
+        <activity android:name=".SettingScreen.Notificatons_settings" android:exported="false" />
+        <activity android:name=".Other.LanguageEnglish" android:exported="false" />
+        <activity android:name=".SettingScreen.EditProfile" android:exported="false" />
+        <activity android:name=".SettingScreen.Settings" android:exported="false" />
+        <activity android:name=".Authentication.WelcomeScreen" android:exported="false" />
+        <activity android:name=".DashboardScreen.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Authentication.Forgetpassword"
-            android:exported="false" />
-        <activity
-            android:name=".Authentication.OTP"
-            android:exported="false" />
-        <activity
-            android:name=".Authentication.register"
-            android:exported="false" />
-        <activity
-            android:name=".Authentication.login"
-            android:exported="false" />
+        <activity android:name=".Authentication.Forgetpassword" android:exported="false" />
+        <activity android:name=".Authentication.OTP" android:exported="false" />
+        <activity android:name=".Authentication.register" android:exported="false" />
+        <activity android:name=".Authentication.login" android:exported="false" />
+        <activity android:name=".Other.History" android:exported="false" />
         <activity
             android:name=".Authentication.IntroductionScreen"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <service android:name=".Other.AccelerometerService" />
 
     </application>

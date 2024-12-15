@@ -52,7 +52,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth:22.1.1")
     implementation ("com.google.firebase:firebase-database:20.3.3")
     implementation ("com.google.firebase:firebase-auth:23.0.0")
-    implementation ("com.google.android.gms:play-services-auth:21.1.1")
+    implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
     implementation("com.mapbox.navigation:android:2.15.2")
     implementation("com.mapbox.search:mapbox-search-android-ui:1.0.0-rc.6")
@@ -62,4 +62,6 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+
 }

@@ -11,14 +11,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.pothole.DashboardScreen.MainActivity;
+import com.example.pothole.MapScreen.mapdisplay;
 import com.example.pothole.Other.Accelerometer;
 import com.example.pothole.Authentication.login;
+import com.example.pothole.Other.History;
 import com.example.pothole.R;
 
 public class Settings extends BaseActivity {
-    TextView tvEdit, tvLanguage, tvNotify,tvlogout, tvReport ;
+    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport;
+    ImageButton back_button, home_button, maps_button, history_button, settings_button;
 
-    ImageButton back_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,54 +32,65 @@ public class Settings extends BaseActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         tvEdit = findViewById(R.id.tvEditProfile);
         tvLanguage = findViewById(R.id.tvLanguage);
         tvNotify = findViewById(R.id.tvNotifications);
         tvlogout = findViewById(R.id.tvLogOut);
         tvReport = findViewById(R.id.tvReportProblem);
         back_button = findViewById(R.id.btnBack);
-        back_button.setOnClickListener(v -> {
-            finish();
+
+        back_button.setOnClickListener(v -> finish());
+
+        tvEdit.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, EditProfile.class);
+            startActivity(intent);
+        });
+        tvNotify.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, Notificatons_settings.class);
+            startActivity(intent);
+        });
+        tvLanguage.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, ChooseLanguge.class);
+            startActivity(intent);
+        });
+        tvlogout.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, login.class);
+            startActivity(intent);
+        });
+        tvReport.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, Accelerometer.class);
+            startActivity(intent);
         });
 
-        tvEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Settings.this, EditProfile.class);
-                startActivity(intent);
-            }
-        });
-        tvNotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Settings.this, Notificatons_settings.class);
-                startActivity(intent);
-            }
-        });
-        tvLanguage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Settings.this, ChooseLanguge.class);
-                startActivity(intent);
-            }
-        });
-        tvlogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Settings.this, login.class);
-                startActivity(intent);
-            }
-        });
-        tvReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Settings.this, Accelerometer.class);
-                startActivity(intent);
-            }
+        // Find navigation bar buttons
+        home_button = findViewById(R.id.home_button);
+        maps_button = findViewById(R.id.maps_button);
+        history_button = findViewById(R.id.history_button);
+        settings_button = findViewById(R.id.settings_button);
+
+        // Set click listeners for navigation bar buttons
+        home_button.setOnClickListener(view -> {
+            // Handle home button click
+            Intent intent = new Intent(Settings.this, MainActivity.class);
+            startActivity(intent);
         });
 
+        maps_button.setOnClickListener(view -> {
+            // Handle maps button click
+            Intent intent = new Intent(Settings.this, mapdisplay.class);
+            startActivity(intent);
+        });
 
+        history_button.setOnClickListener(view -> {
+            // Handle history button click
+            Intent intent = new Intent(Settings.this, History.class);
+            startActivity(intent);
+        });
+
+        settings_button.setOnClickListener(view -> {
+            // Handle settings button click
+            // You are already in the settings activity, so no need to start a new activity
+        });
     }
-
-
 }
