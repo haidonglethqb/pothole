@@ -807,7 +807,7 @@ public class mapdisplay extends AppCompatActivity {
                 .withTextAnchor(TextAnchor.CENTER)
                 .withIconSize(0.05)
                 .withPoint(potholePoint)
-                .withIconImage( 2);
+                .withIconImage(bitmap2);
         pointAnnotationManager.create(pointAnnotationOptions);
     }
 
