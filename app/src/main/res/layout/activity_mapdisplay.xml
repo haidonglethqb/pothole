@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,60 +6,79 @@
     android:layout_height="match_parent"
     tools:context=".MapScreen.mapdisplay">
 
+    <!-- MapView -->
     <com.mapbox.maps.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mapView"/>
+        android:layout_height="match_parent" />
 
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/search_bar"
+    <!-- Search Bar Layout -->
+    <RelativeLayout
+        android:id="@+id/search_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50sp"
         android:layout_marginStart="10sp"
-        android:layout_marginEnd="10sp"
-        android:elevation="4dp"
-        android:hint="      Search"
-        app:boxCornerRadiusBottomEnd="20sp"
-        app:boxCornerRadiusBottomStart="20sp"
-        app:boxCornerRadiusTopEnd="20sp"
-        app:boxCornerRadiusTopStart="20sp"
-        app:boxStrokeWidthFocused="0sp"
-        app:boxStrokeWidth="0sp"
-        app:startIconDrawable="@drawable/baseline_search_24">
+        android:layout_marginEnd="10sp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/search_bar_text"
-            android:layout_width="match_parent"
+        <!-- Search Bar -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_bar"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:background="@drawable/rounded_input_field"/>
+            android:layout_marginEnd="10sp"
+            android:layout_toStartOf="@id/filter_spinner"
+            android:layout_alignParentStart="true"
+            app:boxCornerRadiusTopStart="20sp"
+            app:boxCornerRadiusBottomStart="20sp"
+            app:boxStrokeWidth="0sp"
+            app:startIconDrawable="@drawable/baseline_search_24"
+            app:startIconTint="@color/black"
+            app:hintEnabled="true">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_bar_text"
+                android:layout_width="304dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_input_field"
+                android:hint="         Search here"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Filter Spinner -->
+        <Spinner
+            android:id="@+id/filter_spinner"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_dropdown"
+            android:contentDescription="Filter Options"
+            android:spinnerMode="dropdown"
+            android:layout_marginEnd="10sp"/>
+    </RelativeLayout>
+
+    <!-- Search Results View -->
     <com.mapbox.search.ui.view.SearchResultsView
         android:id="@+id/search_results_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/search_layout"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"
+        android:layout_marginTop="10dp"
         android:elevation="4dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="20dp"
-        android:layout_below="@id/search_bar" />
+        android:visibility="gone" />
 
+    <!-- Sound Button -->
     <com.mapbox.navigation.ui.voice.view.MapboxSoundButton
+        android:id="@+id/soundButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/search_bar"
+        android:layout_below="@id/search_layout"
         android:layout_marginTop="20sp"
-        android:layout_marginEnd="20sp"
-        android:id="@+id/soundButton"/>
+        android:layout_marginEnd="20sp" />
 
+    <!-- Route Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/route_button"
         android:layout_width="match_parent"
@@ -69,33 +87,27 @@
         android:layout_marginEnd="20sp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20sp"
-        android:background="@drawable/rounded_button"
+        android:background="@color/primary_blue"
         android:text="Set Route"
-        android:textColor="@color/white"
-        android:textSize="16dp"/>
+        android:textColor="@color/white" />
 
+    <!-- Focus Location Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/focus_location_button"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/route_button"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/baseline_my_location_24"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@id/route_button" />
+        android:src="@drawable/baseline_my_location_24" />
 
+    <!-- Maneuver View -->
     <com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView
         android:id="@+id/maneuverView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
-        android:visibility="gone"
-        />
-
-
-
-
-
-
+        android:visibility="gone" />
 </RelativeLayout>

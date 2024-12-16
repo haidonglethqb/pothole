@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#E4E6FF"/>  <!-- Màu nền của trường nhập -->
+    <corners
+        android:topLeftRadius="128dp"
+        android:bottomLeftRadius="128dp"
+        android:topRightRadius="0dp"
+        android:bottomRightRadius="0dp"/>  <!-- Bo tròn góc trái trên và dưới -->
+</shape>
