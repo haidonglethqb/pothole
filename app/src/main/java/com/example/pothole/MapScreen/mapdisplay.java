@@ -67,7 +67,7 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import com.google.android.material.button.MaterialButton;
+import androidx.appcompat.widget.AppCompatButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mapbox.android.core.location.LocationEngine;
@@ -180,7 +180,7 @@ public class mapdisplay extends AppCompatActivity {
     private static final String TAG = "mapdisplay";
     private Style mapStyle;
     MapView mapView;
-    MaterialButton setRoute;
+    AppCompatButton setRoute;
     FloatingActionButton focusLocationBtn;
     CompassView compassView;
     private Point destination;

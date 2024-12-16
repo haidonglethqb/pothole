@@ -23,8 +23,7 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginTop="12dp"
-            android:layout_alignParentStart="true"
-            tools:ignore="DuplicateIds" />
+            android:layout_alignParentStart="true"/>
 
         <ImageView
             android:id="@+id/notification_icon"
@@ -204,12 +203,34 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:layout_width="347dp"
+                <com.patrykandpatrick.vico.views.chart.ChartView
+                    android:id="@+id/recentPotholePieChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="16dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:contentDescription="Pothole severity image"
-                    android:src="@drawable/recentpothole" />
+                    android:layout_marginBottom="16dp"
+                    android:background="@android:color/white"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Overview Report"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <com.patrykandpatrick.vico.views.chart.ComposedChartView
+                        android:id="@+id/overviewReportLineChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="16dp" />
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -401,29 +422,6 @@
                         android:src="@drawable/detailsbutton" />
                 </LinearLayout>
             </GridLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Overview Report"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/overviewreport" />
-            </LinearLayout>
 
             <!-- Phần nội dung còn lại -->
             <!-- Thêm các phần khác như Hình ảnh và Báo cáo tổng quan tương tự -->

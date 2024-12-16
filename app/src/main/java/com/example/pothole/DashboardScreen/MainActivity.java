@@ -10,6 +10,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import com.patrykandpatrick.vico.core.entry.ChartEntry;
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer;
+import com.patrykandpatrick.vico.views.chart.ChartView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -24,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.patrykandpatrick.vico.views.chart.ComposedChartView;
 
 import java.util.Locale;
 
@@ -31,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
     ImageButton home_button, maps_button, history_button, settings_button;
     TextView accerleratorX, accerleratorY, accerleratorZ, combinedDelta, tvpotholeCount, tvdistance;
+
+    ChartView recentPotholePieChart;
+    ComposedChartView overviewReportLineChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +53,33 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        // Initialize buttons
         home_button = findViewById(R.id.home_button);
         maps_button = findViewById(R.id.maps_button);
         history_button = findViewById(R.id.history_button);
         settings_button = findViewById(R.id.settings_button);
+
+        // Initialize TextViews
         accerleratorX = findViewById(R.id.acceleratorX);
         accerleratorY = findViewById(R.id.acceleratorY);
         accerleratorZ = findViewById(R.id.acceleratorZ);
         combinedDelta = findViewById(R.id.combinedDelta);
         tvdistance = findViewById(R.id.traveledDistance);
         tvpotholeCount = findViewById(R.id.potholeCount);
+
+        // Initialize Charts
+        recentPotholePieChart = findViewById(R.id.recentPotholePieChart);
+        overviewReportLineChart = findViewById(R.id.overviewReportLineChart);
+
+        // Button Click Listeners
+        home_button.setOnClickListener(v -> Toast.makeText(MainActivity.this, "You are already on the home screen", Toast.LENGTH_SHORT).show());
+        maps_button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, mapdisplay.class)));
+        settings_button.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, Settings.class)));
+        history_button.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, com.example.pothole.Other.History.class)));
+
+        // Load data into charts
+        setupPieChart();
+        setupLineChart();
 
         // Đăng ký BroadcastReceiver
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
@@ -110,6 +136,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void setupPieChart() {
+        // Sample Pie Chart Data (Replace this with actual data from Firebase)
+        List<ChartEntry> pieEntries = new ArrayList<>();
+        pieEntries.add(new ChartEntry(0, 30f)); // Severity level 1
+        pieEntries.add(new ChartEntry(1, 50f)); // Severity level 2
+        pieEntries.add(new ChartEntry(2, 20f)); // Severity level 3
+
+        // Bind data to the ChartView
+        ChartEntryModelProducer producer = new ChartEntryModelProducer(pieEntries);
+        recentPotholePieChart.setModel(producer.getModel());
+    }
+
+    private void setupLineChart() {
+        // Sample Line Chart Data (Replace this with actual data from Firebase)
+        List<ChartEntry> lineEntries = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            lineEntries.add(new ChartEntry(i, (float) (Math.random() * 10)));
+        }
+
+        // Bind data to the ComposedChartView
+        ChartEntryModelProducer producer = new ChartEntryModelProducer(lineEntries);
+        overviewReportLineChart.setModel(producer.getModel());
+    }
+
+
 
     private final BroadcastReceiver potholeReceiver = new BroadcastReceiver() {
         @Override

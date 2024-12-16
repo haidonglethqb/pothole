@@ -62,4 +62,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    implementation ("com.patrykandpatrick.vico:core:1.14.0")
+    implementation ("com.patrykandpatrick.vico:views:1.14.0")
 }
