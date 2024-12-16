@@ -44,7 +44,7 @@ public class History extends AppCompatActivity {
         historyList = new ArrayList<>();
 
         // Adapter
-        historyAdapter = new HistoryAdapter(historyList);
+        historyAdapter = new HistoryAdapter(this, historyList);
         recyclerView.setAdapter(historyAdapter);
 
         // Kết nối Firebase

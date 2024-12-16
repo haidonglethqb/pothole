@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class EditProfile extends BaseActivity {
     private EditText etName, etEmail, etPhoneNumber,edDateOfBirth;
     private TextView  tvCountryRegion;
     private Button btnSaveChanges;
+    private Spinner spcountry;
 
     private SharedPreferences sharedPreferences;
 
@@ -47,7 +49,7 @@ public class EditProfile extends BaseActivity {
         etEmail = findViewById(R.id.etEmail);
         etPhoneNumber = findViewById(R.id.etPhoneNumber);
         edDateOfBirth = findViewById(R.id.edDateOfBirth);
-        tvCountryRegion = findViewById(R.id.tvCountryRegion);
+        spcountry = findViewById(R.id.spCountry);
         btnSaveChanges = findViewById(R.id.btnSaveChanges);
 
         // Gán sự kiện cho nút Back
@@ -68,12 +70,21 @@ public class EditProfile extends BaseActivity {
         String dateOfBirth = sharedPreferences.getString("dateOfBirth", "");
         String countryRegion = sharedPreferences.getString("countryRegion", "");
 
+
+
         // Hiển thị dữ liệu lên giao diện
         etName.setText(name);
         etEmail.setText(email);
         etPhoneNumber.setText(phoneNumber);
         edDateOfBirth.setText(dateOfBirth);
-        tvCountryRegion.setText(countryRegion);
+        if (countryRegion != null) {
+            for (int i = 0; i < spcountry.getCount(); i++) {
+                if (spcountry.getItemAtPosition(i).toString().equals(countryRegion)) {
+                    spcountry.setSelection(i);
+                    break;
+                }
+            }
+        }
     }
 
     private void saveProfileData() {
@@ -82,8 +93,7 @@ public class EditProfile extends BaseActivity {
         String email = etEmail.getText().toString().trim();
         String phoneNumber = etPhoneNumber.getText().toString().trim();
         String dateOfBirth = edDateOfBirth.getText().toString().trim();
-        String countryRegion = tvCountryRegion.getText().toString().trim();
-
+        String countryRegion = spcountry.getSelectedItem().toString();
         // Lưu dữ liệu vào SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("name", name);

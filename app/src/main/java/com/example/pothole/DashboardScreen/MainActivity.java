@@ -24,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.pothole.MapScreen.mapdisplay;
 import com.example.pothole.R;
+import com.example.pothole.SettingScreen.BaseActivity;
 import com.example.pothole.SettingScreen.Settings;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     ImageButton home_button, maps_button, history_button, settings_button;
     TextView accerleratorX, accerleratorY, accerleratorZ, combinedDelta, tvpotholeCount, tvdistance;
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Hiển thị dữ liệu trên giao diện
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
-        tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", savedTravelDistance));
+        tvdistance.setText(String.format(Locale.getDefault(), "%.1f m", savedTravelDistance));
 
         home_button.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "You are already on the home screen", Toast.LENGTH_SHORT).show();

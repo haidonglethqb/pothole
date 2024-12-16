@@ -13,6 +13,7 @@
     <string name="email_hint">Enter your email</string>
     <string name="phone_number">Phone number</string>
     <string name="phone_number_hint">Enter your phone number</string>
+    <string name="password">Password</string>
     <string name="date_of_birth">Date of Birth</string>
     <string name="date_of_birth_hint">DD/MM/YYYY</string>
     <string name="country_region">Country/Region</string>
@@ -23,12 +24,92 @@
     <string name="notification">Notifications</string>
     <string name="setting_title">Settings</string>
     <string name="actions">Actions</string>
+    <string name="account">Account</string>
+    <string name="cache">Cache &amp; Cellular</string>
     <string name="report_problem">Report a problem</string>
     <string name="add_account">Add account</string>
     <string name="log_out">Log out</string>
     <string name="free_up_space">Free up space</string>
     <string name="data_saver">Data saver</string>
+    <string name="aler_sound">Alert sound</string>
 
+    <!-- Dashboard -->
+
+    <string name="header_title">Dashboard</string>
+    <string name="notification_icon_description">Notification Icon</string>
+
+    <!-- User Greeting -->
+    <string name="welcome_message">Welcome back,trapboi1003</string>
+    <string name="greeting_message">Nice to meet you!</string>
+
+    <!-- Fundamental Reports -->
+    <string name="fundamental_reports_title">Fundamental reports</string>
+    <string name="pothole_report">Pothole Report</string>
+    <string name="traveled_distance">Traveled distance</string>
+    <string name="need_improvement">Need Improvement</string>
+    <string name="excellent">Excellent</string>
+    <string name="details_button_description">Details button</string>
+
+    <!-- Recent Pothole Severity -->
+    <string name="recent_pothole_severity_title">Recent pothole severity</string>
+    <string name="recent_pothole_image_description">Pothole severity image</string>
+
+    <!-- Visualization -->
+    <string name="visualization_title">Visualization</string>
+    <string name="accelerator_x">Accelerator X</string>
+    <string name="accelerator_y">Accelerator Y</string>
+    <string name="accelerator_z">Accelerator Z</string>
+    <string name="parameter_t">Magnitude</string>
+    <string name="safe">Safe</string>
+    <string name="danger">Danger</string>
+    <string name="you_are_there">You are already on the home screen</string>
+
+    <!-- Overview Report -->
+    <string name="overview_report_title">Overview Report</string>
+    <string name="overview_report_image_description">Overview Report Chart</string>
+
+    <!-- History -->
+
+    >
+    <string name="history">History</string>
+    <string name="location">Location:</string>
+    <string name="timeframe">Timeframe:</string>
+
+<!--    &lt;!&ndash; Dropdown Entries &ndash;&gt;-->
+<!--    <string-array name="locations">-->
+<!--        <item>All Locations</item>-->
+<!--        <item>Location 1</item>-->
+<!--        <item>Location 2</item>-->
+<!--        <item>Location 3</item>-->
+<!--    </string-array>-->
+
+<!--    <string-array name="timeframes">-->
+<!--        <item>All Timeframes</item>-->
+<!--        <item>Last Week</item>-->
+<!--        <item>Last Month</item>-->
+<!--        <item>Last Year</item>-->
+<!--    </string-array>-->
+
+    <!-- Thời gian -->
+    <string name="date_time_label">Date/Time:</string>
+    <string name="default_date_time">2021-07-15 12:00:00</string>
+
+
+    <!-- Địa điểm -->
+    <string name="location_label">Location:</string>
+
+    <!-- Người dùng báo cáo -->
+    <string name="user_reported_label">Reported by:</string>
+    <string name="default_user_reported">bearhunter291</string>
+
+    <!-- Mức độ nghiêm trọng -->
+    <string name="severity_label">Severity:</string>
+    <string name="default_severity">Minor</string>
+
+    <!-- Miêu tả hình ảnh -->
+    <string name="desc_location_icon">Location Icon</string>
+    <string name="desc_user_icon">User Icon</string>
+    <string name="desc_severity_icon">Severity Icon</string>
 
     <string name="web_id">AIzaSyC6Peem6i09cCErVZCnWikWUJtVsIX3Tl4</string>
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>

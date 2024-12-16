@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Settings"
+                    android:text="@string/setting_title"
                     android:textColor="@color/white"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Account"
+                android:text="@string/account"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -87,7 +87,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Edit profile"
+                        android:text="@string/edit_profile_title"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -114,7 +114,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Language"
+                        android:text="@string/language_title"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -141,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Notifications"
+                        android:text="@string/notification"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -169,7 +169,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Alert sound"
+                        android:text="@string/aler_sound"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -182,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Actions"
+                android:text="@string/actions"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -215,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Report a problem"
+                        android:text="@string/report_problem"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -242,7 +242,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Add account"
+                        android:text="@string/add_account"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -269,7 +269,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Log out"
+                        android:text="@string/log_out"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -281,7 +281,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Cache &amp; Cellular"
+                android:text="@string/cache"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -314,7 +314,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Free up space "
+                        android:text="@string/free_up_space"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -339,7 +339,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
-                        android:text="Data saver"
+                        android:text="@string/data_saver"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
