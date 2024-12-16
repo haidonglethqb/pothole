@@ -11,13 +11,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.patrykandpatrick.vico.core.entry.ChartEntry;
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer;
 import com.patrykandpatrick.vico.views.chart.ChartView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -32,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.patrykandpatrick.vico.views.chart.ComposedChartView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
-
         });
 
         // Initialize buttons
@@ -80,17 +81,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Load data into charts
         setupPieChart();
-        setupLineChart();
+        //setupLineChart();
 
         // Đăng ký BroadcastReceiver
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
         registerReceiver(potholeReceiver, filter);
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         // Đọc dữ liệu từ SharedPreferences
         SharedPreferences prefs = getSharedPreferences("PotholeData", MODE_PRIVATE);
         int savedPotholeCount = prefs.getInt("potholeCount", 0);
         float savedTravelDistance = prefs.getFloat("totalDistance", 0.0f);
+<<<<<<< Updated upstream
         // Hiển thị dữ liệu trên giao diện
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
         tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", savedTravelDistance));
@@ -98,21 +103,12 @@ public class MainActivity extends AppCompatActivity {
         home_button.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "You are already on the home screen", Toast.LENGTH_SHORT).show();
         });
+=======
+>>>>>>> Stashed changes
 
-        maps_button.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, mapdisplay.class);
-            startActivity(intent);
-        });
-
-        settings_button.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, Settings.class);
-            startActivity(intent);
-        });
-
-        history_button.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, com.example.pothole.Other.History.class);
-            startActivity(intent);
-        });
+        // Hiển thị dữ liệu trên giao diện
+        tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
+        tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", savedTravelDistance));
 
         // Kết nối và đọc dữ liệu từ Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -147,31 +143,68 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Biểu đồ tròn thể hiện mức độ nghiêm trọng
+
     private void setupPieChart() {
-        // Sample Pie Chart Data (Replace this with actual data from Firebase)
-        List<ChartEntry> pieEntries = new ArrayList<>();
-        pieEntries.add(new ChartEntry(0, 30f)); // Severity level 1
-        pieEntries.add(new ChartEntry(1, 50f)); // Severity level 2
-        pieEntries.add(new ChartEntry(2, 20f)); // Severity level 3
+        DatabaseReference chartRef = FirebaseDatabase.getInstance().getReference("potholes");
 
-        // Bind data to the ChartView
-        ChartEntryModelProducer producer = new ChartEntryModelProducer(pieEntries);
-        recentPotholePieChart.setModel(producer.getModel());
+        // Lắng nghe dữ liệu từ Firebase
+        // 3 mức độ nghiêm trọng
+        chartRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Kiểm tra từng child của "potholeData"
+                    for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                        try {
+                            // Lấy dữ liệu từ Firebase
+                            Float deltaX = childSnapshot.child("deltax").getValue(Float.class);
+                            Float deltaY = childSnapshot.child("deltay").getValue(Float.class);
+                            Float deltaZ = childSnapshot.child("deltaz").getValue(Float.class);
+                            Float combinedDeltaValue = childSnapshot.child("combinedDelta").getValue(Float.class);
+                            Integer potholeCount = childSnapshot.child("potholeCount").getValue(Integer.class);
+                            Double totalDistance = childSnapshot.child("totalDistance").getValue(Double.class);
+                            String severity = childSnapshot.child("severity").getValue(String.class);
+
+                            // Cập nhật dữ liệu vào giao diện
+                            accerleratorX.setText(deltaX != null ? String.format(Locale.getDefault(), "%.2f", deltaX) : "N/A");
+                            accerleratorY.setText(deltaY != null ? String.format(Locale.getDefault(), "%.2f", deltaY) : "N/A");
+                            accerleratorZ.setText(deltaZ != null ? String.format(Locale.getDefault(), "%.2f", deltaZ) : "N/A");
+                            combinedDelta.setText(combinedDeltaValue != null ? String.format(Locale.getDefault(), "%.2f", combinedDeltaValue) : "N/A");
+                            tvpotholeCount.setText(potholeCount != null ? String.valueOf(potholeCount) : "N/A");
+                            tvdistance.setText(totalDistance != null ? String.format(Locale.getDefault(), "%.2f m", totalDistance) : "N/A");
+
+                            // Log hoặc sử dụng giá trị severity
+                            if (severity != null) {
+                                Toast.makeText(MainActivity.this, "Severity: " + severity, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(MainActivity.this, "Error parsing data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "No data found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
-    private void setupLineChart() {
-        // Sample Line Chart Data (Replace this with actual data from Firebase)
-        List<ChartEntry> lineEntries = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            lineEntries.add(new ChartEntry(i, (float) (Math.random() * 10)));
-        }
-
-        // Bind data to the ComposedChartView
-        ChartEntryModelProducer producer = new ChartEntryModelProducer(lineEntries);
-        overviewReportLineChart.setModel(producer.getModel());
-    }
-
-
+//    private void setupLineChart() {
+//        // Sample Line Chart Data (Replace this with actual data from Firebase)
+//        List<ChartEntry> lineEntries = new ArrayList<>();
+//        for (int i = 0; i < 7; i++) {
+//            lineEntries.add(new ChartEntry(i, (float) (Math.random() * 10)));
+//        }
+//
+//        // Bind data to the ComposedChartView
+//        ChartEntryModelProducer producer = new ChartEntryModelProducer(lineEntries);
+//        overviewReportLineChart.setModel(producer.getModel());
+//    }
 
     private final BroadcastReceiver potholeReceiver = new BroadcastReceiver() {
         @Override
