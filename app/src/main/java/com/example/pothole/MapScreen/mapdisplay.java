@@ -12,6 +12,10 @@ import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
 import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
 import kotlin.Triple;
 
+import android.view.MotionEvent;
+import android.widget.CheckBox;
+
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -50,9 +54,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultCallback;
@@ -168,6 +176,7 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class mapdisplay extends AppCompatActivity {
+    private List<String> selectedPotholeTypes = new ArrayList<>();
     private boolean soundPlayed = false;
     private void showPotholeInfoDialog(Point point) {
         // Find the pothole information based on the point
@@ -525,12 +534,57 @@ public class mapdisplay extends AppCompatActivity {
     private PlaceAutocompleteUiAdapter placeAutocompleteUiAdapter;
     private TextInputEditText searchET;
     private boolean ignoreNextQueryUpdate = false;
+    private void showMultiSelectDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_multi_select, null);
+        builder.setView(dialogView);
+
+        CheckBox checkboxMinor = dialogView.findViewById(R.id.checkbox_minor);
+        CheckBox checkboxMedium = dialogView.findViewById(R.id.checkbox_medium);
+        CheckBox checkboxSevere = dialogView.findViewById(R.id.checkbox_severe);
+
+        // Set initial state based on selectedPotholeTypes
+        checkboxMinor.setChecked(selectedPotholeTypes.contains("Minor"));
+        checkboxMedium.setChecked(selectedPotholeTypes.contains("Medium"));
+        checkboxSevere.setChecked(selectedPotholeTypes.contains("Severe"));
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                selectedPotholeTypes.clear();
+                if (checkboxMinor.isChecked()) {
+                    selectedPotholeTypes.add("Minor");
+                }
+                if (checkboxMedium.isChecked()) {
+                    selectedPotholeTypes.add("Medium");
+                }
+                if (checkboxSevere.isChecked()) {
+                    selectedPotholeTypes.add("Severe");
+                }
+                filterAndDisplayPotholes();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void filterAndDisplayPotholes() {
+        pointAnnotationManager.deleteAll();
+        for (Triple<Double, Double, String> location : potholeLocations) {
+            if (selectedPotholeTypes.contains(location.getThird())) {
+                addPotholeIcon(location);
+            }
+        }
+    }
 
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         mediaPlayer = MediaPlayer.create(this, R.raw.warning); // Replace with your sound file
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -552,6 +606,22 @@ public class mapdisplay extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        setContentView(R.layout.activity_mapdisplay);
+
+        Spinner filterSpinner = findViewById(R.id.filter_spinner);
+        filterSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showMultiSelectDialog();
+                }
+                return true;
+            }
+        });
+
+
+
+
 
         if (database == null) {
             FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
@@ -886,6 +956,8 @@ public class mapdisplay extends AppCompatActivity {
 
 
 
+
+
     private boolean isRouteActive = false;
     private void addPotholeIcon(Triple<Double, Double, String> location) {
         double iconSize = 0.05;
@@ -929,10 +1001,7 @@ public class mapdisplay extends AppCompatActivity {
                 Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
                 builder.coordinatesList(Arrays.asList(origin, point));
 
-
-
                 builder.alternatives(true);
-
                 builder.profile(DirectionsCriteria.PROFILE_DRIVING);
                 builder.bearingsList(Arrays.asList(Bearing.builder().angle(location.getBearing()).degrees(45.0).build(), null));
                 applyDefaultNavigationOptions(builder);
@@ -940,68 +1009,31 @@ public class mapdisplay extends AppCompatActivity {
                 mapboxNavigation.requestRoutes(builder.build(), new NavigationRouterCallback() {
                     @Override
                     public void onRoutesReady(@NonNull List<NavigationRoute> list, @NonNull RouterOrigin routerOrigin) {
-
-
                         mapboxNavigation.setNavigationRoutes(list);
                         checkedRoute = list.get(0);
+
+                        // Filter and display potholes based on selected types
                         for (Triple<Double, Double, String> location : potholeLocations) {
-                            Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
-                            if (isPointOnRoute2(potholePoint, checkedRoute)) {
-                                addPotholeIcon(location); // Pass the Triple object directly
+                            if (selectedPotholeTypes.contains(location.getThird())) {
+                                Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                                if (isPointOnRoute2(potholePoint, checkedRoute)) {
+                                    addPotholeIcon(location); // Pass the Triple object directly
+                                }
                             }
                         }
-
-//                        if(isPointOnRoute2(pothole3,checkedRoute)){
-//                            Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-//                            PointAnnotationOptions potholeAnnotationOptions3 = new PointAnnotationOptions()
-//                                    .withTextAnchor(TextAnchor.CENTER)
-//                                    .withIconImage(bitmap)
-//                                    .withPoint(pothole3);
-//                            pointAnnotationManager.create(potholeAnnotationOptions3);
-//
-//
-//                        }
-
-
-
 
                         focusLocationBtn.performClick();
                         setRoute.setEnabled(true);
-
-
                         isRouteActive = true;
-
                         setRoute.setText("Clear route");
                         maneuverView.setVisibility(View.VISIBLE);
                         findViewById(R.id.search_bar).setVisibility(View.GONE);
-                        int potholeonRoute2 = 0;
-                        for (Triple<Double, Double,String> location : potholeLocations)
-                        {
-                            if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
-                                double iconsize=0.06;
-                                bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
-                                potholeonRoute2++;
-                                if(location.getThird().equals("Minor")){
-                                    iconsize = 0.05;
-                                    bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
-                                }
-                                if(location.getThird().equals("Medium")){
-                                    iconsize = 0.055;
-                                    bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
-                                }
-                                PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
-                                        .withIconSize(iconsize)
-                                        .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
-
-                                pointAnnotationManager.create(pointAnnotationOptions);
-                            }
-                        }
-                        Toast.makeText(mapdisplay.this, "Number of potholes on route: " + potholeonRoute2, Toast.LENGTH_SHORT).show();
+                        
 
                         addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                             @Override
                             public boolean onMapClick(@NonNull Point point) {
-                                int index=1;
+                                int index = 1;
                                 if (list.size() > 1) {
                                     for (int i = 1; i < list.size(); i++) {
                                         alternativeRoute = list.get(i);
@@ -1012,77 +1044,21 @@ public class mapdisplay extends AppCompatActivity {
                                     }
                                     list.remove(index);
                                     list.add(0, alternativeRoute);
-
                                 }
 
                                 mapboxNavigation.setNavigationRoutes(list);
-                                checkedRoute=alternativeRoute;
+                                checkedRoute = alternativeRoute;
                                 pointAnnotationManager.deleteAll();
 
-                                int potholeonRoute = 0;
-                                for (Triple<Double, Double,String> location : potholeLocations)
-                                {
-                                    if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
-                                        Bitmap B1 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
-                                        double iconsize=0.06;
-                                        if(location.getThird().equals("Minor")){
-                                            iconsize = 0.05;
-                                            B1 = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+                                // Filter and display potholes based on selected types
+                                for (Triple<Double, Double, String> location : potholeLocations) {
+                                    if (selectedPotholeTypes.contains(location.getThird())) {
+                                        Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                                        if (isPointOnRoute2(potholePoint, checkedRoute)) {
+                                            addPotholeIcon(location); // Pass the Triple object directly
                                         }
-                                        if(location.getThird().equals("Medium")){
-                                            iconsize = 0.055;
-                                            B1 = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
-                                        }
-
-                                        potholeonRoute++;
-                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(B1)
-                                                .withIconSize(iconsize)
-                                                .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
-
-                                        pointAnnotationManager.create(pointAnnotationOptions);
                                     }
                                 }
-                                Toast.makeText(mapdisplay.this, "Number of potholes on route: " + potholeonRoute, Toast.LENGTH_SHORT).show();
-
-//                                if(isPointOnRoute2(pothole2,checkedRoute)){
-//                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-//                                    PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
-//                                            .withTextAnchor(TextAnchor.CENTER)
-//                                            .withIconImage(bitmap)
-//                                            .withPoint(pothole2);
-//                                    pointAnnotationManager.create(potholeAnnotationOptions2);
-//
-//
-//
-//                                }
-//                                if(isPointOnRoute2(pothole3,checkedRoute)){
-//                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-//                                    PointAnnotationOptions potholeAnnotationOptions3 = new PointAnnotationOptions()
-//                                            .withTextAnchor(TextAnchor.CENTER)
-//                                            .withIconImage(bitmap)
-//                                            .withPoint(pothole3);
-//                                    pointAnnotationManager.create(potholeAnnotationOptions3);
-//
-//
-//                                }
-//
-//
-//
-//                                if(isPointOnRoute2(pothole,checkedRoute)){
-//                                    Toast.makeText(mapdisplay.this, "Pothole detected", Toast.LENGTH_SHORT).show();
-//                                    PointAnnotationOptions potholeAnnotationOptions2 = new PointAnnotationOptions()
-//                                            .withTextAnchor(TextAnchor.CENTER)
-//                                            .withIconImage(bitmap)
-//                                            .withPoint(pothole);
-//                                    pointAnnotationManager.create(potholeAnnotationOptions2);
-//
-//
-//                                }
-
-
-
-
-
 
                                 setRoute.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1094,21 +1070,14 @@ public class mapdisplay extends AppCompatActivity {
                                             mapboxNavigation.setNavigationRoutes(Collections.emptyList());
                                             setRoute.setText("Set route");
                                             maneuverView.setVisibility(View.GONE);
-                                            findViewById(R.id.search_bar).setVisibility(View.VISIBLE);// Hide the maneuver view
+                                            findViewById(R.id.search_bar).setVisibility(View.VISIBLE); // Hide the maneuver view
                                         }
                                     }
                                 });
                                 return true;
                             }
                         });
-
                     }
-
-
-
-
-
-
 
                     @Override
                     public void onFailure(@NonNull List<RouterFailure> list, @NonNull RouteOptions routeOptions) {
@@ -1119,14 +1088,12 @@ public class mapdisplay extends AppCompatActivity {
 
                     @Override
                     public void onCanceled(@NonNull RouteOptions routeOptions, @NonNull RouterOrigin routerOrigin) {
-
                     }
                 });
             }
 
             @Override
             public void onFailure(@NonNull Exception exception) {
-
             }
         });
     }
