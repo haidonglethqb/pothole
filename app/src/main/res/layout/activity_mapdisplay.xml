@@ -7,12 +7,13 @@
     tools:context=".MapScreen.mapdisplay">
 
     <!-- MapView -->
+
+    <!-- Search Bar Layout -->
     <com.mapbox.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Search Bar Layout -->
     <RelativeLayout
         android:id="@+id/search_layout"
         android:layout_width="match_parent"
@@ -51,7 +52,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/ic_dropdown"
+            android:background="@drawable/ic_severity"
             android:contentDescription="Filter Options"
             android:spinnerMode="dropdown"
             android:layout_marginEnd="10sp"/>
