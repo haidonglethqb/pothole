@@ -10,6 +10,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
 import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
+import kotlin.Triple;
+
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
@@ -47,6 +50,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -155,6 +159,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import android.widget.ImageView;
 
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
@@ -163,14 +168,32 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class mapdisplay extends AppCompatActivity {
+    private boolean soundPlayed = false;
     private void showPotholeInfoDialog(Point point) {
         // Find the pothole information based on the point
-        for (Pair<Double, Double> location : potholeLocations) {
-            if (location.first == point.latitude() && location.second == point.longitude()) {
-                // Create and show the AlertDialog with pothole information
+        for (Triple<Double, Double, String> location : potholeLocations) {
+            if (location.getFirst() == point.latitude() && location.getSecond() == point.longitude()) {
+                // Inflate the custom layout
+                View dialogView = getLayoutInflater().inflate(R.layout.dialog_pothole_info, null);
+                ImageView potholeImage = dialogView.findViewById(R.id.pothole_image);
+                TextView potholeInfo = dialogView.findViewById(R.id.pothole_info);
+
+                // Set the pothole information
+                potholeInfo.setText("Latitude: " + location.getFirst() + "\nLongitude: " + location.getSecond() + "\nSeverity: " + location.getThird());
+
+                // Optionally, set the image resource based on severity or other criteria
+                if (location.getThird().equals("Minor")) {
+                    potholeImage.setImageResource(R.drawable.minor);
+                } else if (location.getThird().equals("Medium")) {
+                    potholeImage.setImageResource(R.drawable.medium);
+                } else if (location.getThird().equals("Severe")) {
+                    potholeImage.setImageResource(R.drawable.potholecaution);
+                }
+
+                // Create and show the AlertDialog with the custom layout
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Pothole Information");
-                builder.setMessage("Latitude: " + location.first + "\nLongitude: " + location.second);
+                builder.setView(dialogView);
                 builder.setPositiveButton("OK", null);
                 builder.show();
                 break;
@@ -187,7 +210,7 @@ public class mapdisplay extends AppCompatActivity {
     private Point pothole;
     private Point pothole2;
     private Point pothole3;
-    private List<Pair<Double, Double>> potholeLocations;
+    private List<Triple<Double, Double, String>> potholeLocations;
     private DatabaseReference database;
     private MapboxManeuverView maneuverView;
     private MapboxManeuverApi maneuverApi;
@@ -203,9 +226,13 @@ public class mapdisplay extends AppCompatActivity {
     //
     Bitmap bitmap;
     Bitmap bitmap2;
+    Bitmap nang;
+    Bitmap trungbinh;
+    Bitmap nhe;
     //map compoment
     private MapboxRouteArrowApi routeArrowApi;
     private MapboxRouteArrowView routeArrowView;
+    private MediaPlayer mediaPlayer;
 
 
 
@@ -349,14 +376,19 @@ public class mapdisplay extends AppCompatActivity {
             }
         }
     });
-    private void checkProximityToPothole(Point userLocation, Point pothole) {
+    private void checkProximityToPothole(Point userLocation, Point pothole, String severity) {
         double distance = TurfMeasurement.distance(userLocation, pothole);
         double thresholdDistance = 0.10; // 100 meters
         if (distance < thresholdDistance && !notificationShown) {
-            showNotification("Pothole Alert", "Slow down, you are approaching a pothole." );
+            showNotification("Pothole Alert", "Slow down, you are approaching a pothole with severity: " + severity);
             Toast.makeText(mapdisplay.this, "Pothole 100 meters ahead", Toast.LENGTH_SHORT).show();
             notificationShown = true;
 
+            // Play warning sound only once
+            if (!soundPlayed && mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                mediaPlayer.start();
+                soundPlayed = true;
+            }
         }
     }
 
@@ -388,10 +420,10 @@ public class mapdisplay extends AppCompatActivity {
                     routeLineView.renderRouteLineUpdate(mapStyle, result);
                 }
                 // Check proximity to all potholes on the route
-                for (Pair<Double, Double> location : potholeLocations) {
-                    Point potholePoint = Point.fromLngLat(location.second, location.first);
-                    if (isPointOnRoute2(potholePoint, checkedRoute)) {
-                        checkProximityToPothole(point, potholePoint);
+                for (Triple<Double, Double, String> location : potholeLocations) {
+                    Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                    if (checkedRoute != null && isPointOnRoute2(potholePoint, checkedRoute)) {
+                        checkProximityToPothole(point, potholePoint, location.getThird());
                     }
                 }
             }
@@ -406,6 +438,9 @@ public class mapdisplay extends AppCompatActivity {
         return distance < thresholdDistance;
     }
     private boolean isPointOnRoute2(Point point, NavigationRoute route) {
+        if (route == null) {
+            return false;
+        }
         LineString routeLineString = LineString.fromPolyline(route.getDirectionsRoute().geometry(), 6);
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
         double distance = TurfMeasurement.distance(point, nearestPoint);
@@ -496,7 +531,18 @@ public class mapdisplay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mediaPlayer = MediaPlayer.create(this, R.raw.warning); // Replace with your sound file
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.seekTo(0); // Reset the MediaPlayer to the beginning
+            }
+        });
+
         bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+        nang = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+        trungbinh = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+        nhe = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -517,14 +563,14 @@ public class mapdisplay extends AppCompatActivity {
         LocationRetriever locationRetriever = new LocationRetriever(this);
         locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
             @Override
-            public void onLocationsRetrieved(List<Pair<Double, Double>> locations) {
+            public void onLocationsRetrieved(List<Triple<Double, Double, String>> locations) {
                 // Log the retrieved locations
                 if (locations.isEmpty()) {
                     Log.d(TAG, "No locations retrieved from local storage.");
                 } else {
                     Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
-                    for (Pair<Double, Double> location : locations) {
-                        Log.d(TAG, "Latitude: " + location.first + ", Longitude: " + location.second);
+                    for (Triple<Double, Double, String> location : locations) {
+                        Log.d(TAG, "Latitude: " + location.getFirst() + ", Longitude: " + location.getSecond() + ", Severity: " + location.getThird());
                     }
                 }
                 // get locations
@@ -727,12 +773,26 @@ public class mapdisplay extends AppCompatActivity {
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
                  pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
-                for (Pair<Double, Double> location : potholeLocations) {
-                    Point point = Point.fromLngLat(location.second, location.first);
+                for (Triple<Double, Double,String> location : potholeLocations) {
+                    double iconSize = 0.05;
+                    Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+                    if(location.getThird().equals("Minor")){
+                        iconSize=0.05;
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+
+                    }
+                    if(location.getThird().equals("Medium")){
+                        iconSize=0.055;
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+                    }
+                    if(location.getThird().equals("Severe")){
+                        iconSize=0.06;
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+                    }
                     PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                             .withTextAnchor(TextAnchor.CENTER)
-                            .withIconSize(0.05)
+                            .withIconSize(iconSize)
                             .withIconImage(bitmap)
                             .withPoint(point);
                     pointAnnotationManager.create(pointAnnotationOptions);
@@ -782,7 +842,8 @@ public class mapdisplay extends AppCompatActivity {
 
                         pointAnnotationManager.deleteAll();
                         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap)
-                                .withPoint(placeAutocompleteSuggestion.getCoordinate());
+                                .withPoint(placeAutocompleteSuggestion.getCoordinate())
+                                .withIconSize(0.49);
                         pointAnnotationManager.create(pointAnnotationOptions);
                         updateCamera(placeAutocompleteSuggestion.getCoordinate(), 0.0);
                         destination=placeAutocompleteSuggestion.getCoordinate();
@@ -826,13 +887,30 @@ public class mapdisplay extends AppCompatActivity {
 
 
     private boolean isRouteActive = false;
-    private void addPotholeIcon(Point potholePoint) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution); // Replace with your icon resource
+    private void addPotholeIcon(Triple<Double, Double, String> location) {
+        double iconSize = 0.05;
+        Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+
+        String severity = location.getThird();
+        if (severity != null) {
+            if (severity.equals("Minor")) {
+                iconSize = 0.05;
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+            } else if (severity.equals("Medium")) {
+                iconSize = 0.055;
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+            } else if (severity.equals("Severe")) {
+                iconSize = 0.06;
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+            }
+        }
+
         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                 .withTextAnchor(TextAnchor.CENTER)
-                .withIconSize(0.05)
-                .withPoint(potholePoint)
-                .withIconImage(bitmap2);
+                .withIconSize(iconSize)
+                .withIconImage(bitmap)
+                .withPoint(point);
         pointAnnotationManager.create(pointAnnotationOptions);
     }
 
@@ -866,10 +944,10 @@ public class mapdisplay extends AppCompatActivity {
 
                         mapboxNavigation.setNavigationRoutes(list);
                         checkedRoute = list.get(0);
-                        for (Pair<Double, Double> location : potholeLocations) {
-                            Point potholePoint = Point.fromLngLat(location.second, location.first);
-                            if (isPointOnRoute(potholePoint, checkedRoute)) {
-                                addPotholeIcon(potholePoint);
+                        for (Triple<Double, Double, String> location : potholeLocations) {
+                            Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                            if (isPointOnRoute2(potholePoint, checkedRoute)) {
+                                addPotholeIcon(location); // Pass the Triple object directly
                             }
                         }
 
@@ -897,13 +975,23 @@ public class mapdisplay extends AppCompatActivity {
                         maneuverView.setVisibility(View.VISIBLE);
                         findViewById(R.id.search_bar).setVisibility(View.GONE);
                         int potholeonRoute2 = 0;
-                        for (Pair<Double, Double> location : potholeLocations)
+                        for (Triple<Double, Double,String> location : potholeLocations)
                         {
-                            if(isPointOnRoute2(Point.fromLngLat(location.second, location.first),checkedRoute)){
+                            if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
+                                double iconsize=0.06;
+                                bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
                                 potholeonRoute2++;
+                                if(location.getThird().equals("Minor")){
+                                    iconsize = 0.05;
+                                    bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+                                }
+                                if(location.getThird().equals("Medium")){
+                                    iconsize = 0.055;
+                                    bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+                                }
                                 PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
-                                        .withIconSize(0.05)
-                                        .withPoint(Point.fromLngLat(location.second, location.first));
+                                        .withIconSize(iconsize)
+                                        .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
 
                                 pointAnnotationManager.create(pointAnnotationOptions);
                             }
@@ -932,13 +1020,24 @@ public class mapdisplay extends AppCompatActivity {
                                 pointAnnotationManager.deleteAll();
 
                                 int potholeonRoute = 0;
-                                for (Pair<Double, Double> location : potholeLocations)
+                                for (Triple<Double, Double,String> location : potholeLocations)
                                 {
-                                    if(isPointOnRoute2(Point.fromLngLat(location.second, location.first),checkedRoute)){
+                                    if(isPointOnRoute2(Point.fromLngLat(location.getSecond(), location.getFirst()),checkedRoute)){
+                                        Bitmap B1 = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+                                        double iconsize=0.06;
+                                        if(location.getThird().equals("Minor")){
+                                            iconsize = 0.05;
+                                            B1 = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
+                                        }
+                                        if(location.getThird().equals("Medium")){
+                                            iconsize = 0.055;
+                                            B1 = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
+                                        }
+
                                         potholeonRoute++;
-                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(bitmap2)
-                                                .withIconSize(0.05)
-                                                .withPoint(Point.fromLngLat(location.second, location.first));
+                                        PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions().withTextAnchor(TextAnchor.CENTER).withIconImage(B1)
+                                                .withIconSize(iconsize)
+                                                .withPoint(Point.fromLngLat(location.getSecond(), location.getFirst()));
 
                                         pointAnnotationManager.create(pointAnnotationOptions);
                                     }

@@ -195,39 +195,39 @@ public class AccelerometerService extends Service implements SensorEventListener
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-private void saveToFirebase(int potholeCount,String severity, float deltaX, float deltaY, float deltaZ, float combinedDelta, double latitude, double longitude) {
-    // Check if database reference is initialized
-    if (databaseReference == null) {
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-    }
+    private void saveToFirebase(int potholeCount,String severity, float deltaX, float deltaY, float deltaZ, float combinedDelta, double latitude, double longitude) {
+        // Check if database reference is initialized
+        if (databaseReference == null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference();
+        }
 
-    // Generate a unique key for each pothole entry
-    String potholeId = databaseReference.child("potholes").push().getKey();
+        // Generate a unique key for each pothole entry
+        String potholeId = databaseReference.child("potholes").push().getKey();
 
-    if (potholeId == null) {
-        Log.e(TAG, "Failed to generate unique key for pothole");
-        return;
-    }
+        if (potholeId == null) {
+            Log.e(TAG, "Failed to generate unique key for pothole");
+            return;
+        }
 
-    // Create pothole data object
-    PotholeData potholeData = new PotholeData(
-            potholeCount,
-            severity,
-            deltaX,
-            deltaY,
-            deltaZ,
-            combinedDelta,
-            latitude,
-            longitude,
-            System.currentTimeMillis(),
-            getCurrentDateTime()
-    );
+        // Create pothole data object
+        PotholeData potholeData = new PotholeData(
+                potholeCount,
+                severity,
+                deltaX,
+                deltaY,
+                deltaZ,
+                combinedDelta,
+                latitude,
+                longitude,
+                System.currentTimeMillis(),
+                getCurrentDateTime()
+        );
 
-    // Save data with error handling and completion listener
-    databaseReference.child("potholes").child(potholeId).setValue(potholeData)
+        // Save data with error handling and completion listener
+        databaseReference.child("potholes").child(potholeId).setValue(potholeData)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Pothole data saved successfully. ID: " + potholeId))
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to save pothole data", e));
-}
+    }
 
     private String getCurrentDateTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
