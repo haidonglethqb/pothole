@@ -87,15 +87,11 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
         registerReceiver(potholeReceiver, filter);
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
         // Đọc dữ liệu từ SharedPreferences
         SharedPreferences prefs = getSharedPreferences("PotholeData", MODE_PRIVATE);
         int savedPotholeCount = prefs.getInt("potholeCount", 0);
         float savedTravelDistance = prefs.getFloat("totalDistance", 0.0f);
-<<<<<<< Updated upstream
+
         // Hiển thị dữ liệu trên giao diện
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
         tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", savedTravelDistance));
@@ -103,8 +99,7 @@ public class MainActivity extends AppCompatActivity {
         home_button.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "You are already on the home screen", Toast.LENGTH_SHORT).show();
         });
-=======
->>>>>>> Stashed changes
+
 
         // Hiển thị dữ liệu trên giao diện
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
