@@ -48,7 +48,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     private String severity;
 
     private TextView sensorName, sensorType, maxRange, resolution;
-    private TextView currentX, currentY, currentZ, maxX, maxY, maxZ, latitudeText, longitudeText;
+    private TextView currentX, currentY, currentZ, maxX, maxY, maxZ, latitudeText, longitudeText, speed, distance;
     private TextView potholeTotal, minorPothole, mediumPothole, severePothole, combinedDelta;
 
     private float deltaXMax = 0, deltaYMax = 0, deltaZMax = 0;
@@ -66,6 +66,8 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     private DatabaseReference databaseReference, database;
 
     private double latitude = 0.0, longitude = 0.0;
+    private float totalDistance = 0.0f; // Đơn vị: mét
+    private Location previousLocation = null; // Lưu vị trí trước đó
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,8 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
 
         latitudeText = findViewById(R.id.latitude);
         longitudeText = findViewById(R.id.longitude);
+        speed = findViewById(R.id.Speed);
+        distance = findViewById(R.id.Distance);
 
         potholeTotal = findViewById(R.id.potholeTotal);
         minorPothole = findViewById(R.id.minorPothole);
@@ -145,10 +149,24 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     public void onLocationChanged(@NonNull Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-        Log.d(TAG, "Updated Location: Latitude: " + latitude + ", Longitude: " + longitude);
+        float speedValue = location.getSpeed(); // Tốc độ theo m/s
+        float speedKmH = speedValue * 3.6f;     // Chuyển đổi sang km/h
 
+        // Tính quãng đường di chuyển
+        if (previousLocation != null) {
+            float distance = previousLocation.distanceTo(location); // Đơn vị: mét
+            totalDistance += distance; // Cộng dồn vào tổng quãng đường
+        }
+        previousLocation = location;
 
+        // Hiển thị tốc độ và quãng đường lên giao diện
+        speed.setText(String.format(Locale.getDefault(), "Speed: %.2f km/h", speedKmH));
+        distance.setText(String.format(Locale.getDefault(), "Distance: %.2f m", totalDistance));
+
+        Log.d(TAG, "Updated Location: Latitude: " + latitude + ", Longitude: " + longitude +
+                ", Speed: " + speedKmH + " km/h, Distance: " + totalDistance + " m");
     }
+
 
     @Override
     public void onProviderEnabled(@NonNull String provider) {}
@@ -178,26 +196,23 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     private void detectPothole() {
         float combinedDelta = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-        if (combinedDelta > 10) {
+        if (combinedDelta > 15) {
             long currentTime = System.currentTimeMillis();
 
             // Check if the phone is moving at a certain speed (e.g., greater than 5 m/s)
-            if (locationManager != null) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
+                lastDetectionTime = currentTime;
 
-                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (location != null && location.getSpeed() > 5) {
-                        if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
-                            lastDetectionTime = currentTime;
-
-                            if (combinedDelta < 15) {
-                                severity = "Minor";
-                            } else if (combinedDelta < 20) {
-                                severity = "Medium";
-                            } else {
-                                severity = "Severe";
-                            }
+                if (combinedDelta < 20) {
+                    severity = "Minor";
+                    //minorCount++;
+                } else if (combinedDelta < 25) {
+                    severity = "Medium";
+                    //mediumCount++;
+                } else {
+                    severity = "Severe";
+                    //severeCount++;
+                }
                             initializeLocation();
                             saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
                             saveCountsToSharedPreferences();  // Lưu lại vào SharedPreferences
@@ -205,12 +220,12 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
                             showConfirmDialog(severity, deltaX, deltaY, deltaZ,combinedDelta, latitude, longitude);
                             updateUI();
 
-                    }
-                }
-            }
 
 
             }
+
+
+
         }
     }
 //
@@ -264,6 +279,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         return sdf.format(new Date());
     }
 
+
     private void updateUI() {
         potholeTotal.setText("Potholes: " + potholeCount);
         minorPothole.setText("Minor: " + minorCount);
@@ -272,6 +288,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         combinedDelta.setText("Combined Delta: " + (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
         latitudeText.setText("Latitude: " + latitude);
         longitudeText.setText("Longitude: " + longitude);
+        speed.setText("Speed: 0.0 km/h");
     }
 
     private void displayCurrentValues() {

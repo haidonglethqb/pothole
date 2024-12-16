@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.pothole.DashboardScreen.MainActivity;
 import com.example.pothole.R;
 
 import java.util.Locale;
@@ -67,6 +68,11 @@ public class ChooseLanguge extends BaseActivity {
         startActivity(refresh);
         finish();
         Intent intent = new Intent(this, Settings.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+
+        Intent intentDashboard = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();

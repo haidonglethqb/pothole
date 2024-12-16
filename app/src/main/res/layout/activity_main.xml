@@ -18,7 +18,7 @@
             android:id="@+id/header_title_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dashboard"
+            android:text="@string/header_title"
             android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/user_avatar"
                     android:layout_marginStart="16dp"
-                    android:text="Welcome back, trapboiz1003"
+                    android:text="@string/welcome_message"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -84,7 +84,7 @@
                     android:layout_below="@id/user_welcome_message"
                     android:layout_toEndOf="@id/user_avatar"
                     android:layout_marginStart="16dp"
-                    android:text="It's great to see you!"
+                    android:text="@string/greeting_message"
                     android:textSize="14sp" />
             </RelativeLayout>
 
@@ -92,7 +92,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fundamental reports"
+                android:text="@string/fundamental_reports_title"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
@@ -116,7 +116,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pothole Report"
+                        android:text="@string/pothole_report"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -132,7 +132,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Need Improvement"
+                        android:text="@string/need_improvement"
                         android:textSize="14sp" />
 
                     <ImageView
@@ -140,7 +140,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:src="@drawable/detailsbutton"
-                        android:contentDescription="Details button"
+                        android:contentDescription="@string/details_button_description"
                         android:clickable="true"
                         android:focusable="true"/>
                 </LinearLayout>
@@ -156,7 +156,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Traveled distance"
+                        android:text="@string/traveled_distance"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -172,7 +172,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Excellent"
+                        android:text="@string/excellent"
                         android:textSize="14sp" />
 
                     <ImageView
@@ -180,7 +180,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:src="@drawable/detailsbutton"
-                        android:contentDescription="Details button"
+                        android:contentDescription="@string/details_button_description"
                         android:clickable="true"
                         android:focusable="true"/>
                 </LinearLayout>
@@ -200,7 +200,7 @@
                     android:layout_width="349dp"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:text="Recent pothole severity"
+                    android:text="@string/recent_pothole_severity_title"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -217,7 +217,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Visualization"
+                android:text="@string/visualization_title"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
@@ -247,7 +247,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Accelerator X"
+                        android:text="@string/accelerator_x"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -263,17 +263,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Safe"
+
                         android:textSize="14sp" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:clickable="true"
-                        android:contentDescription="Details button"
-                        android:focusable="true"
-                        android:src="@drawable/detailsbutton" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -288,7 +280,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Accelerator Y"
+                        android:text="@string/accelerator_y"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -304,17 +296,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Safe"
+
                         android:textSize="14sp" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:clickable="true"
-                        android:contentDescription="Details button"
-                        android:focusable="true"
-                        android:src="@drawable/detailsbutton" />
                 </LinearLayout>
 
                 <!-- Accelerator Z -->
@@ -330,7 +314,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Accelerator Z"
+                        android:text="@string/accelerator_z"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -346,17 +330,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Danger"
+
                         android:textSize="14sp" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:clickable="true"
-                        android:contentDescription="Details button"
-                        android:focusable="true"
-                        android:src="@drawable/detailsbutton" />
                 </LinearLayout>
 
                 <!-- Parameter T -->
@@ -372,7 +348,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Parameter T"
+                        android:text="@string/parameter_t"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -388,7 +364,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Safe"
+
                         android:textSize="14sp" />
 
                     <ImageView
@@ -396,7 +372,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:clickable="true"
-                        android:contentDescription="Details button"
+                        android:contentDescription="@string/details_button_description"
                         android:focusable="true"
                         android:src="@drawable/detailsbutton" />
                 </LinearLayout>
@@ -413,7 +389,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Overview Report"
+                    android:text="@string/overview_report_title"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />

@@ -90,6 +90,25 @@
                     android:layout_below="@id/latitude"
                     android:layout_marginTop="8dp" />
 
+                <TextView
+                    android:id="@+id/Speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/longitude"
+                    android:layout_marginTop="7dp"
+                    android:text="Speed: 0.0"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/Distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/Speed"
+                    android:layout_marginTop="7dp"
+                    android:text="Distance: 0.0"
+                    android:textSize="16sp" />
+
+
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
