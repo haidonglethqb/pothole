@@ -199,35 +199,36 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         if (combinedDelta > 15) {
             long currentTime = System.currentTimeMillis();
 
-            // Check if the phone is moving at a certain speed (e.g., greater than 5 m/s)
-            if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
-                lastDetectionTime = currentTime;
+            // Kiểm tra khoảng thời gian phát hiện và tốc độ
+            if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS && previousLocation != null) {
+                float speedValue = previousLocation.getSpeed(); // Tốc độ theo m/s
+                float speedKmH = speedValue * 3.6f; // Chuyển đổi sang km/h
 
-                if (combinedDelta < 20) {
-                    severity = "Minor";
-                    //minorCount++;
-                } else if (combinedDelta < 25) {
-                    severity = "Medium";
-                    //mediumCount++;
+                if (speedKmH >= 8) { // Điều kiện tốc độ tối thiểu 5 km/h
+                    lastDetectionTime = currentTime;
+
+                    // Phân loại mức độ ổ gà
+                    if (combinedDelta < 20) {
+                        severity = "Minor";
+                    } else if (combinedDelta < 25) {
+                        severity = "Medium";
+                    } else {
+                        severity = "Severe";
+                    }
+
+                    // Gọi phương thức để lưu dữ liệu và cập nhật giao diện
+                    initializeLocation();
+                    saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
+                    saveCountsToSharedPreferences();
+                    showConfirmDialog(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
+                    updateUI();
                 } else {
-                    severity = "Severe";
-                    //severeCount++;
+                    Log.d(TAG, "Speed too low: " + speedKmH + " km/h. Skipping pothole detection.");
                 }
-                            initializeLocation();
-                            saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
-                            saveCountsToSharedPreferences();  // Lưu lại vào SharedPreferences
-
-                            showConfirmDialog(severity, deltaX, deltaY, deltaZ,combinedDelta, latitude, longitude);
-                            updateUI();
-
-
-
             }
-
-
-
         }
     }
+
 //
 
 
@@ -320,6 +321,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         // Đặt lại tọa độ (nếu cần)
         latitude = 0.0;
         longitude = 0.0;
+        totalDistance = 0.0f;
 
         // Cập nhật giao diện
         displayReset();
@@ -340,6 +342,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         mediumPothole.setText("Medium: 0");
         severePothole.setText("Severe: 0");
         combinedDelta.setText("Combined Delta: 0.0");
+        distance.setText("Distance: 0.0 m");
     }
 
 
@@ -350,6 +353,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         editor.putInt("minorCount", minorCount);
         editor.putInt("mediumCount", mediumCount);
         editor.putInt("severeCount", severeCount);
+        editor.putFloat("totalDistance", totalDistance);
         editor.apply();
     }
     private void loadCountsFromSharedPreferences() {
@@ -358,6 +362,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         minorCount = sharedPreferences.getInt("minorCount", 0);
         mediumCount = sharedPreferences.getInt("mediumCount", 0);
         severeCount = sharedPreferences.getInt("severeCount", 0);
+        totalDistance = sharedPreferences.getFloat("totalDistance", 0.0f);
 
         updateUI();  // Cập nhật UI với các giá trị đã lưu
     }

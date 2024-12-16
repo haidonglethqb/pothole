@@ -92,6 +92,7 @@
 
     <!-- Thời gian -->
     <string name="date_time_label">Date/Time:</string>
+    <string name="default_date_time">2021-07-15 12:00:00</string>
 
 
     <!-- Địa điểm -->

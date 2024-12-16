@@ -112,6 +112,38 @@
                 android:spinnerMode="dropdown" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Mode Icon"
+
+                app:tint="@color/black" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:text="Notification Mode"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/modeSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+
         <!-- Save Changes Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSaveNotificationChanges"
@@ -127,14 +159,6 @@
             android:layout_marginBottom="24dp" />
 
     </LinearLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/bttest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Test Notify"
-        android:textColor="@color/white"
-        android:background="@drawable/rounded_button_small"/>
 
 </LinearLayout>
 

@@ -91,6 +91,7 @@
 
     <!-- Thời gian -->
     <string name="date_time_lable">Ngày/Giờ:</string>
+    <string name="default_date_time">20/10/2021 10:00</string>
 
     <!-- Địa điểm -->
     <string name="location_label">Địa điểm:</string>
