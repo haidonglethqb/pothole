@@ -74,7 +74,7 @@ public class ChooseLanguge extends BaseActivity {
 
         Intent intentDashboard = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        startActivity(intentDashboard);
         finish();
 
     }
