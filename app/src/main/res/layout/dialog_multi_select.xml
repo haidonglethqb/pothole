@@ -3,7 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="?attr/colorSurface">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Pothole Severity"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:paddingBottom="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:text="Minor" />
+            android:text="Minor"
+            android:textAppearance="?attr/textAppearanceBody1" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:text="Medium" />
+            android:text="Medium"
+            android:textAppearance="?attr/textAppearanceBody1" />
     </LinearLayout>
 
     <LinearLayout
@@ -65,7 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:text="Severe" />
+            android:text="Severe"
+            android:textAppearance="?attr/textAppearanceBody1" />
     </LinearLayout>
 
 </LinearLayout>
