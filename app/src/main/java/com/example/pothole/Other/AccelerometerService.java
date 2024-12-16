@@ -41,7 +41,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     private float lastX, lastY, lastZ;
     private float deltaX, deltaY, deltaZ;
-    private double latitude, longitude;
+    private double latitude, longitude,speed;
     private int potholeCount = 0;
     private DatabaseReference databaseReference;
     private String severity;
@@ -71,6 +71,8 @@ public class AccelerometerService extends Service implements SensorEventListener
         // Khởi tạo giá trị từ SharedPreferences
         potholeCount = prefs.getInt("potholeCount", 0);
         totalDistance = prefs.getFloat("totalDistance", 0.0f);
+
+
     }
 
     @Override

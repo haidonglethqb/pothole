@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
@@ -90,7 +91,7 @@ public class Settings extends BaseActivity {
 
         settings_button.setOnClickListener(view -> {
             // Handle settings button click
-            // You are already in the settings activity, so no need to start a new activity
+            Toast.makeText(Settings.this, "You are already on the settings screen", Toast.LENGTH_SHORT).show();
         });
     }
 }

@@ -1,11 +1,13 @@
 package com.example.pothole.SettingScreen;
 
-import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -14,14 +16,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pothole.R;
-import com.example.pothole.Other.TestActivity;
 
 public class Notificatons_settings extends AppCompatActivity {
-    ImageView ivBack;
-    Button test;
+    private ImageView ivBack;
     private Switch notificationSwitch;
-    private Spinner soundSpinner;
+    private Spinner modeSpinner;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,81 +31,72 @@ public class Notificatons_settings extends AppCompatActivity {
 
         // Ánh xạ view
         ivBack = findViewById(R.id.ivBack);
-        test = findViewById(R.id.bttest);
         notificationSwitch = findViewById(R.id.switchNotifications);
-        soundSpinner = findViewById(R.id.soundSpinner);
+        modeSpinner = findViewById(R.id.modeSpinner);
 
         // Quay lại màn hình trước
         ivBack.setOnClickListener(v -> finish());
 
-        // Chuyển đến màn hình test thông báo
-        test.setOnClickListener(v -> {
-            Intent intent = new Intent(Notificatons_settings.this, TestActivity.class);
-            startActivity(intent);
-        });
-
         // Khởi tạo SharedPreferences
         sharedPreferences = getSharedPreferences("Settings", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
-        // Load trạng thái thông báo từ SharedPreferences
-        boolean isNotificationEnabled = sharedPreferences.getBoolean("notificationsEnabled", true);
-        notificationSwitch.setChecked(isNotificationEnabled);
+        // Thiết lập dữ liệu cho Spinner
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.notification_modes, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        modeSpinner.setAdapter(adapter);
 
-        // Cập nhật trạng thái Toggle
+        // Đặt trạng thái mặc định cho Switch và Spinner
+        boolean isNotificationOn = sharedPreferences.getBoolean("notifications_enabled", true);
+        notificationSwitch.setChecked(isNotificationOn);
+
+        String mode = sharedPreferences.getString("notification_mode", "Sound");
+        int spinnerPosition = adapter.getPosition(mode);
+        modeSpinner.setSelection(spinnerPosition);
+
+        // Lắng nghe sự thay đổi của Switch
         notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("notificationsEnabled", isChecked);
+            editor.putBoolean("notifications_enabled", isChecked);
             editor.apply();
-
-            String message = isChecked ? "Thông báo đã bật" : "Thông báo đã tắt";
-            Toast.makeText(Notificatons_settings.this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Notifications " + (isChecked ? "Enabled" : "Disabled"), Toast.LENGTH_SHORT).show();
         });
 
-        // Danh sách âm thanh
-        String[] soundOptions = {"Âm thanh 1", "Âm thanh 2"};
-        int[] soundResources = {R.raw.sound4, R.raw.sound5};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, soundOptions);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        soundSpinner.setAdapter(adapter);
-
-        // Load âm thanh đã chọn từ SharedPreferences
-        String selectedSound = sharedPreferences.getString("selectedSound", "Âm thanh 1");
-        int soundPosition = adapter.getPosition(selectedSound);
-        soundSpinner.setSelection(soundPosition);
-
-        // Tạo MediaPlayer để phát âm thanh khi chọn
-        final MediaPlayer[] mediaPlayer = {new MediaPlayer()};
-
-        soundSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+        // Lắng nghe sự thay đổi chế độ trong Spinner
+        modeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
-                String selectedSound = soundOptions[position];
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("selectedSound", selectedSound);
-                editor.putInt("selectedSoundResource", soundResources[position]); // Lưu âm thanh đã chọn
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedMode = parent.getItemAtPosition(position).toString();
+                editor.putString("notification_mode", selectedMode);
                 editor.apply();
 
-                // Đảm bảo MediaPlayer được xử lý đúng trong Spinner
-                if (mediaPlayer[0] != null) {
-                    mediaPlayer[0].stop();
-                    mediaPlayer[0].release();
+                if ("Vibrate".equals(selectedMode)) {
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vibrator != null && vibrator.hasVibrator()) {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            // API 26 trở lên
+                            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            // API thấp hơn 26
+                            vibrator.vibrate(500); // Rung trong 500ms
+                        }
+                        Toast.makeText(Notificatons_settings.this, "Vibrate Mode Activated", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                mediaPlayer[0] = MediaPlayer.create(Notificatons_settings.this, soundResources[position]);
-                mediaPlayer[0].start();
-
-                Toast.makeText(Notificatons_settings.this, "Âm thanh đã chọn: " + selectedSound, Toast.LENGTH_SHORT).show();
+                // Hiển thị thông báo tương ứng với chế độ được chọn
+                else if ("Silent".equals(selectedMode)) {
+                    Toast.makeText(Notificatons_settings.this, "Silent Mode Activated", Toast.LENGTH_SHORT).show();
+                } else if ("Sound".equals(selectedMode)) {
+                    Toast.makeText(Notificatons_settings.this, "Sound Mode Activated", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-                // Không làm gì
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
             }
         });
     }
-
-    // Hàm tiện ích để lấy âm thanh thông báo
-    public static int getNotificationSoundResource(SharedPreferences sharedPreferences) {
-        return sharedPreferences.getInt("selectedSoundResource", R.raw.sound4); // Mặc định là sound1
-    }
 }
+
+
