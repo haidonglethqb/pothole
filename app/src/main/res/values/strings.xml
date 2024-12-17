@@ -75,20 +75,20 @@
     <string name="location">Location:</string>
     <string name="timeframe">Timeframe:</string>
 
-<!--    &lt;!&ndash; Dropdown Entries &ndash;&gt;-->
-<!--    <string-array name="locations">-->
-<!--        <item>All Locations</item>-->
-<!--        <item>Location 1</item>-->
-<!--        <item>Location 2</item>-->
-<!--        <item>Location 3</item>-->
-<!--    </string-array>-->
+    <!--    &lt;!&ndash; Dropdown Entries &ndash;&gt;-->
+    <!--    <string-array name="locations">-->
+    <!--        <item>All Locations</item>-->
+    <!--        <item>Location 1</item>-->
+    <!--        <item>Location 2</item>-->
+    <!--        <item>Location 3</item>-->
+    <!--    </string-array>-->
 
-<!--    <string-array name="timeframes">-->
-<!--        <item>All Timeframes</item>-->
-<!--        <item>Last Week</item>-->
-<!--        <item>Last Month</item>-->
-<!--        <item>Last Year</item>-->
-<!--    </string-array>-->
+    <!--    <string-array name="timeframes">-->
+    <!--        <item>All Timeframes</item>-->
+    <!--        <item>Last Week</item>-->
+    <!--        <item>Last Month</item>-->
+    <!--        <item>Last Year</item>-->
+    <!--    </string-array>-->
 
     <!-- Thời gian -->
     <string name="date_time_label">Date/Time:</string>
