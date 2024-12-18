@@ -107,7 +107,6 @@ public class login extends AppCompatActivity {
 
     }
 
-    // Phương thức đăng nhập bằng Google
     private void signInWithGoogle() {
         // Đăng xuất trước khi đăng nhập lại
         mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> {

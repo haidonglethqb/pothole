@@ -53,17 +53,16 @@ dependencies {
     implementation ("com.google.firebase:firebase-database:20.3.3")
     implementation ("com.google.firebase:firebase-auth:23.0.0")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
-    implementation ("com.google.android.gms:play-services-location:18.0.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.0")
 
     implementation("com.mapbox.navigation:android:2.15.2")
     implementation("com.mapbox.search:mapbox-search-android-ui:1.0.0-rc.6")
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.activity:activity:1.7.0")
     implementation("com.mapbox.maps:android:10.0.0")
-
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
 
 
