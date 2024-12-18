@@ -12,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.pothole.Authentication.register;
 import com.example.pothole.DashboardScreen.MainActivity;
 import com.example.pothole.MapScreen.mapdisplay;
 import com.example.pothole.Other.Accelerometer;
@@ -20,7 +21,7 @@ import com.example.pothole.Other.History;
 import com.example.pothole.R;
 
 public class Settings extends BaseActivity {
-    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport,tvSound;
+    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport,tvSound,tvAddaccount;
     ImageButton back_button, home_button, maps_button, history_button, settings_button;
 
     @Override
@@ -41,6 +42,7 @@ public class Settings extends BaseActivity {
         tvReport = findViewById(R.id.tvReportProblem);
         tvSound = findViewById(R.id.tvAlertSound);
         back_button = findViewById(R.id.btnBack);
+        tvAddaccount = findViewById(R.id.tvAddAccount);
 
         back_button.setOnClickListener(v -> finish());
 
@@ -67,6 +69,11 @@ public class Settings extends BaseActivity {
 
         tvSound.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, AlertSound_Setting.class);
+            startActivity(intent);
+        });
+
+        tvAddaccount.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, register.class);
             startActivity(intent);
         });
         // Find navigation bar buttons

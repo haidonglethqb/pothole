@@ -53,7 +53,8 @@ public class AccelerometerService extends Service implements SensorEventListener
     private static final long DETECTION_THRESHOLD_MS = 1000;
 
     private double totalDistance = 0.0; // Tổng quãng đường
-    private Location lastLocation = null; // Vị trí lần cuối
+    private Location lastLocation = null;// Vị trí lần cuối
+    private float speedKmh = 0.0f; // Tốc độ km/h
 
     Uri selectedRingtoneUri; // Khai báo biến
 
@@ -198,6 +199,9 @@ public class AccelerometerService extends Service implements SensorEventListener
         }
     }
 
+
+
+
     private void initializeLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -216,7 +220,12 @@ public class AccelerometerService extends Service implements SensorEventListener
     public void onLocationChanged(@NonNull Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-        Log.d(TAG, "Updated Location: Latitude: " + latitude + ", Longitude: " + longitude);
+        speed = location.getSpeed();// Lấy tốc độ từ Location (tính bằng m/s)
+        double speedKmH = speed * 3.6f; // Chuyển đổi sang km/h
+        if (lastLocation != null) {
+            totalDistance += lastLocation.distanceTo(location);
+        }
+        Log.d(TAG, "Updated Location: Latitude: " + latitude + ", Longitude: " + longitude + ", Speed: " + speed);
     }
 
     @Override
