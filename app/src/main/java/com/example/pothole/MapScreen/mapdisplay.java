@@ -1129,11 +1129,12 @@ public class mapdisplay extends AppCompatActivity {
                         checkedRoute = list.get(0);
 
                         // Filter and display potholes based on selected types
-                        for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+                        pointAnnotationManager.deleteAll();
+                        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
                             if (selectedPotholeTypes.contains(location.getThird())) {
                                 Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                                 if (isPointOnRoute2(potholePoint, checkedRoute)) {
-                                    addPotholeIcon(location); // Pass the Triple object directly
+                                    addPotholeIcon(location); // Pass the Quadruple object directly
                                 }
                             }
                         }
@@ -1144,7 +1145,6 @@ public class mapdisplay extends AppCompatActivity {
                         setRoute.setText("Clear route");
                         maneuverView.setVisibility(View.VISIBLE);
                         findViewById(R.id.search_bar).setVisibility(View.GONE);
-                        
 
                         addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
                             @Override
@@ -1167,11 +1167,11 @@ public class mapdisplay extends AppCompatActivity {
                                 pointAnnotationManager.deleteAll();
 
                                 // Filter and display potholes based on selected types
-                                for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+                                for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
                                     if (selectedPotholeTypes.contains(location.getThird())) {
                                         Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                                         if (isPointOnRoute2(potholePoint, checkedRoute)) {
-                                            addPotholeIcon(location); // Pass the Triple object directly
+                                            addPotholeIcon(location); // Pass the Quadruple object directly
                                         }
                                     }
                                 }
