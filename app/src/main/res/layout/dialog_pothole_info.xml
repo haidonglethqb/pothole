@@ -8,8 +8,8 @@
     <ImageView
         android:id="@+id/pothole_image"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
+        android:layout_height="240dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/potholecaution" />
 
     <TextView
@@ -19,4 +19,12 @@
         android:layout_marginTop="16dp"
         android:text="Pothole Information"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/pothole_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Detection Time"
+        android:textSize="14sp" />
 </LinearLayout>

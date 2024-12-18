@@ -97,19 +97,7 @@
 
     <!-- Focus Location Button -->
 
-    <TextView
-        android:id="@+id/tvdistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvspeed"
-        android:text="Distance: 0.0" />
 
-    <TextView
-        android:id="@+id/tvspeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_layout"
-        android:text="Speed: 0.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/focus_location_button"
