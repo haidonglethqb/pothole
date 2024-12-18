@@ -20,7 +20,7 @@ import com.example.pothole.Other.History;
 import com.example.pothole.R;
 
 public class Settings extends BaseActivity {
-    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport;
+    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport,tvSound;
     ImageButton back_button, home_button, maps_button, history_button, settings_button;
 
     @Override
@@ -39,6 +39,7 @@ public class Settings extends BaseActivity {
         tvNotify = findViewById(R.id.tvNotifications);
         tvlogout = findViewById(R.id.tvLogOut);
         tvReport = findViewById(R.id.tvReportProblem);
+        tvSound = findViewById(R.id.tvAlertSound);
         back_button = findViewById(R.id.btnBack);
 
         back_button.setOnClickListener(v -> finish());
@@ -64,6 +65,10 @@ public class Settings extends BaseActivity {
             startActivity(intent);
         });
 
+        tvSound.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, AlertSound_Setting.class);
+            startActivity(intent);
+        });
         // Find navigation bar buttons
         home_button = findViewById(R.id.home_button);
         maps_button = findViewById(R.id.maps_button);
@@ -93,5 +98,7 @@ public class Settings extends BaseActivity {
             // Handle settings button click
             Toast.makeText(Settings.this, "You are already on the settings screen", Toast.LENGTH_SHORT).show();
         });
+
+
     }
 }
