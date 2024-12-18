@@ -75,20 +75,20 @@
     <string name="location">Location:</string>
     <string name="timeframe">Timeframe:</string>
 
-<!--    &lt;!&ndash; Dropdown Entries &ndash;&gt;-->
-<!--    <string-array name="locations">-->
-<!--        <item>All Locations</item>-->
-<!--        <item>Location 1</item>-->
-<!--        <item>Location 2</item>-->
-<!--        <item>Location 3</item>-->
-<!--    </string-array>-->
+    <!--    &lt;!&ndash; Dropdown Entries &ndash;&gt;-->
+    <!--    <string-array name="locations">-->
+    <!--        <item>All Locations</item>-->
+    <!--        <item>Location 1</item>-->
+    <!--        <item>Location 2</item>-->
+    <!--        <item>Location 3</item>-->
+    <!--    </string-array>-->
 
-<!--    <string-array name="timeframes">-->
-<!--        <item>All Timeframes</item>-->
-<!--        <item>Last Week</item>-->
-<!--        <item>Last Month</item>-->
-<!--        <item>Last Year</item>-->
-<!--    </string-array>-->
+    <!--    <string-array name="timeframes">-->
+    <!--        <item>All Timeframes</item>-->
+    <!--        <item>Last Week</item>-->
+    <!--        <item>Last Month</item>-->
+    <!--        <item>Last Year</item>-->
+    <!--    </string-array>-->
 
     <!-- Thời gian -->
     <string name="date_time_label">Date/Time:</string>
@@ -111,6 +111,6 @@
     <string name="desc_user_icon">User Icon</string>
     <string name="desc_severity_icon">Severity Icon</string>
 
-    <string name="web_id">AIzaSyC6Peem6i09cCErVZCnWikWUJtVsIX3Tl4</string>
+    <string name="web_id" translatable="false">798306032495-0kq06idn7hee59q9cil8mq3pknebmi9a.apps.googleusercontent.com</string>
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>
 </resources>

@@ -13,6 +13,9 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -52,6 +55,8 @@ public class AccelerometerService extends Service implements SensorEventListener
     private double totalDistance = 0.0; // Tổng quãng đường
     private Location lastLocation = null; // Vị trí lần cuối
 
+    Uri selectedRingtoneUri; // Khai báo biến
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -72,6 +77,12 @@ public class AccelerometerService extends Service implements SensorEventListener
         potholeCount = prefs.getInt("potholeCount", 0);
         totalDistance = prefs.getFloat("totalDistance", 0.0f);
 
+        // Retrieve the saved ringtone URI from SharedPreferences
+        String ringtoneUriString = getSharedPreferences("PotholeSettings", MODE_PRIVATE)
+                .getString("notification_ringtone", null);
+        if (ringtoneUriString != null) {
+            selectedRingtoneUri = Uri.parse(ringtoneUriString);
+        }
 
     }
 
@@ -111,6 +122,25 @@ public class AccelerometerService extends Service implements SensorEventListener
         detectPothole();
     }
 
+
+    private void playNotificationSound() {
+        try {
+            Ringtone ringtone;
+
+            if (selectedRingtoneUri != null) {
+                ringtone = RingtoneManager.getRingtone(this, selectedRingtoneUri);
+            } else {
+                ringtone = RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            }
+
+            if (ringtone != null && !ringtone.isPlaying()) {
+                ringtone.play();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error playing ringtone", e);
+        }
+    }
+
     private void detectPothole() {
         float combinedDelta = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
@@ -144,7 +174,8 @@ public class AccelerometerService extends Service implements SensorEventListener
                 saveToPreferences("totalDistance", (float) totalDistance);
 
                 saveToFirebase(potholeCount,severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
-
+// Play notification sound
+                playNotificationSound();
             }
 
             // Send broadcast

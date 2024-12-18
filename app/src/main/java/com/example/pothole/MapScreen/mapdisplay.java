@@ -1,4 +1,11 @@
 package com.example.pothole.MapScreen;
+import android.location.Location;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import android.location.Location;
+
 import com.mapbox.navigation.base.formatter.DistanceFormatterOptions;
 import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter;
 import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
@@ -11,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
 import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
 import kotlin.Triple;
-
+import android.location.Location;
 import android.view.MotionEvent;
 import android.widget.CheckBox;
 
@@ -55,6 +62,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
@@ -180,7 +189,7 @@ public class mapdisplay extends AppCompatActivity {
     private boolean soundPlayed = false;
     private void showPotholeInfoDialog(Point point) {
         // Find the pothole information based on the point
-        for (Triple<Double, Double, String> location : potholeLocations) {
+        for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
             if (location.getFirst() == point.latitude() && location.getSecond() == point.longitude()) {
                 // Inflate the custom layout
                 View dialogView = getLayoutInflater().inflate(R.layout.dialog_pothole_info, null);
@@ -219,7 +228,7 @@ public class mapdisplay extends AppCompatActivity {
     private Point pothole;
     private Point pothole2;
     private Point pothole3;
-    private List<Triple<Double, Double, String>> potholeLocations;
+    private List<LocationRetriever.Quadruple<Double, Double, String, String>> potholeLocations;
     private DatabaseReference database;
     private MapboxManeuverView maneuverView;
     private MapboxManeuverApi maneuverApi;
@@ -429,7 +438,7 @@ public class mapdisplay extends AppCompatActivity {
                     routeLineView.renderRouteLineUpdate(mapStyle, result);
                 }
                 // Check proximity to all potholes on the route
-                for (Triple<Double, Double, String> location : potholeLocations) {
+                for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
                     Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                     if (checkedRoute != null && isPointOnRoute2(potholePoint, checkedRoute)) {
                         checkProximityToPothole(point, potholePoint, location.getThird());
@@ -542,11 +551,35 @@ public class mapdisplay extends AppCompatActivity {
         CheckBox checkboxMinor = dialogView.findViewById(R.id.checkbox_minor);
         CheckBox checkboxMedium = dialogView.findViewById(R.id.checkbox_medium);
         CheckBox checkboxSevere = dialogView.findViewById(R.id.checkbox_severe);
+        RadioGroup radioGroupDateRange = dialogView.findViewById(R.id.radio_group_date_range);
+        RadioButton radio7Days = dialogView.findViewById(R.id.radio_7_days);
+        RadioButton radio14Days = dialogView.findViewById(R.id.radio_14_days);
+        RadioButton radio30Days = dialogView.findViewById(R.id.radio_30_days);
+        RadioGroup radioGroupDistance = dialogView.findViewById(R.id.radio_group_distance);
+        RadioButton radio1Km = dialogView.findViewById(R.id.radio_1_km);
+        RadioButton radio3Km = dialogView.findViewById(R.id.radio_3_km);
+        RadioButton radio5Km = dialogView.findViewById(R.id.radio_5_km);
 
         // Set initial state based on selectedPotholeTypes
         checkboxMinor.setChecked(selectedPotholeTypes.contains("Minor"));
         checkboxMedium.setChecked(selectedPotholeTypes.contains("Medium"));
         checkboxSevere.setChecked(selectedPotholeTypes.contains("Severe"));
+
+        if (selectedPotholeTypes.contains("Last 7 days")) {
+            radio7Days.setChecked(true);
+        } else if (selectedPotholeTypes.contains("Last 14 days")) {
+            radio14Days.setChecked(true);
+        } else if (selectedPotholeTypes.contains("Last 30 days")) {
+            radio30Days.setChecked(true);
+        }
+
+        if (selectedPotholeTypes.contains("Within 1 km")) {
+            radio1Km.setChecked(true);
+        } else if (selectedPotholeTypes.contains("Within 3 km")) {
+            radio3Km.setChecked(true);
+        } else if (selectedPotholeTypes.contains("Within 5 km")) {
+            radio5Km.setChecked(true);
+        }
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
@@ -561,6 +594,22 @@ public class mapdisplay extends AppCompatActivity {
                 if (checkboxSevere.isChecked()) {
                     selectedPotholeTypes.add("Severe");
                 }
+                int selectedDateRangeId = radioGroupDateRange.getCheckedRadioButtonId();
+                if (selectedDateRangeId == R.id.radio_7_days) {
+                    selectedPotholeTypes.add("Last 7 days");
+                } else if (selectedDateRangeId == R.id.radio_14_days) {
+                    selectedPotholeTypes.add("Last 14 days");
+                } else if (selectedDateRangeId == R.id.radio_30_days) {
+                    selectedPotholeTypes.add("Last 30 days");
+                }
+                int selectedDistanceId = radioGroupDistance.getCheckedRadioButtonId();
+                if (selectedDistanceId == R.id.radio_1_km) {
+                    selectedPotholeTypes.add("Within 1 km");
+                } else if (selectedDistanceId == R.id.radio_3_km) {
+                    selectedPotholeTypes.add("Within 3 km");
+                } else if (selectedDistanceId == R.id.radio_5_km) {
+                    selectedPotholeTypes.add("Within 5 km");
+                }
                 filterAndDisplayPotholes();
             }
         });
@@ -570,11 +619,69 @@ public class mapdisplay extends AppCompatActivity {
     }
 
     private void filterAndDisplayPotholes() {
-        pointAnnotationManager.deleteAll();
-        for (Triple<Double, Double, String> location : potholeLocations) {
-            if (selectedPotholeTypes.contains(location.getThird())) {
-                addPotholeIcon(location);
+        getCurrentLocation(currentLocation -> {
+            if (currentLocation == null) {
+                Toast.makeText(this, "Unable to get current location", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            pointAnnotationManager.deleteAll();
+            boolean noFiltersSelected = selectedPotholeTypes.isEmpty();
+
+            for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
+                boolean shouldDisplay = noFiltersSelected || selectedPotholeTypes.contains(location.getThird());
+
+                if (selectedPotholeTypes.contains("Last 7 days")) {
+                    shouldDisplay = shouldDisplay && isWithinDays(location.getFourth(), 7);
+                } else if (selectedPotholeTypes.contains("Last 14 days")) {
+                    shouldDisplay = shouldDisplay && isWithinDays(location.getFourth(), 14);
+                } else if (selectedPotholeTypes.contains("Last 30 days")) {
+                    shouldDisplay = shouldDisplay && isWithinDays(location.getFourth(), 30);
+                }
+
+                if (selectedPotholeTypes.contains("Within 1 km")) {
+                    shouldDisplay = shouldDisplay && isWithinDistance(currentLocation, location, 1);
+                } else if (selectedPotholeTypes.contains("Within 3 km")) {
+                    shouldDisplay = shouldDisplay && isWithinDistance(currentLocation, location, 3);
+                } else if (selectedPotholeTypes.contains("Within 5 km")) {
+                    shouldDisplay = shouldDisplay && isWithinDistance(currentLocation, location, 5);
+                }
+
+                if (shouldDisplay) {
+                    addPotholeIcon(location);
+                }
+            }
+        });
+    }
+    private boolean isWithinDistance(Location currentLocation, LocationRetriever.Quadruple<Double, Double, String, String> location, int distanceKm) {
+        float[] results = new float[1];
+        Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), location.getFirst(), location.getSecond(), results);
+        return results[0] <= distanceKm * 1000;
+    }
+    private void getCurrentLocation(OnSuccessListener<Location> listener) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request the necessary permissions
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            return;
+        }
+
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, listener)
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to get current location", e));
+    }
+    private boolean isWithinDays(String dateTime, int days) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date date = sdf.parse(dateTime);
+            long timeInMillis = date.getTime();
+            long currentTime = System.currentTimeMillis();
+            long daysInMillis = days * 24 * 60 * 60 * 1000L;
+            return (currentTime - timeInMillis) <= daysInMillis;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -633,14 +740,14 @@ public class mapdisplay extends AppCompatActivity {
         LocationRetriever locationRetriever = new LocationRetriever(this);
         locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
             @Override
-            public void onLocationsRetrieved(List<Triple<Double, Double, String>> locations) {
+            public void onLocationsRetrieved(List<LocationRetriever.Quadruple<Double, Double, String,String>> locations) {
                 // Log the retrieved locations
                 if (locations.isEmpty()) {
                     Log.d(TAG, "No locations retrieved from local storage.");
                 } else {
                     Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
-                    for (Triple<Double, Double, String> location : locations) {
-                        Log.d(TAG, "Latitude: " + location.getFirst() + ", Longitude: " + location.getSecond() + ", Severity: " + location.getThird());
+                    for (LocationRetriever.Quadruple<Double, Double, String,String> location : locations) {
+                        Log.d(TAG, "Latitude: " + location.getFirst() + ", Longitude: " + location.getSecond() + ", Severity: " + location.getThird()+ ", Date: " + location.getFourth());
                     }
                 }
                 // get locations
@@ -812,6 +919,9 @@ public class mapdisplay extends AppCompatActivity {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 mapStyle = style;
+                style.addImage("minor-icon", BitmapFactory.decodeResource(getResources(), R.drawable.minor));
+                style.addImage("medium-icon", BitmapFactory.decodeResource(getResources(), R.drawable.medium));
+                style.addImage("severe-icon", BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution));
                 CompassPlugin compassPlugin = (CompassPlugin) mapView.getPlugin(Plugin.MAPBOX_COMPASS_PLUGIN_ID);
                 if (compassPlugin != null) {
                     compassPlugin.setVisibility(false);
@@ -838,12 +948,14 @@ public class mapdisplay extends AppCompatActivity {
 
 
 
+
                  bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
 
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
                  pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
-                for (Triple<Double, Double,String> location : potholeLocations) {
+                filterAndDisplayPotholes();
+                for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
                     double iconSize = 0.05;
                     Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
@@ -959,29 +1071,33 @@ public class mapdisplay extends AppCompatActivity {
 
 
     private boolean isRouteActive = false;
-    private void addPotholeIcon(Triple<Double, Double, String> location) {
+    private void addPotholeIcon(LocationRetriever.Quadruple<Double, Double, String, String> location) {
         double iconSize = 0.05;
         Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+        String iconName = "severe-icon"; // Default icon
 
         String severity = location.getThird();
         if (severity != null) {
-            if (severity.equals("Minor")) {
-                iconSize = 0.05;
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.minor);
-            } else if (severity.equals("Medium")) {
-                iconSize = 0.055;
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medium);
-            } else if (severity.equals("Severe")) {
-                iconSize = 0.06;
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
+            switch (severity) {
+                case "Minor":
+                    iconSize = 0.05;
+                    iconName = "minor-icon";
+                    break;
+                case "Medium":
+                    iconSize = 0.055;
+                    iconName = "medium-icon";
+                    break;
+                case "Severe":
+                    iconSize = 0.06;
+                    iconName = "severe-icon";
+                    break;
             }
         }
 
         PointAnnotationOptions pointAnnotationOptions = new PointAnnotationOptions()
                 .withTextAnchor(TextAnchor.CENTER)
                 .withIconSize(iconSize)
-                .withIconImage(bitmap)
+                .withIconImage(iconName)
                 .withPoint(point);
         pointAnnotationManager.create(pointAnnotationOptions);
     }
@@ -1013,7 +1129,7 @@ public class mapdisplay extends AppCompatActivity {
                         checkedRoute = list.get(0);
 
                         // Filter and display potholes based on selected types
-                        for (Triple<Double, Double, String> location : potholeLocations) {
+                        for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
                             if (selectedPotholeTypes.contains(location.getThird())) {
                                 Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                                 if (isPointOnRoute2(potholePoint, checkedRoute)) {
@@ -1051,7 +1167,7 @@ public class mapdisplay extends AppCompatActivity {
                                 pointAnnotationManager.deleteAll();
 
                                 // Filter and display potholes based on selected types
-                                for (Triple<Double, Double, String> location : potholeLocations) {
+                                for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
                                     if (selectedPotholeTypes.contains(location.getThird())) {
                                         Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                                         if (isPointOnRoute2(potholePoint, checkedRoute)) {
@@ -1096,6 +1212,18 @@ public class mapdisplay extends AppCompatActivity {
             public void onFailure(@NonNull Exception exception) {
             }
         });
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, retry getting the current location
+                filterAndDisplayPotholes();
+            } else {
+                Toast.makeText(this, "Location permission is required to display potholes", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

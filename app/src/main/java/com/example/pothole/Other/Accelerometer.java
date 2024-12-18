@@ -13,6 +13,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -68,6 +71,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
     private double latitude = 0.0, longitude = 0.0;
     private float totalDistance = 0.0f; // Đơn vị: mét
     private Location previousLocation = null; // Lưu vị trí trước đó
+    Uri selectedRingtoneUri; // Khai báo biến
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,12 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pothole-060104-default-rtdb.firebaseio.com/");
         loadDataFromFirebase();
 
+        // Retrieve the saved ringtone URI from SharedPreferences
+        String ringtoneUriString = getSharedPreferences("PotholeSettings", MODE_PRIVATE)
+                .getString("notification_ringtone", null);
+        if (ringtoneUriString != null) {
+            selectedRingtoneUri = Uri.parse(ringtoneUriString);
+        }
     }
 
     private void initializeViews() {
@@ -193,6 +203,23 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
         detectPothole();
     }
 
+    private void playNotificationSound() {
+        try {
+            Ringtone ringtone;
+
+            if (selectedRingtoneUri != null) {
+                ringtone = RingtoneManager.getRingtone(this, selectedRingtoneUri);
+            } else {
+                ringtone = RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            }
+
+            if (ringtone != null && !ringtone.isPlaying()) {
+                ringtone.play();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error playing ringtone", e);
+        }
+    }
     private void detectPothole() {
         float combinedDelta = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
@@ -204,7 +231,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
                 float speedValue = previousLocation.getSpeed(); // Tốc độ theo m/s
                 float speedKmH = speedValue * 3.6f; // Chuyển đổi sang km/h
 
-                if (speedKmH >= 8) { // Điều kiện tốc độ tối thiểu 5 km/h
+                if (speedKmH >= 10) { // Điều kiện tốc độ tối thiểu 5 km/h
                     lastDetectionTime = currentTime;
 
                     // Phân loại mức độ ổ gà
@@ -219,6 +246,8 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
                     // Gọi phương thức để lưu dữ liệu và cập nhật giao diện
                     initializeLocation();
                     saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
+                    // Play notification sound
+                    playNotificationSound();
                     saveCountsToSharedPreferences();
                     showConfirmDialog(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
                     updateUI();
