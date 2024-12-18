@@ -60,10 +60,9 @@ dependencies {
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.activity:activity:1.7.0")
     implementation("com.mapbox.maps:android:10.0.0")
-
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
 
 

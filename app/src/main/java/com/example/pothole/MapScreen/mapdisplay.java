@@ -19,6 +19,8 @@ import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
 import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
 import kotlin.Triple;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.view.MotionEvent;
 import android.widget.CheckBox;
 
@@ -185,19 +187,26 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class mapdisplay extends AppCompatActivity {
+
+    private TextView tvSpeed;
+    private TextView tvDistance;
+    private double totalDistance = 0.0;
+    private Location lastLocation;
     private List<String> selectedPotholeTypes = new ArrayList<>();
     private boolean soundPlayed = false;
     private void showPotholeInfoDialog(Point point) {
         // Find the pothole information based on the point
-        for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
             if (location.getFirst() == point.latitude() && location.getSecond() == point.longitude()) {
                 // Inflate the custom layout
                 View dialogView = getLayoutInflater().inflate(R.layout.dialog_pothole_info, null);
                 ImageView potholeImage = dialogView.findViewById(R.id.pothole_image);
                 TextView potholeInfo = dialogView.findViewById(R.id.pothole_info);
+                TextView potholeTime = dialogView.findViewById(R.id.pothole_time);
 
                 // Set the pothole information
                 potholeInfo.setText("Latitude: " + location.getFirst() + "\nLongitude: " + location.getSecond() + "\nSeverity: " + location.getThird());
+                potholeTime.setText("Detection Time: " + location.getFourth());
 
                 // Optionally, set the image resource based on severity or other criteria
                 if (location.getThird().equals("Minor")) {
@@ -251,6 +260,9 @@ public class mapdisplay extends AppCompatActivity {
     private MapboxRouteArrowApi routeArrowApi;
     private MapboxRouteArrowView routeArrowView;
     private MediaPlayer mediaPlayer;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private TextView speedTextView;
 
 
 
@@ -618,6 +630,7 @@ public class mapdisplay extends AppCompatActivity {
         builder.show();
     }
 
+
     private void filterAndDisplayPotholes() {
         getCurrentLocation(currentLocation -> {
             if (currentLocation == null) {
@@ -684,6 +697,12 @@ public class mapdisplay extends AppCompatActivity {
             return false;
         }
     }
+    private void updateSpeedUI(float speedKmH) {
+        runOnUiThread(() -> {
+            tvSpeed.setText("hi");
+            Log.d("Speed", "Speed: " + speedKmH + " km/h");
+        });
+    }
 
 
 
@@ -708,6 +727,51 @@ public class mapdisplay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_mapdisplay);
+
+
+
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                float speed = location.getSpeed(); // speed in meters/second
+                float speedKmH = speed * 3.6f; // convert to km/h
+                Log.d("Speed", "Speed: " + speedKmH + " km/h");
+                if (speedKmH > 0) {
+                    // Remove the usage of tvSpeed
+                    // tvSpeed.setText("Speed: " + speedKmH + " km/h");
+                    Log.d("Speed", "Speed: " + speedKmH + " km/h");
+                }
+                if (lastLocation != null) {
+                    float[] results = new float[1];
+                    Location.distanceBetween(lastLocation.getLatitude(), lastLocation.getLongitude(),
+                            location.getLatitude(), location.getLongitude(), results);
+                    totalDistance += results[0];
+                    Log.d("Distance", "Total distance: " + totalDistance + " meters");
+                }
+                lastLocation = location;
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {
+            }
+        };
+
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+        } else {
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -1070,6 +1134,7 @@ public class mapdisplay extends AppCompatActivity {
 
 
 
+
     private boolean isRouteActive = false;
     private void addPotholeIcon(LocationRetriever.Quadruple<Double, Double, String, String> location) {
         double iconSize = 0.05;
@@ -1101,6 +1166,7 @@ public class mapdisplay extends AppCompatActivity {
                 .withPoint(point);
         pointAnnotationManager.create(pointAnnotationOptions);
     }
+
 
 
 
@@ -1213,15 +1279,19 @@ public class mapdisplay extends AppCompatActivity {
             }
         });
     }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted, retry getting the current location
-                filterAndDisplayPotholes();
+                if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+                }
             } else {
-                Toast.makeText(this, "Location permission is required to display potholes", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Location permission is required to display speed", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -1232,11 +1302,13 @@ public class mapdisplay extends AppCompatActivity {
         if (mapboxNavigation != null) {
             mapboxNavigation.onDestroy();
         }
-        //haihh them
         if (isBound) {
             unbindService(serviceConnection);
             isBound = false;
         }
         unregisterReceiver(potholeReceiver);
+        if (locationManager != null && locationListener != null) {
+            locationManager.removeUpdates(locationListener);
+        }
     }
 }
