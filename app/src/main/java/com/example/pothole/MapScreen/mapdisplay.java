@@ -949,10 +949,10 @@ public class mapdisplay extends AppCompatActivity {
 
 
 
-                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
 
                 AnnotationPlugin annotationPlugin = AnnotationPluginImplKt.getAnnotations(mapView);
-                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
+                pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 filterAndDisplayPotholes();
                 for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {

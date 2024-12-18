@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.pothole.MapScreen.mapdisplay;
 import com.example.pothole.R;
 import com.example.pothole.SettingScreen.BaseActivity;
+import com.example.pothole.SettingScreen.EditProfile;
 import com.example.pothole.SettingScreen.Settings;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +36,8 @@ import java.util.Locale;
 public class MainActivity extends BaseActivity {
 
     ImageButton home_button, maps_button, history_button, settings_button;
-    TextView accerleratorX, accerleratorY, accerleratorZ, combinedDelta, tvpotholeCount, tvdistance;
+    TextView accerleratorX, accerleratorY, accerleratorZ, combinedDelta, tvpotholeCount, tvdistance,tvname;
+    ImageView ivProfilePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,10 @@ public class MainActivity extends BaseActivity {
         combinedDelta = findViewById(R.id.combinedDelta);
         tvdistance = findViewById(R.id.traveledDistance);
         tvpotholeCount = findViewById(R.id.potholeCount);
+        ivProfilePicture = findViewById(R.id.user_avatar);
+        tvname = findViewById(R.id.user_welcome_message);
+
+
 
         // Đăng ký BroadcastReceiver
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
@@ -70,6 +79,20 @@ public class MainActivity extends BaseActivity {
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
         tvdistance.setText(String.format(Locale.getDefault(), "%.1f m", savedTravelDistance));
 
+        // Hiển thị ảnh đại diện
+        loadProfilePictureAndName();
+
+        // Sự kiện click vào ảnh đại diện để chuyển đến EditProfile
+        ivProfilePicture.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, EditProfile.class);
+            startActivityForResult(intent, 100); // 100 là requestCode
+
+        });
+        tvname.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, EditProfile.class);
+            startActivityForResult(intent, 100); // 100 là requestCode
+
+        });
         home_button.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "You are already on the home screen", Toast.LENGTH_SHORT).show();
         });
@@ -105,6 +128,7 @@ public class MainActivity extends BaseActivity {
                     int potholeCount = snapshot.child("potholeCount").getValue(Integer.class);
                     double totalDistance = snapshot.child("totalDistance").getValue(Double.class);
 
+
                     // Cập nhật dữ liệu vào TextView
                     accerleratorX.setText(String.format(Locale.getDefault(), "%.2f", deltaX));
                     accerleratorY.setText(String.format(Locale.getDefault(), "%.2f", deltaY));
@@ -112,6 +136,7 @@ public class MainActivity extends BaseActivity {
                     combinedDelta.setText(String.format(Locale.getDefault(), "%.2f", combinedDeltaValue));
                     tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", potholeCount));
                     tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
+
                 }
             }
 
@@ -121,6 +146,8 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+
 
     private final BroadcastReceiver potholeReceiver = new BroadcastReceiver() {
         @Override
@@ -144,6 +171,33 @@ public class MainActivity extends BaseActivity {
             }
         }
     };
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
+        String profileImageBase64 = prefs.getString("profileImage", null);
+        if (profileImageBase64 != null) {
+            Bitmap bitmap = base64ToBitmap(profileImageBase64);
+            ivProfilePicture.setImageBitmap(bitmap);
+        }
+    }
+
+    private void loadProfilePictureAndName() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserProfile", MODE_PRIVATE);
+        String base64Image = sharedPreferences.getString("profilePicture", null);
+
+        String name = sharedPreferences.getString("name", "");
+        tvname.setText("Welcome back, "+name);
+        if (base64Image != null) {
+            Bitmap bitmap = base64ToBitmap(base64Image);
+            ivProfilePicture.setImageBitmap(bitmap);
+        }
+    }
+
+    private Bitmap base64ToBitmap(String base64String) {
+        byte[] decodedBytes = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
 
     @Override
     protected void onDestroy() {
