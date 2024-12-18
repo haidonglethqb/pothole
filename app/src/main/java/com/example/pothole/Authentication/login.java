@@ -109,28 +109,44 @@ public class login extends AppCompatActivity {
 
     // Phương thức đăng nhập bằng Google
     private void signInWithGoogle() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        // Đăng xuất trước khi đăng nhập lại
+        mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                // Đăng nhập Firebase bằng Google Token
-                firebaseAuthWithGoogle(account.getIdToken());
+                if (account != null) {
+                    // Đăng nhập Firebase bằng Google Token
+                    firebaseAuthWithGoogle(account.getIdToken());
+                } else {
+                    Toast.makeText(this, "Google sign-in failed: account is null", Toast.LENGTH_SHORT).show();
+                }
             } catch (ApiException e) {
-                Toast.makeText(this, "Google sign-in failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Google sign-in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
+
+
+
     }
 
     // Đăng nhập Firebase bằng Google Token
     private void firebaseAuthWithGoogle(String idToken) {
+        if (idToken == null) {
+            Toast.makeText(this, "Google ID Token is null", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
@@ -140,7 +156,7 @@ public class login extends AppCompatActivity {
                         startActivity(new Intent(login.this, MainActivity.class));
                         finish();
                     } else {
-                        Toast.makeText(login.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(login.this, "Authentication Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
