@@ -267,6 +267,7 @@ public class mapdisplay extends AppCompatActivity {
     private TextView speedTextView;
 
     private double lastUpdateDistance = 0;
+    private long lastProximityCheckTimestamp = 0;
 
 
 
@@ -417,6 +418,7 @@ public class mapdisplay extends AppCompatActivity {
             showNotification("Pothole Alert", "Slow down, you are approaching a pothole with severity: " + severity);
             Toast.makeText(mapdisplay.this, "Pothole 100 meters ahead", Toast.LENGTH_SHORT).show();
             notificationShown = true;
+            Log.d(TAG, "Pothole 100 meters ahead");
 
             // Play warning sound only once
             if (!soundPlayed && mediaPlayer != null && !mediaPlayer.isPlaying()) {
@@ -934,8 +936,8 @@ public class mapdisplay extends AppCompatActivity {
                         ? Double.MAX_VALUE
                         : TurfMeasurement.distance(lastUpdatePoint, currentPoint);
 
-                // Cập nhật nếu người dùng di chuyển trên 50m hoặc đã qua 2 giây
-                if (distance > 0.03 || currentTime - lastUpdateTimestamp > 700) {
+                // Chỉ cập nhật khi người dùng di chuyển đủ xa hoặc sau 2 giây
+                if (distance > 0.05 || currentTime - lastUpdateTimestamp > 2000) {
                     lastUpdateTimestamp = currentTime;
                     lastUpdatePoint = currentPoint;
 
@@ -944,6 +946,16 @@ public class mapdisplay extends AppCompatActivity {
                             routeLineApi.updateTraveledRouteLine(currentPoint);
                     if (mapStyle != null) {
                         routeLineView.renderRouteLineUpdate(mapStyle, result);
+                    }
+
+                    // Gọi checkProximityToPothole mỗi 1 giây
+                    if (currentTime - lastProximityCheckTimestamp > 1000) { // 1 giây
+                        for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+                            Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                            if (checkedRoute != null && isPointOnRoute2(potholePoint, checkedRoute)) {
+                                checkProximityToPothole(currentPoint, potholePoint, location.getThird());
+                            }
+                        }
                     }
                 }
             }
