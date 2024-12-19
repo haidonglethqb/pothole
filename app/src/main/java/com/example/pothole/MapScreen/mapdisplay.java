@@ -187,6 +187,8 @@ import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
 public class mapdisplay extends AppCompatActivity {
+    private long lastUpdateTimestamp = 0; // Lưu thời gian lần cập nhật cuối
+    private Point lastUpdatePoint; // Lưu vị trí lần cập nhật cuối
 
     private TextView tvSpeed;
     private TextView tvDistance;
@@ -263,6 +265,9 @@ public class mapdisplay extends AppCompatActivity {
     private LocationManager locationManager;
     private LocationListener locationListener;
     private TextView speedTextView;
+
+    private double lastUpdateDistance = 0;
+    private long lastProximityCheckTimestamp = 0;
 
 
 
@@ -413,6 +418,7 @@ public class mapdisplay extends AppCompatActivity {
             showNotification("Pothole Alert", "Slow down, you are approaching a pothole with severity: " + severity);
             Toast.makeText(mapdisplay.this, "Pothole 100 meters ahead", Toast.LENGTH_SHORT).show();
             notificationShown = true;
+            Log.d(TAG, "Pothole 100 meters ahead");
 
             // Play warning sound only once
             if (!soundPlayed && mediaPlayer != null && !mediaPlayer.isPlaying()) {
@@ -922,7 +928,38 @@ public class mapdisplay extends AppCompatActivity {
 
         focusLocationBtn.hide();
         LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
-        locationComponentPlugin.addOnIndicatorPositionChangedListener(onPositionChangedListener);
+        locationComponentPlugin.addOnIndicatorPositionChangedListener(new OnIndicatorPositionChangedListener() {
+            @Override
+            public void onIndicatorPositionChanged(Point currentPoint) {
+                long currentTime = System.currentTimeMillis();
+                double distance = lastUpdatePoint == null
+                        ? Double.MAX_VALUE
+                        : TurfMeasurement.distance(lastUpdatePoint, currentPoint);
+
+                // Chỉ cập nhật khi người dùng di chuyển đủ xa hoặc sau 2 giây
+                if (distance > 0.05 || currentTime - lastUpdateTimestamp > 2000) {
+                    lastUpdateTimestamp = currentTime;
+                    lastUpdatePoint = currentPoint;
+
+                    // Vẽ lại tuyến đường nếu cần
+                    Expected<RouteLineError, RouteLineUpdateValue> result =
+                            routeLineApi.updateTraveledRouteLine(currentPoint);
+                    if (mapStyle != null) {
+                        routeLineView.renderRouteLineUpdate(mapStyle, result);
+                    }
+
+                    // Gọi checkProximityToPothole mỗi 1 giây
+                    if (currentTime - lastProximityCheckTimestamp > 1000) { // 1 giây
+                        for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+                            Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                            if (checkedRoute != null && isPointOnRoute2(potholePoint, checkedRoute)) {
+                                checkProximityToPothole(currentPoint, potholePoint, location.getThird());
+                            }
+                        }
+                    }
+                }
+            }
+        });
         getGestures(mapView).addOnMoveListener(onMoveListener);
 
         setRoute.setOnClickListener(new View.OnClickListener() {
@@ -1177,107 +1214,126 @@ public class mapdisplay extends AppCompatActivity {
             @Override
             public void onSuccess(LocationEngineResult result) {
                 Location location = result.getLastLocation();
+                if (location == null) {
+                    handleRouteFailure("Failed to get current location");
+                    return;
+                }
+
                 setRoute.setEnabled(false);
                 setRoute.setText("Fetching route...");
                 RouteOptions.Builder builder = RouteOptions.builder();
-                Point origin = Point.fromLngLat(Objects.requireNonNull(location).getLongitude(), location.getLatitude());
-                builder.coordinatesList(Arrays.asList(origin, point));
-
-                builder.alternatives(true);
-                builder.profile(DirectionsCriteria.PROFILE_DRIVING);
-                builder.bearingsList(Arrays.asList(Bearing.builder().angle(location.getBearing()).degrees(45.0).build(), null));
+                Point origin = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                builder.coordinatesList(Arrays.asList(origin, point))
+                        .alternatives(true)
+                        .profile(DirectionsCriteria.PROFILE_DRIVING)
+                        .bearingsList(Arrays.asList(Bearing.builder().angle(location.getBearing()).degrees(45.0).build(), null));
                 applyDefaultNavigationOptions(builder);
 
                 mapboxNavigation.requestRoutes(builder.build(), new NavigationRouterCallback() {
                     @Override
                     public void onRoutesReady(@NonNull List<NavigationRoute> list, @NonNull RouterOrigin routerOrigin) {
-                        mapboxNavigation.setNavigationRoutes(list);
-                        checkedRoute = list.get(0);
-
-                        // Filter and display potholes based on selected types
-                        pointAnnotationManager.deleteAll();
-                        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
-                            if (selectedPotholeTypes.contains(location.getThird())) {
-                                Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
-                                if (isPointOnRoute2(potholePoint, checkedRoute)) {
-                                    addPotholeIcon(location); // Pass the Quadruple object directly
-                                }
-                            }
-                        }
-
-                        focusLocationBtn.performClick();
-                        setRoute.setEnabled(true);
-                        isRouteActive = true;
-                        setRoute.setText("Clear route");
-                        maneuverView.setVisibility(View.VISIBLE);
-                        findViewById(R.id.search_bar).setVisibility(View.GONE);
-
-                        addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
-                            @Override
-                            public boolean onMapClick(@NonNull Point point) {
-                                int index = 1;
-                                if (list.size() > 1) {
-                                    for (int i = 1; i < list.size(); i++) {
-                                        alternativeRoute = list.get(i);
-                                        if (isPointOnRoute(point, alternativeRoute)) {
-                                            index = i;
-                                            break;
-                                        }
-                                    }
-                                    list.remove(index);
-                                    list.add(0, alternativeRoute);
-                                }
-
-                                mapboxNavigation.setNavigationRoutes(list);
-                                checkedRoute = alternativeRoute;
-                                pointAnnotationManager.deleteAll();
-
-                                // Filter and display potholes based on selected types
-                                for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
-                                    if (selectedPotholeTypes.contains(location.getThird())) {
-                                        Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
-                                        if (isPointOnRoute2(potholePoint, checkedRoute)) {
-                                            addPotholeIcon(location); // Pass the Quadruple object directly
-                                        }
-                                    }
-                                }
-
-                                setRoute.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if (!isRouteActive) {
-                                            fetchRoute(destination);
-                                        } else {
-                                            isRouteActive = false;
-                                            mapboxNavigation.setNavigationRoutes(Collections.emptyList());
-                                            setRoute.setText("Set route");
-                                            maneuverView.setVisibility(View.GONE);
-                                            findViewById(R.id.search_bar).setVisibility(View.VISIBLE); // Hide the maneuver view
-                                        }
-                                    }
-                                });
-                                return true;
-                            }
-                        });
+                        handleRoutesReady(list);
                     }
 
                     @Override
                     public void onFailure(@NonNull List<RouterFailure> list, @NonNull RouteOptions routeOptions) {
-                        setRoute.setEnabled(true);
-                        setRoute.setText("Set route");
-                        Toast.makeText(mapdisplay.this, "Route request failed", Toast.LENGTH_SHORT).show();
+                        handleRouteFailure("Route request failed");
                     }
 
                     @Override
                     public void onCanceled(@NonNull RouteOptions routeOptions, @NonNull RouterOrigin routerOrigin) {
+                        handleRouteFailure("Route request canceled");
                     }
                 });
             }
 
             @Override
             public void onFailure(@NonNull Exception exception) {
+                handleRouteFailure("Failed to get location: " + exception.getMessage());
             }
         });
+    }
+
+    private void handleRoutesReady(@NonNull List<NavigationRoute> list) {
+        mapboxNavigation.setNavigationRoutes(list);
+        checkedRoute = list.get(0);
+
+        // Filter and display potholes based on selected types
+        pointAnnotationManager.deleteAll();
+        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
+            if (selectedPotholeTypes.contains(location.getThird())) {
+                Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                if (isPointOnRoute2(potholePoint, checkedRoute)) {
+                    addPotholeIcon(location); // Pass the Quadruple object directly
+                }
+            }
+        }
+
+        focusLocationBtn.performClick();
+        setRoute.setEnabled(true);
+        isRouteActive = true;
+        setRoute.setText("Clear route");
+        maneuverView.setVisibility(View.VISIBLE);
+        findViewById(R.id.search_bar).setVisibility(View.GONE);
+
+        addOnMapClickListener(mapView.getMapboxMap(), new OnMapClickListener() {
+            @Override
+            public boolean onMapClick(@NonNull Point point) {
+                handleMapClick(point, list);
+                return true;
+            }
+        });
+    }
+
+    private void handleMapClick(@NonNull Point point, @NonNull List<NavigationRoute> list) {
+        int index = 1;
+        if (list.size() > 1) {
+            for (int i = 1; i < list.size(); i++) {
+                alternativeRoute = list.get(i);
+                if (isPointOnRoute(point, alternativeRoute)) {
+                    index = i;
+                    break;
+                }
+            }
+            list.remove(index);
+            list.add(0, alternativeRoute);
+        }
+
+        mapboxNavigation.setNavigationRoutes(list);
+        checkedRoute = alternativeRoute;
+        pointAnnotationManager.deleteAll();
+
+        // Filter and display potholes based on selected types
+        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
+            if (selectedPotholeTypes.contains(location.getThird())) {
+                Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
+                if (isPointOnRoute2(potholePoint, checkedRoute)) {
+                    addPotholeIcon(location); // Pass the Quadruple object directly
+                }
+            }
+        }
+
+        setRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isRouteActive) {
+                    fetchRoute(destination);
+                } else {
+                    isRouteActive = false;
+                    mapboxNavigation.setNavigationRoutes(Collections.emptyList());
+                    setRoute.setText("Set route");
+                    maneuverView.setVisibility(View.GONE);
+                    findViewById(R.id.search_bar).setVisibility(View.VISIBLE); // Hide the maneuver view
+                }
+            }
+        });
+    }
+
+    private void handleRouteFailure(String message) {
+        setRoute.setEnabled(true);
+        setRoute.setText("Set route");
+        Toast.makeText(mapdisplay.this, message, Toast.LENGTH_SHORT).show();
+        Log.e("fetchRoute", message);
     }
 
 
