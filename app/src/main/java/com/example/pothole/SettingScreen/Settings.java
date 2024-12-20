@@ -61,6 +61,7 @@ public class Settings extends BaseActivity {
         tvlogout.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, login.class);
             startActivity(intent);
+            finish();
         });
         tvReport.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, Accelerometer.class);
@@ -75,6 +76,7 @@ public class Settings extends BaseActivity {
         tvAddaccount.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, register.class);
             startActivity(intent);
+            finish();
         });
         // Find navigation bar buttons
         home_button = findViewById(R.id.home_button);
@@ -87,18 +89,21 @@ public class Settings extends BaseActivity {
             // Handle home button click
             Intent intent = new Intent(Settings.this, MainActivity.class);
             startActivity(intent);
+            finish();
         });
 
         maps_button.setOnClickListener(view -> {
             // Handle maps button click
             Intent intent = new Intent(Settings.this, mapdisplay.class);
             startActivity(intent);
+            finish();
         });
 
         history_button.setOnClickListener(view -> {
             // Handle history button click
             Intent intent = new Intent(Settings.this, History.class);
             startActivity(intent);
+            finish();
         });
 
         settings_button.setOnClickListener(view -> {
