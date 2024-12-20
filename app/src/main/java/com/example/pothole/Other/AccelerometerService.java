@@ -145,17 +145,17 @@ public class AccelerometerService extends Service implements SensorEventListener
     private void detectPothole() {
         float combinedDelta = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-        if (combinedDelta > 15) {
+        if (combinedDelta > 25) {
             long currentTime = System.currentTimeMillis();
 
 
             if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
                 lastDetectionTime = currentTime;
 
-                if (combinedDelta < 20) {
+                if (combinedDelta < 30) {
                     severity = "Minor";
                     //minorCount++;
-                } else if (combinedDelta < 25) {
+                } else if (combinedDelta < 35) {
                     severity = "Medium";
                     //mediumCount++;
                 } else {
