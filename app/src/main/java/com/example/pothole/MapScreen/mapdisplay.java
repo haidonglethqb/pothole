@@ -1,5 +1,7 @@
 package com.example.pothole.MapScreen;
 import android.location.Location;
+
+import com.example.pothole.DashboardScreen.MainActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -284,6 +286,7 @@ public class mapdisplay extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private double latitude, longitude;
     private int potholeCount = 0;
+    private float deltaX, deltaY, deltaZ,combinedDelta;
     private String severity;
     private AccelerometerService accelerometerService;
     private boolean isBound = false;
@@ -333,15 +336,81 @@ public class mapdisplay extends AppCompatActivity {
             String severity = intent.getStringExtra("severity");
             double latitude = intent.getDoubleExtra("latitude", 0.0);
             double longitude = intent.getDoubleExtra("longitude", 0.0);
-
-            Toast.makeText(mapdisplay.this, "New pothole", Toast.LENGTH_SHORT).show();
+            int potholeCount = intent.getIntExtra("potholeCount", 0);
+            float deltaX = intent.getFloatExtra("deltaX", 0.0f);
+            float deltaY = intent.getFloatExtra("deltaY", 0.0f);
+            float deltaZ = intent.getFloatExtra("deltaZ", 0.0f);
+            float combinedDelta = intent.getFloatExtra("combinedDelta", 0.0f);
             showPotholeNotification(severity, latitude, longitude);
 
+
+            showConfirmDialog(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
         }
     };
 
 
+    private void showConfirmDialog(final String severity, final float deltaX, final float deltaY, final float deltaZ, final float combinedDelta, final double latitude, final double longitude) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm Pothole Detection")
+                .setMessage("Do you want to save the pothole data?\nSeverity: " + severity + "\nLatitude: " + latitude + "\nLongitude: " + longitude)
+                .setPositiveButton("Yes", null) // Set null to override later
+                .setNegativeButton("No", null); // Set null to override later
 
+        AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false); // Prevent dialog from being dismissed on touch outside
+        dialog.show();
+
+        // Override the positive button to prevent automatic dismissal
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveToFirebase(potholeCount, severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
+
+                Intent intent = new Intent("com.example.pothole.POTHOLE_CONFIRMED");
+                sendBroadcast(intent);
+                dialog.dismiss();
+            }
+        });
+
+        // Override the negative button to prevent automatic dismissal
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+    private void saveToFirebase(int potholeCount,String severity, float deltaX, float deltaY, float deltaZ, float combinedDelta, double latitude, double longitude) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pothole-060104-default-rtdb.firebaseio.com/");
+        String potholeId = databaseReference.child("potholes").push().getKey();
+
+        if (potholeId == null) {
+            Log.e(TAG, "Failed to generate unique key for pothole");
+            return;
+        }
+
+        PotholeData potholeData = new PotholeData(
+                potholeCount,
+                severity,
+                deltaX,
+                deltaY,
+                deltaZ,
+                combinedDelta,
+                latitude,
+                longitude,
+                System.currentTimeMillis(),
+                getCurrentDateTime()
+        );
+
+        databaseReference.child("potholes").child(potholeId).setValue(potholeData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Pothole data saved successfully. ID: " + potholeId))
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to save pothole data", e));
+    }
+
+    private String getCurrentDateTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return sdf.format(new Date());
+    }
 
     //navigation
     private final LocationObserver locationObserver = new LocationObserver() {
@@ -840,6 +909,8 @@ public class mapdisplay extends AppCompatActivity {
         // Register broadcast receiver
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
         registerReceiver(potholeReceiver, filter);
+
+
 
         points.add(pothole);
         points.add(pothole2);
@@ -1350,6 +1421,15 @@ public class mapdisplay extends AppCompatActivity {
                 Toast.makeText(this, "Location permission is required to display speed", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed(); // Call the superclass method
+        Intent intent = new Intent(mapdisplay.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish(); // Ensure the current activity is finished
     }
 
     @Override
