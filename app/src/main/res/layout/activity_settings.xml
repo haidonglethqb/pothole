@@ -4,9 +4,42 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+    <!-- Header (Phần tiêu đề) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1F41BB"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:id="@+id/header">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_gravity="start"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/out" />
+
+        <TextView
+            android:id="@+id/tvSettingsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/setting_title"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/header"
         android:layout_above="@id/navigation_bar"
         android:background="@color/white">
 
@@ -16,37 +49,6 @@
             android:id="@+id/main"
             android:background="@color/white"
             android:orientation="vertical">
-
-            <!-- Header (Phần tiêu đề) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#1F41BB"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <ImageButton
-                    android:id="@+id/btnBack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:layout_gravity="start"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Back"
-                    android:src="@drawable/out" />
-
-                <TextView
-                    android:id="@+id/tvSettingsTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/setting_title"
-                    android:textColor="@color/white"
-                    android:textSize="30sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
 
             <!-- Account Section (Phần Tài khoản) -->
             <TextView
@@ -349,10 +351,65 @@
     </ScrollView>
 
     <!-- Bottom Navigation -->
-    <include
+    <FrameLayout
         android:id="@+id/navigation_bar"
-        layout="@layout/item_navigation_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <!-- Home Button -->
+            <ImageButton
+                android:id="@+id/home_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Open home"
+                android:scaleType="centerInside"
+                android:src="@drawable/home"
+                app:tint="@color/black" />
+
+            <!-- Maps Button -->
+            <ImageButton
+                android:id="@+id/maps_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Open maps"
+                android:scaleType="centerInside"
+                android:src="@drawable/maps"
+                app:tint="@color/black" />
+
+            <!-- History Button -->
+            <ImageButton
+                android:id="@+id/history_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Open report history"
+                android:scaleType="centerInside"
+                android:src="@drawable/history"
+                app:tint="@color/black" />
+
+            <!-- Settings Button -->
+            <ImageButton
+                android:id="@+id/settings_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Open settings"
+                android:scaleType="centerInside"
+                android:src="@drawable/settings"
+                app:tint="@color/black" />
+        </LinearLayout>
+    </FrameLayout>
 </RelativeLayout>

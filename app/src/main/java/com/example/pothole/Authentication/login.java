@@ -35,7 +35,7 @@ public class login extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pothole-060104-default-rtdb.firebaseio.com/");
-
+    private long backPressedTime;
     Button btnSignIn, btnGoogle;
 
     @SuppressLint("WrongViewCast")
@@ -171,4 +171,16 @@ public class login extends AppCompatActivity {
                     finish();
                 });
     }
+
+    @Override
+    public void onBackPressed() {
+        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            super.onBackPressed();
+            finishAffinity();
+        } else {
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+        backPressedTime = System.currentTimeMillis();
+    }
 }
+

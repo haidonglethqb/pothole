@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="severity_levels">
+        <item>All</item>
+        <item>Minor</item>
+        <item>Medium</item>
+        <item>Severe</item>
+    </string-array>
+
+</resources>
