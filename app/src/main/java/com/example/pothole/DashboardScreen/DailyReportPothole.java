@@ -108,8 +108,8 @@ public class DailyReportPothole extends AppCompatActivity {
     private void setupLineChart(List<DataEntry> data) {
         Cartesian cartesian = AnyChart.line();
         cartesian.title("Pothole Count for the Week");
-        cartesian.xAxis(0).title("Days of the Week");
-        cartesian.yAxis(0).title("Number of Potholes");
+        cartesian.xAxis(0).title("Weekdays");
+        cartesian.yAxis(0).title("No. of Potholes");
 
         Line line = cartesian.line(data);
         lineChartView.setChart(cartesian);
