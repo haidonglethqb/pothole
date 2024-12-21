@@ -109,4 +109,5 @@ public class register extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
 }

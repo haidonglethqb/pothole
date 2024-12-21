@@ -65,6 +65,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         }
         holder.itemView.setBackgroundColor(backgroundColor);
     }
+    public void updateList(ArrayList<HistoryItem> newList) {
+        historyList.clear();
+        historyList.addAll(newList);
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemCount() {
