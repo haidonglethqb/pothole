@@ -27,4 +27,13 @@
         android:layout_marginTop="8dp"
         android:text="Detection Time"
         android:textSize="14sp" />
+
+    <!-- Thêm TextView cho tên đường -->
+    <TextView
+        android:id="@+id/pothole_street"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Street Name"
+        android:textSize="14sp" />
 </LinearLayout>

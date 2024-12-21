@@ -55,6 +55,8 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
     implementation ("com.google.android.gms:play-services-location:21.0.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("com.mapbox.navigation:android:2.15.2")
     implementation("com.mapbox.search:mapbox-search-android-ui:1.0.0-rc.6")

@@ -92,6 +92,13 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -207,10 +214,16 @@ public class mapdisplay extends AppCompatActivity {
                 ImageView potholeImage = dialogView.findViewById(R.id.pothole_image);
                 TextView potholeInfo = dialogView.findViewById(R.id.pothole_info);
                 TextView potholeTime = dialogView.findViewById(R.id.pothole_time);
+                TextView potholeStreet = dialogView.findViewById(R.id.pothole_street);
 
                 // Set the pothole information
                 potholeInfo.setText("Latitude: " + location.getFirst() + "\nLongitude: " + location.getSecond() + "\nSeverity: " + location.getThird());
                 potholeTime.setText("Detection Time: " + location.getFourth());
+
+                // Fetch the street name from the API
+                getStreetNameFromApi(point, "Unknown Street", streetName -> {
+                    potholeStreet.setText("Street Name: " + streetName);
+                });
 
                 // Optionally, set the image resource based on severity or other criteria
                 if (location.getThird().equals("Minor")) {
@@ -270,6 +283,9 @@ public class mapdisplay extends AppCompatActivity {
 
     private double lastUpdateDistance = 0;
     private long lastProximityCheckTimestamp = 0;
+
+
+    private static final String BASE_URL = "https://nominatim.openstreetmap.org/";
 
 
 
@@ -347,6 +363,8 @@ public class mapdisplay extends AppCompatActivity {
             showConfirmDialog(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
         }
     };
+
+
 
 
     private void showConfirmDialog(final String severity, final float deltaX, final float deltaY, final float deltaZ, final float combinedDelta, final double latitude, final double longitude) {
@@ -550,7 +568,7 @@ public class mapdisplay extends AppCompatActivity {
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
         double distance = TurfMeasurement.distance(point, nearestPoint);
         // Define a threshold distance (in kilometers) to consider the point as being on the route
-        double thresholdDistance = 0.005; // 5 meters
+        double thresholdDistance = 0.005; // 50 meters
         return distance < thresholdDistance;
     }
     private MapboxSpeechApi speechApi;
@@ -621,6 +639,39 @@ public class mapdisplay extends AppCompatActivity {
             speechApi.generate(voiceInstructions, speechCallback);
         }
     };
+
+    private void getStreetNameFromApi(Point point, String defaultStreetName, com.example.pothole.MapScreen.mapdisplay.Callback<String> callback) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        NominatimService service = retrofit.create(NominatimService.class);
+        Call<NominatimResponse> call = service.getStreetName(point.latitude(), point.longitude(), "json");
+
+        call.enqueue(new retrofit2.Callback<NominatimResponse>() {
+            @Override
+            public void onResponse(Call<NominatimResponse> call, Response<NominatimResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String streetName = response.body().address.road;
+                    callback.onResponse(streetName != null ? streetName : defaultStreetName);
+                } else {
+                    callback.onResponse(defaultStreetName);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NominatimResponse> call, Throwable t) {
+                callback.onResponse(defaultStreetName);
+            }
+        });
+    }
+
+    private interface Callback<T> {
+        void onResponse(T result);
+    }
+
+
 
     private boolean isVoiceInstructionsMuted = false;
 
