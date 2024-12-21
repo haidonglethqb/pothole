@@ -115,6 +115,8 @@
                     android:orientation="horizontal">
 
                     <!-- Card 1: Pothole Report -->
+
+                    <!-- Separator -->
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -153,7 +155,6 @@
                             android:textSize="14sp" />
                     </RelativeLayout>
 
-                    <!-- Separator -->
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
