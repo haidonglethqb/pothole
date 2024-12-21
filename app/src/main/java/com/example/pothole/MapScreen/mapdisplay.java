@@ -550,7 +550,7 @@ public class mapdisplay extends AppCompatActivity {
         Point nearestPoint = (Point) TurfMisc.nearestPointOnLine(point, routeLineString.coordinates()).geometry();
         double distance = TurfMeasurement.distance(point, nearestPoint);
         // Define a threshold distance (in kilometers) to consider the point as being on the route
-        double thresholdDistance = 0.005; // 50 meters
+        double thresholdDistance = 0.005; // 5 meters
         return distance < thresholdDistance;
     }
     private MapboxSpeechApi speechApi;
@@ -1087,7 +1087,7 @@ public class mapdisplay extends AppCompatActivity {
             }
         });
 
-        mapView.getMapboxMap().loadStyleUri(Style.OUTDOORS, new Style.OnStyleLoaded() {
+        mapView.getMapboxMap().loadStyleUri(Style.TRAFFIC_DAY, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 mapStyle = style;
