@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:id="@+id/main"> <!-- Add this line -->
 
     <!-- Thanh công cụ -->
     <RelativeLayout
@@ -230,20 +230,15 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/pothole_pie_chart"
+        <com.anychart.AnyChartView
+            android:id="@+id/line_chart_view"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/potholereport" />
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 
     <include
         android:id="@+id/navigation_bar"
         layout="@layout/item_navigation_bar" />
 
-
-
-
 </RelativeLayout>
-

@@ -22,6 +22,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anychart.AnyChart;
+import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
+import com.anychart.charts.Pie;
+import com.anychart.AnyChartView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,17 +46,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends BaseActivity implements LocationListener {
 
     ImageButton home_button, maps_button, history_button, settings_button;
-    TextView accerleratorX, accerleratorY, accerleratorZ, combinedDelta, tvpotholeCount, tvdistance,tvname;
+    TextView accerleratorX, accerleratorY, accerleratorZ, combinedDelta, tvpotholeCount, tvdistance, tvname;
     ImageView ivProfilePicture;
+
     private long backPressedTime;
     private double latitude = 0.0, longitude = 0.0;
     private float totalDistance = 0.0f; // Đơn vị: mét
     private Location previousLocation = null; // Lưu vị trí trước đó
+    AnyChartView anyChartView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +72,6 @@ public class MainActivity extends BaseActivity implements LocationListener {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
-
         });
 
         home_button = findViewById(R.id.home_button);
@@ -76,20 +86,17 @@ public class MainActivity extends BaseActivity implements LocationListener {
         tvpotholeCount = findViewById(R.id.potholeCount);
         ivProfilePicture = findViewById(R.id.user_avatar);
         tvname = findViewById(R.id.user_welcome_message);
-
-
         initializeLocation();
+        anyChartView = findViewById(R.id.any_chart_view);
         // Đăng ký BroadcastReceiver
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
         registerReceiver(potholeReceiver, filter);
-
         // Đăng ký BroadcastReceiver
         IntentFilter distanceFilter = new IntentFilter("com.example.pothole.TOTAL_DISTANCE_UPDATED");
         registerReceiver(distanceReceiver, distanceFilter);
 
         IntentFilter potholecountFilter = new IntentFilter("com.example.pothole.POTHOLE_CONFIRMED");
         registerReceiver(potholeConfirmedReceiver, potholecountFilter);
-
         // Đọc dữ liệu từ SharedPreferences
         SharedPreferences prefs = getSharedPreferences("PotholeData", MODE_PRIVATE);
         int savedPotholeCount = prefs.getInt("potholeCount", 0);
@@ -103,12 +110,10 @@ public class MainActivity extends BaseActivity implements LocationListener {
         ivProfilePicture.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, EditProfile.class);
             startActivityForResult(intent, 100); // 100 là requestCode
-
         });
         tvname.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, EditProfile.class);
             startActivityForResult(intent, 100); // 100 là requestCode
-
         });
 
 
@@ -130,39 +135,74 @@ public class MainActivity extends BaseActivity implements LocationListener {
 
         });
 
-        // Kết nối và đọc dữ liệu từ Firebase
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference potholeRef = database.getReference("potholeData");
+        // Set OnClickListener for AnyChartView
+        anyChartView.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DailyReportPothole.class);
+            startActivity(intent);
+        });
 
-        potholeRef.addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference potholeRef = database.getReference("potholes");
+        // Kiểm tra kết nối
+        database.getReference(".info/connected").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    // Giả sử có 1 node duy nhất
-                    float deltaX = snapshot.child("deltax").getValue(Float.class);
-                    float deltaY = snapshot.child("deltay").getValue(Float.class);
-                    float deltaZ = snapshot.child("deltaz").getValue(Float.class);
-                    float combinedDeltaValue = snapshot.child("combinedDelta").getValue(Float.class);
-                    int potholeCount = snapshot.child("potholeCount").getValue(Integer.class);
-                    double totalDistance = snapshot.child("totalDistance").getValue(Double.class);
-
-
-                    // Cập nhật dữ liệu vào TextView
-                    accerleratorX.setText(String.format(Locale.getDefault(), "%.2f", deltaX));
-                    accerleratorY.setText(String.format(Locale.getDefault(), "%.2f", deltaY));
-                    accerleratorZ.setText(String.format(Locale.getDefault(), "%.2f", deltaZ));
-                    combinedDelta.setText(String.format(Locale.getDefault(), "%.2f", combinedDeltaValue));
-                    tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", potholeCount));
-                    tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
-
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                    Log.d("Firebase", "Connected to Firebase");
+                } else {
+                    Log.d("Firebase", "Disconnected from Firebase");
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                //Toast.makeText(MainActivity.this, "Failed to load data.", Toast.LENGTH_SHORT).show();
+                Log.e("Firebase", "Error checking connection");
             }
         });
+
+        potholeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Log.d("Firebase", "onDataChange called");
+                if (snapshot.exists()) {
+                    Log.d("Firebase", "Data exists: " + snapshot.toString());
+
+                    // Kiểm tra và lấy giá trị một cách an toàn
+                    Float deltaX = snapshot.child("deltax").getValue(Float.class);
+                    Float deltaY = snapshot.child("deltay").getValue(Float.class);
+                    Float deltaZ = snapshot.child("deltaz").getValue(Float.class);
+                    Float combinedDeltaValue = snapshot.child("combinedDelta").getValue(Float.class);
+                    Integer potholeCount = snapshot.child("potholeCount").getValue(Integer.class);
+                    Double totalDistance = snapshot.child("totalDistance").getValue(Double.class);
+
+                    // Đảm bảo giá trị không null trước khi sử dụng
+                    accerleratorX.setText(deltaX != null ? String.format(Locale.getDefault(), "%.2f", deltaX) : "N/A");
+                    accerleratorY.setText(deltaY != null ? String.format(Locale.getDefault(), "%.2f", deltaY) : "N/A");
+                    accerleratorZ.setText(deltaZ != null ? String.format(Locale.getDefault(), "%.2f", deltaZ) : "N/A");
+                    combinedDelta.setText(combinedDeltaValue != null ? String.format(Locale.getDefault(), "%.2f", combinedDeltaValue) : "N/A");
+                    tvpotholeCount.setText(potholeCount != null ? String.format(Locale.getDefault(), "%d", potholeCount) : "0");
+                    tvdistance.setText(totalDistance != null ? String.format(Locale.getDefault(), "%.2f m", totalDistance) : "0.00 m");
+
+                    // Cập nhật dữ liệu vào biểu đồ nếu dữ liệu hợp lệ
+                    if (deltaX != null && deltaY != null && deltaZ != null) {
+                        List<DataEntry> data = new ArrayList<>();
+                        data.add(new ValueDataEntry("Delta X", deltaX));
+                        data.add(new ValueDataEntry("Delta Y", deltaY));
+                        data.add(new ValueDataEntry("Delta Z", deltaZ));
+                        setupPieChart(data);
+                    }
+                } else {
+                    Log.w("Firebase", "No data exists in 'potholeData'");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("Firebase", "Database error: " + error.getMessage(), error.toException());
+            }
+        });
+
     }
     private void initializeLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -198,7 +238,11 @@ public class MainActivity extends BaseActivity implements LocationListener {
                 ",  Distance: " + totalDistance + " m");
     }
 
-
+    private void setupPieChart(List<DataEntry> data) {
+        Pie pie = AnyChart.pie();
+        pie.data(data);
+        anyChartView.setChart(pie);
+    }
 
     private BroadcastReceiver distanceReceiver = new BroadcastReceiver() {
         @Override
@@ -244,10 +288,16 @@ public class MainActivity extends BaseActivity implements LocationListener {
                 MainActivity.this.combinedDelta.setText(String.format(Locale.getDefault(), "%.2f", combinedDelta));
                 tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
 
-//
+                // Cập nhật dữ liệu vào biểu đồ
+                List<DataEntry> data = new ArrayList<>();
+                data.add(new ValueDataEntry("Delta X", deltaX));
+                data.add(new ValueDataEntry("Delta Y", deltaY));
+                data.add(new ValueDataEntry("Delta Z", deltaZ));
+                setupPieChart(data);
             }
         }
     };
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -271,7 +321,7 @@ public class MainActivity extends BaseActivity implements LocationListener {
         String base64Image = sharedPreferences.getString("profilePicture", null);
 
         String name = sharedPreferences.getString("name", "");
-        tvname.setText("Welcome back, "+name);
+        tvname.setText("Welcome back, " + name);
         if (base64Image != null) {
             Bitmap bitmap = base64ToBitmap(base64Image);
             ivProfilePicture.setImageBitmap(bitmap);

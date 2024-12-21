@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white"> <!-- Ensure background is set -->
 
     <!-- Tiêu đề Dashboard cố định -->
     <RelativeLayout
@@ -22,7 +22,7 @@
             android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:layout_alignParentStart="true"
             tools:ignore="DuplicateIds" />
 
@@ -34,8 +34,6 @@
             android:layout_centerVertical="true"
             android:src="@drawable/bell"
             app:tint="@android:color/white" />
-
-
     </RelativeLayout>
 
     <!-- Nội dung cuộn -->
@@ -44,7 +42,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/header"
-        android:padding="16dp">
+        android:layout_marginTop="26dp"
+        android:layout_marginBottom="40dp"
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,9 +55,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:background="@android:color/white"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:padding="8dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/user_avatar"
@@ -71,346 +71,341 @@
                     android:id="@+id/user_welcome_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/user_avatar"
                     android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/user_avatar"
                     android:text="@string/welcome_message"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
 
                 <TextView
                     android:id="@+id/user_greeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/user_welcome_message"
-                    android:layout_toEndOf="@id/user_avatar"
                     android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/user_avatar"
                     android:text="@string/greeting_message"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
             </RelativeLayout>
 
             <!-- Phần Báo cáo cơ bản -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fundamental_reports_title"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+
 
             <!-- Fundamental Report Cards -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@android:color/white"
-                    android:padding="16dp"
-                    android:layout_marginEnd="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pothole_report"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/potholeCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="8"
-                        android:textColor="#3abd5d"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/need_improvement"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:src="@drawable/detailsbutton"
-                        android:contentDescription="@string/details_button_description"
-                        android:clickable="true"
-                        android:focusable="true"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@android:color/white"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/traveled_distance"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/traveledDistance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0 m"
-                        android:textColor="#3abd5d"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/excellent"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:src="@drawable/detailsbutton"
-                        android:contentDescription="@string/details_button_description"
-                        android:clickable="true"
-                        android:focusable="true"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Recent Pothole Severity Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:textAlignment="center"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:layout_width="349dp"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="@string/recent_pothole_severity_title"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:layout_width="347dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:contentDescription="Pothole severity image"
-                    android:src="@drawable/recentpothole" />
-
-            </LinearLayout>
-
-            <!-- Visualization Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/visualization_title"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <!-- Overview Report Section -->
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:columnCount="2"
-                android:rowCount="2">
-
-                <!-- Accelerator X -->
-
-                <!-- Accelerator Y -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@android:color/white"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/accelerator_x"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/acceleratorX"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.0"
-                        android:textColor="#3abd5d"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@android:color/white"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/accelerator_y"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/acceleratorY"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.0"
-                        android:textColor="#3abd5d"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <!-- Accelerator Z -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@android:color/white"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/accelerator_z"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/acceleratorZ"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.0"
-                        android:textColor="#3abd5d"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <!-- Parameter T -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@android:color/white"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/parameter_t"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/combinedDelta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.0"
-                        android:textColor="#3abd5d"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:clickable="true"
-                        android:contentDescription="@string/details_button_description"
-                        android:focusable="true"
-                        android:src="@drawable/detailsbutton" />
-                </LinearLayout>
-            </GridLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/overview_report_title"
-                    android:textSize="18sp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/fundamental_reports_title"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:textColor="@android:color/black" />
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/overviewreport" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Card 1: Pothole Report -->
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/potholeReportLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pothole_report"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/potholeCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/potholeReportLabel"
+                            android:layout_marginTop="8dp"
+                            android:text="8"
+                            android:textColor="#3abd5d"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/potholeImprovementLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/potholeCount"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/need_improvement"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+                    <!-- Separator -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/darker_gray" />
+
+                    <!-- Card 2: Traveled Distance -->
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/traveledDistanceLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/traveled_distance"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/traveledDistance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/traveledDistanceLabel"
+                            android:layout_marginTop="8dp"
+                            android:text="0 m"
+                            android:textColor="#3abd5d"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/traveledDistanceStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/traveledDistance"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/excellent"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <!-- Recent Pothole Severity Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@android:color/white"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/overview_report_title"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+
+                    <com.anychart.AnyChartView
+                        android:id="@+id/any_chart_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="16dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Visualization Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@android:color/white">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/visualization_title"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+
+                <!-- Overview Report Section -->
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:columnCount="2"
+                    android:rowCount="2">
+
+                    <!-- Accelerator X -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:background="@android:color/white"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/accelerator_x"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+
+                        <TextView
+                            android:id="@+id/acceleratorX"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.0"
+                            android:textColor="#3abd5d"
+                            android:textSize="32sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="accelerator_x_value"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+                    </LinearLayout>
+
+                    <!-- Accelerator Y -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_row="0"
+                        android:layout_column="1"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:background="@android:color/white"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/accelerator_y"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+
+                        <TextView
+                            android:id="@+id/acceleratorY"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.0"
+                            android:textColor="#3abd5d"
+                            android:textSize="32sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="accelerator_y_value"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+                    </LinearLayout>
+
+                    <!-- Accelerator Z -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_row="1"
+                        android:layout_column="0"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:background="@android:color/white"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/accelerator_z"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+
+                        <TextView
+                            android:id="@+id/acceleratorZ"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.0"
+                            android:textColor="#3abd5d"
+                            android:textSize="32sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="accelerator_z_value"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+                    </LinearLayout>
+
+                    <!-- Parameter T -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_row="1"
+                        android:layout_column="1"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:background="@android:color/white"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/parameter_t"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+
+                        <TextView
+                            android:id="@+id/combinedDelta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.0"
+                            android:textColor="#3abd5d"
+                            android:textSize="32sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="parameter_t_value"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black" /> <!-- Ensure text color is set -->
+                    </LinearLayout>
+                </GridLayout>
             </LinearLayout>
 
             <!-- Phần nội dung còn lại -->
             <!-- Thêm các phần khác như Hình ảnh và Báo cáo tổng quan tương tự -->
-
         </LinearLayout>
     </ScrollView>
 
-    <!-- Nav barr -->
     <include
         android:id="@+id/item_navigation_bar"
         layout="@layout/item_navigation_bar" />
-
-
 </RelativeLayout>
