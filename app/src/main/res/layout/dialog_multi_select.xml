@@ -1,68 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="16dp">
 
     <!-- Pothole Type Section -->
     <TextView
+        android:id="@+id/text_pothole_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Pothole Type"
         android:textStyle="bold"
-        android:paddingBottom="8dp" />
+        android:textColor="@android:color/black"
+        android:paddingBottom="8dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/linear_pothole_type"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_below="@id/text_pothole_type"
+        android:layout_marginBottom="16dp"
+        android:weightSum="3"
+        android:gravity="start">
 
         <CheckBox
             android:id="@+id/checkbox_minor"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Minor" />
+            android:layout_weight="1"
+            android:text="Minor"
+            android:layout_marginEnd="8dp" />
 
         <CheckBox
             android:id="@+id/checkbox_medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Medium" />
+            android:layout_weight="1"
+            android:text="Medium"
+            android:layout_marginEnd="8dp" />
 
         <CheckBox
             android:id="@+id/checkbox_severe"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Severe" />
     </LinearLayout>
 
     <!-- Date Range Section -->
     <TextView
+        android:id="@+id/text_date_range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Date Range"
         android:textStyle="bold"
+        android:textColor="@android:color/black"
         android:paddingTop="16dp"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="8dp"
+        android:textSize="16sp"
+        android:layout_below="@id/linear_pothole_type"
+        android:layout_marginBottom="8dp"/>
 
     <RadioGroup
         android:id="@+id/radio_group_date_range"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_below="@id/text_date_range"
+        android:layout_marginBottom="16dp"
+        android:gravity="start">
 
         <RadioButton
             android:id="@+id/radio_7_days"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last 7 days" />
+            android:text="Last 7 days"
+            android:layout_marginEnd="8dp" />
 
         <RadioButton
             android:id="@+id/radio_14_days"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last 14 days" />
+            android:text="Last 14 days"
+            android:layout_marginEnd="8dp" />
 
         <RadioButton
             android:id="@+id/radio_30_days"
@@ -73,30 +95,39 @@
 
     <!-- Distance Section -->
     <TextView
+        android:id="@+id/text_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Distance"
         android:textStyle="bold"
+        android:textColor="@android:color/black"
         android:paddingTop="16dp"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="8dp"
+        android:textSize="16sp"
+        android:layout_below="@id/radio_group_date_range"
+        android:layout_marginBottom="8dp"/>
 
     <RadioGroup
         android:id="@+id/radio_group_distance"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_below="@id/text_distance"
+        android:gravity="start">
 
         <RadioButton
             android:id="@+id/radio_1_km"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Within 1 km" />
+            android:text="Within 1 km"
+            android:layout_marginEnd="8dp" />
 
         <RadioButton
             android:id="@+id/radio_3_km"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Within 3 km" />
+            android:text="Within 3 km"
+            android:layout_marginEnd="8dp" />
 
         <RadioButton
             android:id="@+id/radio_5_km"
@@ -105,4 +136,4 @@
             android:text="Within 5 km" />
     </RadioGroup>
 
-</LinearLayout>
+</RelativeLayout>

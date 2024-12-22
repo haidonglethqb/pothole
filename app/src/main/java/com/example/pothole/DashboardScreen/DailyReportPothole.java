@@ -2,6 +2,8 @@ package com.example.pothole.DashboardScreen;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +34,9 @@ import java.util.Map;
 
 public class DailyReportPothole extends AppCompatActivity {
 
+    // UI elements
+    private ImageButton btnBack;
+
     private static final String TAG = "DailyReportPothole";
     private AnyChartView lineChartView;
 
@@ -44,6 +49,15 @@ public class DailyReportPothole extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        // Use btnBack to get back to the previous activity
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
         });
 
         lineChartView = findViewById(R.id.line_chart_view);

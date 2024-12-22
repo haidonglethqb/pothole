@@ -24,6 +24,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.view.MotionEvent;
+import android.widget.Button;
 import android.widget.CheckBox;
 
 import android.content.DialogInterface;
@@ -66,6 +67,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -81,6 +83,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -195,10 +198,15 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import kotlin.jvm.functions.Function1;
 
+import com.bumptech.glide.Glide;
+
 public class mapdisplay extends AppCompatActivity {
+
+    // UI elements
+    private ImageButton btnBack;
+
     private long lastUpdateTimestamp = 0; // Lưu thời gian lần cập nhật cuối
     private Point lastUpdatePoint; // Lưu vị trí lần cập nhật cuối
-
     private TextView tvSpeed;
     private TextView tvDistance;
     private double totalDistance = 0.0;
@@ -212,12 +220,16 @@ public class mapdisplay extends AppCompatActivity {
                 // Inflate the custom layout
                 View dialogView = getLayoutInflater().inflate(R.layout.dialog_pothole_info, null);
                 ImageView potholeImage = dialogView.findViewById(R.id.pothole_image);
-                TextView potholeInfo = dialogView.findViewById(R.id.pothole_info);
+                TextView pothole_latitude = dialogView.findViewById(R.id.pothole_latitude);
+                TextView pothole_longitude = dialogView.findViewById(R.id.pothole_longitude);
+                TextView pothole_severity = dialogView.findViewById(R.id.pothole_severity);
                 TextView potholeTime = dialogView.findViewById(R.id.pothole_time);
                 TextView potholeStreet = dialogView.findViewById(R.id.pothole_street);
 
                 // Set the pothole information
-                potholeInfo.setText("Latitude: " + location.getFirst() + "\nLongitude: " + location.getSecond() + "\nSeverity: " + location.getThird());
+                pothole_latitude.setText("Latitude: " + location.getFirst());
+                pothole_longitude.setText("Longitude: " + location.getSecond());
+                pothole_severity.setText("Severity: " + location.getThird());
                 potholeTime.setText("Detection Time: " + location.getFourth());
 
                 // Fetch the street name from the API
@@ -225,14 +237,17 @@ public class mapdisplay extends AppCompatActivity {
                     potholeStreet.setText("Street Name: " + streetName);
                 });
 
-                // Optionally, set the image resource based on severity or other criteria
+                // Set the image resource based on severity or other criteria
+                int gifResource = R.drawable.potholecaution; // Default GIF
                 if (location.getThird().equals("Minor")) {
-                    potholeImage.setImageResource(R.drawable.minor);
+                    gifResource = R.drawable.minor_caution;
                 } else if (location.getThird().equals("Medium")) {
-                    potholeImage.setImageResource(R.drawable.medium);
+                    gifResource = R.drawable.medium_caution;
                 } else if (location.getThird().equals("Severe")) {
-                    potholeImage.setImageResource(R.drawable.potholecaution);
+                    gifResource = R.drawable.severe_caution;
                 }
+
+                Glide.with(this).asGif().load(gifResource).into(potholeImage);
 
                 // Create and show the AlertDialog with the custom layout
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -247,7 +262,7 @@ public class mapdisplay extends AppCompatActivity {
     private static final String TAG = "mapdisplay";
     private Style mapStyle;
     MapView mapView;
-    MaterialButton setRoute;
+    AppCompatButton setRoute;
     FloatingActionButton focusLocationBtn;
     CompassView compassView;
     private Point destination;
@@ -835,8 +850,6 @@ public class mapdisplay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         mediaPlayer = MediaPlayer.create(this, R.raw.warning); // Replace with your sound file
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -854,8 +867,9 @@ public class mapdisplay extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_mapdisplay);
 
-
-
+        // Set up the back button
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {

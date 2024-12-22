@@ -11,12 +11,17 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,24 +55,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends BaseActivity implements LocationListener {
+public class MainActivity extends BaseActivity implements LocationListener, SensorEventListener {
 
+    // UI elements
     ImageButton home_button, maps_button, history_button, settings_button;
     TextView accerleratorX, accerleratorY, accerleratorZ, combinedDelta, tvpotholeCount, tvdistance, tvname;
     ImageView ivProfilePicture;
+    AnyChartView anyChartView;
+    Button showCharts;
 
+    // Sensor variables
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+
+    // Location variables
     private long backPressedTime;
     private double latitude = 0.0, longitude = 0.0;
     private float totalDistance = 0.0f; // Đơn vị: mét
     private Location previousLocation = null; // Lưu vị trí trước đó
-    AnyChartView anyChartView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        hideSystemUI();
+        adjustNavigationBarPadding();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -78,6 +91,7 @@ public class MainActivity extends BaseActivity implements LocationListener {
         maps_button = findViewById(R.id.maps_button);
         history_button = findViewById(R.id.history_button);
         settings_button = findViewById(R.id.settings_button);
+        showCharts = findViewById(R.id.showCharts);
         accerleratorX = findViewById(R.id.acceleratorX);
         accerleratorY = findViewById(R.id.acceleratorY);
         accerleratorZ = findViewById(R.id.acceleratorZ);
@@ -88,21 +102,39 @@ public class MainActivity extends BaseActivity implements LocationListener {
         tvname = findViewById(R.id.user_welcome_message);
         initializeLocation();
         anyChartView = findViewById(R.id.any_chart_view);
-        // Đăng ký BroadcastReceiver
+
+
+        // Đăng ký BroadcastReceiver để nhận thông báo khi phát hiện pothole
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
         registerReceiver(potholeReceiver, filter);
-        // Đăng ký BroadcastReceiver
+
+        // Đăng ký BroadcastReceiver để nhận thông báo khi cập nhật quãng đường
         IntentFilter distanceFilter = new IntentFilter("com.example.pothole.TOTAL_DISTANCE_UPDATED");
         registerReceiver(distanceReceiver, distanceFilter);
 
+        // Đăng ký BroadcastReceiver để nhận thông báo khi xác nhận pothole
         IntentFilter potholecountFilter = new IntentFilter("com.example.pothole.POTHOLE_CONFIRMED");
         registerReceiver(potholeConfirmedReceiver, potholecountFilter);
+
+        // Đăng ký cảm biến
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        // Kiểm tra cảm biến có tồn tại không
+        if (accelerometer == null) {
+            Toast.makeText(this, "Accelerometer sensor not found", Toast.LENGTH_SHORT).show();
+        }
+
+        // Đăng ký cảm biến
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
         // Đọc dữ liệu từ SharedPreferences
         SharedPreferences prefs = getSharedPreferences("PotholeData", MODE_PRIVATE);
         int savedPotholeCount = prefs.getInt("potholeCount", 0);
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
         loadTotalDistanceFromSharedPreferences();
         tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
+
         // Hiển thị ảnh đại diện
         loadProfilePictureAndName();
 
@@ -116,6 +148,7 @@ public class MainActivity extends BaseActivity implements LocationListener {
             startActivityForResult(intent, 100); // 100 là requestCode
         });
 
+        // Sự kiện click vào nút Home, Maps, History, Settings
 
         maps_button.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, mapdisplay.class);
@@ -132,15 +165,15 @@ public class MainActivity extends BaseActivity implements LocationListener {
             Intent intent = new Intent(MainActivity.this, com.example.pothole.Other.History.class);
             startActivity(intent);
 
-
         });
 
-        // Set OnClickListener for AnyChartView
-        anyChartView.setOnClickListener(v -> {
+        // Sự kiện click vào biểu đồ
+        showCharts.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DailyReportPothole.class);
             startActivity(intent);
         });
 
+        // Tạo biểu đồ
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference potholeRef = database.getReference("potholes");
         // Kiểm tra kết nối
@@ -161,6 +194,53 @@ public class MainActivity extends BaseActivity implements LocationListener {
             }
         });
 
+        // Hiện biểu đồ tròn theo tổng số lỗ minor, medium, severe từ firebase
+        Pie pie = AnyChart.pie();
+        List<DataEntry> data = new ArrayList<>();
+        potholeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    int minorCount = 0;
+                    int mediumCount = 0;
+                    int severeCount = 0;
+
+                    for (DataSnapshot potholeSnapshot : snapshot.getChildren()) {
+                        String severity = potholeSnapshot.child("severity").getValue(String.class);
+                        if (severity != null) {
+                            switch (severity) {
+                                case "Minor":
+                                    minorCount++;
+                                    break;
+                                case "Medium":
+                                    mediumCount++;
+                                    break;
+                                case "Severe":
+                                    severeCount++;
+                                    break;
+                            }
+                        }
+                    }
+
+                    int totalCount = minorCount + mediumCount + severeCount;
+                    if (totalCount > 0) {
+                        data.clear();
+                        data.add(new ValueDataEntry("Minor", (minorCount * 100.0) / totalCount));
+                        data.add(new ValueDataEntry("Medium", (mediumCount * 100.0) / totalCount));
+                        data.add(new ValueDataEntry("Severe", (severeCount * 100.0) / totalCount));
+                        pie.data(data);
+                        anyChartView.setChart(pie);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("Firebase", "Database error: " + error.getMessage(), error.toException());
+            }
+        });
+
+        // Lắng nghe sự thay đổi dữ liệu
         potholeRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -184,16 +264,8 @@ public class MainActivity extends BaseActivity implements LocationListener {
                     tvpotholeCount.setText(potholeCount != null ? String.format(Locale.getDefault(), "%d", potholeCount) : "0");
                     tvdistance.setText(totalDistance != null ? String.format(Locale.getDefault(), "%.2f m", totalDistance) : "0.00 m");
 
-                    // Cập nhật dữ liệu vào biểu đồ nếu dữ liệu hợp lệ
-                    if (deltaX != null && deltaY != null && deltaZ != null) {
-                        List<DataEntry> data = new ArrayList<>();
-                        data.add(new ValueDataEntry("Delta X", deltaX));
-                        data.add(new ValueDataEntry("Delta Y", deltaY));
-                        data.add(new ValueDataEntry("Delta Z", deltaZ));
-                        setupPieChart(data);
-                    }
                 } else {
-                    Log.w("Firebase", "No data exists in 'potholeData'");
+                    Log.w("Firebase", "No data found in Firebase.");
                 }
             }
 
@@ -204,6 +276,28 @@ public class MainActivity extends BaseActivity implements LocationListener {
         });
 
     }
+
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    private void adjustNavigationBarPadding() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            View navigationBar = findViewById(R.id.item_navigation_bar);
+            navigationBar.setPadding(0, 0, 0, systemBars.bottom);
+            return insets;
+        });
+    }
+
+    // Hàm khởi tạo vị trí
     private void initializeLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -220,6 +314,8 @@ public class MainActivity extends BaseActivity implements LocationListener {
             longitude = location.getLongitude();
         }
     }
+
+    // Hàm cập nhật vị trí
     @Override
     public void onLocationChanged(@NonNull Location location) {
         latitude = location.getLatitude();
@@ -231,19 +327,52 @@ public class MainActivity extends BaseActivity implements LocationListener {
             totalDistance += distance; // Cộng dồn vào tổng quãng đường
         }
         previousLocation = location;
-        // Hiển thị  quãng đường lên giao diện
-        tvdistance.setText(String.format(Locale.getDefault(), "Distance: %.2f m", totalDistance));
+        // Hiển thị quãng đường lên giao diện
+        tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
 
         Log.d(TAG, "Updated Location: Latitude: " + latitude + ", Longitude: " + longitude +
                 ",  Distance: " + totalDistance + " m");
     }
 
-    private void setupPieChart(List<DataEntry> data) {
-        Pie pie = AnyChart.pie();
-        pie.data(data);
-        anyChartView.setChart(pie);
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // Handle the status change if needed
     }
 
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+        // Handle the provider being enabled
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+        // Handle the provider being disabled
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            // Cập nhật giao diện người dùng với giá trị cảm biến
+            accerleratorX.setText(String.format(Locale.getDefault(), "%.2f", x));
+            accerleratorY.setText(String.format(Locale.getDefault(), "%.2f", y));
+            accerleratorZ.setText(String.format(Locale.getDefault(), "%.2f", z));
+
+            // Tính toán giá trị delta kết hợp
+            float combinedDeltaValue = (float) Math.sqrt(x * x + y * y + z * z);
+            combinedDelta.setText(String.format(Locale.getDefault(), "%.2f", combinedDeltaValue));
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Handle sensor accuracy changes if needed
+    }
+
+    // Hàm xử lý khi yêu cầu cấp quyền bị từ chối
     private BroadcastReceiver distanceReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -252,11 +381,12 @@ public class MainActivity extends BaseActivity implements LocationListener {
 
                 // Cập nhật giao diện
                 TextView distanceTextView = findViewById(R.id.traveledDistance);
-                distanceTextView.setText(String.format(Locale.getDefault(), "Total Distance: %.2f meters", totalDistance));
+                distanceTextView.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
             }
         }
     };
 
+    // Hàm xử lý khi xác nhận pothole
     private final BroadcastReceiver potholeConfirmedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -272,6 +402,8 @@ public class MainActivity extends BaseActivity implements LocationListener {
             finish(); // Ensure the current activity is finished
         }
     };
+
+    // Hàm xử lý khi phát hiện pothole
     private final BroadcastReceiver potholeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -287,13 +419,6 @@ public class MainActivity extends BaseActivity implements LocationListener {
                 accerleratorZ.setText(String.format(Locale.getDefault(), "%.2f", deltaZ));
                 MainActivity.this.combinedDelta.setText(String.format(Locale.getDefault(), "%.2f", combinedDelta));
                 tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
-
-                // Cập nhật dữ liệu vào biểu đồ
-                List<DataEntry> data = new ArrayList<>();
-                data.add(new ValueDataEntry("Delta X", deltaX));
-                data.add(new ValueDataEntry("Delta Y", deltaY));
-                data.add(new ValueDataEntry("Delta Z", deltaZ));
-                setupPieChart(data);
             }
         }
     };
@@ -307,7 +432,6 @@ public class MainActivity extends BaseActivity implements LocationListener {
         IntentFilter potholecountFilter = new IntentFilter("com.example.pothole.POTHOLE_CONFIRMED");
         registerReceiver(potholeConfirmedReceiver, potholecountFilter);
 
-
         SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
         String profileImageBase64 = prefs.getString("profileImage", null);
         if (profileImageBase64 != null) {
@@ -316,6 +440,7 @@ public class MainActivity extends BaseActivity implements LocationListener {
         }
     }
 
+    // Hàm lấy ảnh đại diện và tên người dùng từ SharedPreferences
     private void loadProfilePictureAndName() {
         SharedPreferences sharedPreferences = getSharedPreferences("UserProfile", MODE_PRIVATE);
         String base64Image = sharedPreferences.getString("profilePicture", null);
@@ -328,21 +453,25 @@ public class MainActivity extends BaseActivity implements LocationListener {
         }
     }
 
+    // Hàm chuyển đổi chuỗi base64 thành ảnh Bitmap để hiển thị lên ImageView
     private Bitmap base64ToBitmap(String base64String) {
         byte[] decodedBytes = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
+    // Hàm lưu tổng quãng đường vào SharedPreferences
     private void saveTotalDistanceToSharedPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("PotholeData", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat("totalDistance", totalDistance);
         editor.apply();
     }
+
     private void loadTotalDistanceFromSharedPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("PotholeData", MODE_PRIVATE);
         totalDistance = sharedPreferences.getFloat("totalDistance", 0.0f);
     }
+
     @Override
     public void onBackPressed() {
         if (backPressedTime + 2000 > System.currentTimeMillis()) {
@@ -353,14 +482,14 @@ public class MainActivity extends BaseActivity implements LocationListener {
         }
         backPressedTime = System.currentTimeMillis();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(potholeReceiver);
         unregisterReceiver(distanceReceiver);
-
-    
     }
+
     @Override
     protected void onPause() {
         super.onPause();

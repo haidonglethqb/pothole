@@ -4,412 +4,340 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Header (Phần tiêu đề) -->
-    <LinearLayout
+    <!-- Header -->
+    <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#1F41BB"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:id="@+id/header">
+        android:padding="16dp">
 
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_gravity="start"
+            android:layout_alignParentStart="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
+            android:padding="8dp"
             android:src="@drawable/out" />
 
         <TextView
             android:id="@+id/tvSettingsTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="@string/setting_title"
+            android:text="Settings"
             android:textColor="@color/white"
-            android:textSize="30sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/header"
-        android:layout_above="@id/navigation_bar"
-        android:background="@color/white">
+        android:layout_above="@id/navigation_bar">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/main"
-            android:background="@color/white"
-            android:orientation="vertical">
+            android:padding="16dp">
 
-            <!-- Account Section (Phần Tài khoản) -->
+            <!-- Account Section -->
             <TextView
-                android:id="@+id/tvAccountSection"
+                android:id="@+id/account_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/account"
+                android:text="Account"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="16dp"
                 android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/account_layout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/light_primary_blue"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_below="@id/account_section"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="#F5F5F5"
+                android:padding="8dp"
+                android:layout_marginBottom="24dp">
 
-                <!-- Dòng Edit Profile -->
-                <LinearLayout
+                <!-- Edit Profile -->
+                <RelativeLayout
+                    android:id="@+id/edit_profile_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Edit Profile Icon"
-                        android:src="@drawable/editprofile"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:id="@+id/edit_profile_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/editprofile"/>
 
                     <TextView
                         android:id="@+id/tvEditProfile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_toEndOf="@id/edit_profile_icon"
                         android:layout_marginStart="16dp"
-                        android:text="@string/edit_profile_title"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                        android:text="Edit profile"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
 
-                <!-- Dòng Language -->
-                <LinearLayout
+                <!-- Language -->
+                <RelativeLayout
+                    android:id="@+id/language_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
+                    android:layout_below="@id/edit_profile_layout"
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Language Icon"
-                        android:src="@drawable/language"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:id="@+id/language_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/language"/>
 
                     <TextView
                         android:id="@+id/tvLanguage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_toEndOf="@id/language_icon"
                         android:layout_marginStart="16dp"
-                        android:text="@string/language_title"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                        android:text="Language"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
 
-                <!-- Dòng Notifications -->
-                <LinearLayout
+                <!-- Notifications -->
+                <RelativeLayout
+                    android:id="@+id/notifications_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
+                    android:layout_below="@id/language_layout"
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Notifications Icon"
-                        android:src="@drawable/notifications"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:id="@+id/notifications_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/notifications"/>
 
                     <TextView
                         android:id="@+id/tvNotifications"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_toEndOf="@id/notifications_icon"
                         android:layout_marginStart="16dp"
-                        android:text="@string/notification"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                        android:text="Notifications"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
 
-                <!-- Dòng Alert Sound -->
-                <LinearLayout
+                <!-- Alert Sound -->
+                <RelativeLayout
+                    android:id="@+id/alert_sound_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
+                    android:layout_below="@id/notifications_layout"
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="29dp"
-                        android:layout_height="31dp"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="Alert Sound Icon"
-                        android:src="@drawable/alertsound"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:id="@+id/alert_sound_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/alertsound"/>
 
                     <TextView
                         android:id="@+id/tvAlertSound"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_toEndOf="@id/alert_sound_icon"
                         android:layout_marginStart="16dp"
-                        android:text="@string/aler_sound"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
+                        android:text="Alert sound"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
+            </RelativeLayout>
 
-            <!-- Support & About Section (Phần Hỗ trợ & Giới thiệu) -->
+            <!-- Cache & cellular Section -->
             <TextView
-                android:id="@+id/tvActions"
+                android:id="@+id/cache_cellular_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/actions"
+                android:text="Cache &amp; cellular"
+                android:layout_marginStart="16dp"
                 android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_below="@id/account_layout"
+                android:layout_marginBottom="8dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_primary_blue"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Dòng Report a problem -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Report a problem"
-                        android:src="@drawable/reportproblem"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:id="@+id/tvReportProblem"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/report_problem"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                </LinearLayout>
-
-                <!-- Dòng AddAccount -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Help and Support Icon"
-                        android:src="@drawable/addacount"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:id="@+id/tvAddAccount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/add_account"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                </LinearLayout>
-
-                <!-- Dòng Log out -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Terms and Policies Icon"
-                        android:src="@drawable/logout"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:id="@+id/tvLogOut"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/log_out"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvSupportSection"
+            <RelativeLayout
+                android:id="@+id/cache_cellular_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/cache"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/cache_cellular_section"
+                android:background="#F5F5F5"
+                android:padding="8dp"
+                android:layout_marginBottom="24dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_primary_blue"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Dòng Free up space  -->
-                <LinearLayout
+                <!-- Free up space -->
+                <RelativeLayout
+                    android:id="@+id/free_up_space_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Free up space "
-                        android:src="@drawable/freeupspace"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:id="@+id/free_up_space_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/freeupspace"/>
 
                     <TextView
                         android:id="@+id/tvFreeUpSpace"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_toEndOf="@id/free_up_space_icon"
                         android:layout_marginStart="16dp"
-                        android:text="@string/free_up_space"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                </LinearLayout>
+                        android:text="Free up space"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
 
-                <!-- Dòng Data saver -->
-                <LinearLayout
+                <!-- Data Saver -->
+                <RelativeLayout
+                    android:id="@+id/data_saver_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp">
+                    android:layout_below="@id/free_up_space_layout"
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="Data saver"
+                        android:id="@+id/data_saver_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/datasaver"/>
 
                     <TextView
-                        android:id="@+id/tvDatasaver"
+                        android:id="@+id/tvDataSaver"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_toEndOf="@id/data_saver_icon"
                         android:layout_marginStart="16dp"
-                        android:text="@string/data_saver"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
+                        android:text="Data Saver"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <!-- Actions Section -->
+            <TextView
+                android:id="@+id/actions_section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Actions"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_below="@id/cache_cellular_layout"
+                android:layout_marginBottom="8dp"/>
+
+            <RelativeLayout
+                android:id="@+id/actions_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/actions_section"
+                android:background="#F5F5F5"
+                android:padding="8dp">
+
+                <!-- Report a problem -->
+                <RelativeLayout
+                    android:id="@+id/report_problem_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/report_problem_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/reportproblem"/>
+
+                    <TextView
+                        android:id="@+id/tvReportProblem"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/report_problem_icon"
+                        android:layout_marginStart="16dp"
+                        android:text="Report a problem"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
+
+                <!-- Add account -->
+                <RelativeLayout
+                    android:id="@+id/add_account_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/report_problem_layout"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/add_account_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/addacount"/>
+
+                    <TextView
+                        android:id="@+id/tvAddAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/add_account_icon"
+                        android:layout_marginStart="16dp"
+                        android:text="Add account"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
+
+                <!-- Log out -->
+                <RelativeLayout
+                    android:id="@+id/log_out_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/add_account_layout"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/log_out_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/logout"/>
+
+                    <TextView
+                        android:id="@+id/tvLogOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/log_out_icon"
+                        android:layout_marginStart="16dp"
+                        android:text="Log out"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation -->
-    <FrameLayout
-        android:id="@+id/navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:padding="8dp">
+    <!-- Navigation Bar -->
+    <include  android:id="@+id/navigation_bar"
+        layout="@layout/item_navigation_bar"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <!-- Home Button -->
-            <ImageButton
-                android:id="@+id/home_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:contentDescription="Open home"
-                android:scaleType="centerInside"
-                android:src="@drawable/home"
-                app:tint="@color/black" />
-
-            <!-- Maps Button -->
-            <ImageButton
-                android:id="@+id/maps_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:contentDescription="Open maps"
-                android:scaleType="centerInside"
-                android:src="@drawable/maps"
-                app:tint="@color/black" />
-
-            <!-- History Button -->
-            <ImageButton
-                android:id="@+id/history_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:contentDescription="Open report history"
-                android:scaleType="centerInside"
-                android:src="@drawable/history"
-                app:tint="@color/black" />
-
-            <!-- Settings Button -->
-            <ImageButton
-                android:id="@+id/settings_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:contentDescription="Open settings"
-                android:scaleType="centerInside"
-                android:src="@drawable/settings"
-                app:tint="@color/black" />
-        </LinearLayout>
-    </FrameLayout>
 </RelativeLayout>

@@ -1,39 +1,85 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_margin="16dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp"
+    android:background="@drawable/card_background">
 
-    <ImageView
-        android:id="@+id/pothole_image"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/potholecaution" />
-
-    <TextView
-        android:id="@+id/pothole_info"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Pothole Information"
-        android:textSize="16sp" />
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/pothole_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Detection Time"
-        android:textSize="14sp" />
+        <!-- Hình ảnh pothole -->
+        <ImageView
+            android:id="@+id/pothole_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pothole_caution"
+            android:layout_alignParentTop="true" />
 
-    <!-- Thêm TextView cho tên đường -->
-    <TextView
-        android:id="@+id/pothole_street"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Street Name"
-        android:textSize="14sp" />
-</LinearLayout>
+        <!-- Latitude -->
+        <TextView
+            android:id="@+id/pothole_latitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pothole_image"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="12dp"
+            android:text="Latitude:"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <!-- Longitude -->
+        <TextView
+            android:id="@+id/pothole_longitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pothole_latitude"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+            android:text="Longitude:"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <!-- Severity -->
+        <TextView
+            android:id="@+id/pothole_severity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pothole_longitude"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+            android:text="Severity:"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <!-- Street Name -->
+        <TextView
+            android:id="@+id/pothole_street"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pothole_severity"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+            android:text="Street Name:"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <!-- Detection Time -->
+        <TextView
+            android:id="@+id/pothole_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pothole_street"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+            android:text="Detection Time:"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
