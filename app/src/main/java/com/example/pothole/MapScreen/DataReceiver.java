@@ -13,7 +13,7 @@ import java.util.List;
 
 
 
-public class LocationRetriever {
+public class DataReceiver {
     public class Quadruple<F, S, T, Q> {
         private final F first;
         private final S second;
@@ -49,7 +49,7 @@ public class LocationRetriever {
     private List<Quadruple<Double, Double, String, String>> locationList;
     private SharedPreferences sharedPreferences;
 
-    public LocationRetriever(Context context) {
+    public DataReceiver(Context context) {
         databaseReference = FirebaseDatabase.getInstance().getReference("potholes");
         locationList = new ArrayList<>();
         sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
