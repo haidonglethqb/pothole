@@ -126,7 +126,6 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
         if (accelerometer == null) {
             Toast.makeText(this, "Accelerometer sensor not found", Toast.LENGTH_SHORT).show();
         }
-
         // Đăng ký cảm biến
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -135,6 +134,9 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
         int savedPotholeCount = prefs.getInt("potholeCount", 0);
         float savedTotalDistance = prefs.getFloat("totalDistance", 0.0f);
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
+
+        // Lấy dữ liệu từ Firebase
+        fetchPotholeCountFromFirebase();
 
         // Hiển thị ảnh đại diện
         loadProfilePictureAndName();
@@ -155,23 +157,19 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
         });
 
         // Sự kiện click vào nút Home, Maps, History, Settings
-
         maps_button.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, mapdisplay.class);
             startActivity(intent);
         });
-
         settings_button.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, Settings.class);
             startActivity(intent);
-
         });
-
         history_button.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, com.example.pothole.Other.History.class);
             startActivity(intent);
-
         });
+
 
         // Sự kiện click vào biểu đồ
         showCharts.setOnClickListener(v -> {
@@ -277,6 +275,28 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
             }
         });
 
+    }
+
+    private void fetchPotholeCountFromFirebase() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("potholes");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int totalPotholes = 0;
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    totalPotholes++;
+                }
+
+                // Update the TextView with the total count
+                tvpotholeCount.setText(String.valueOf(totalPotholes));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Failed to read data from Firebase", databaseError.toException());
+            }
+        });
     }
 
     private void hideSystemUI() {

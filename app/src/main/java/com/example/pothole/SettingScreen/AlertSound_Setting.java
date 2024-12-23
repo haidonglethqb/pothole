@@ -5,6 +5,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,6 +15,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
+
 import com.example.pothole.R;
 
 public class AlertSound_Setting extends AppCompatActivity {
@@ -20,7 +24,9 @@ public class AlertSound_Setting extends AppCompatActivity {
     private static final int REQUEST_CODE_RINGTONE = 1;
     private TextView selectedRingtoneTextView;
     private Button selectRingtoneButton;
+    private ImageButton btnBack;
     private Uri selectedRingtoneUri;
+    private ImageView gifImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,7 @@ public class AlertSound_Setting extends AppCompatActivity {
             return insets;
         });
 
+        // Select ringtone
         selectedRingtoneTextView = findViewById(R.id.selected_ringtone);
         selectRingtoneButton = findViewById(R.id.bt_select_ringtone);
 
@@ -52,6 +59,15 @@ public class AlertSound_Setting extends AppCompatActivity {
             selectedRingtoneUri = Uri.parse(ringtoneUriString);
             selectedRingtoneTextView.setText("Ringtone selected:" +RingtoneManager.getRingtone(this, selectedRingtoneUri).getTitle(this));
         }
+
+        // Load the gif image
+        // Load the gif image
+        gifImageView = findViewById(R.id.gifImageView);
+        Glide.with(this).asGif().load(R.drawable.sound).into(gifImageView);
+
+        // Back button
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 
     // Xử lý kết quả của hoạt động chọn nhạc chuông
@@ -61,7 +77,7 @@ public class AlertSound_Setting extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_RINGTONE && resultCode == RESULT_OK) {
             selectedRingtoneUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             if (selectedRingtoneUri != null) {
-                selectedRingtoneTextView.setText("Ringtone selected:" + RingtoneManager.getRingtone(this, selectedRingtoneUri).getTitle(this));
+                selectedRingtoneTextView.setText("Ringtone selected: " + RingtoneManager.getRingtone(this, selectedRingtoneUri).getTitle(this));
 
                 // Lưu URI nhạc chuông đã chọn vào SharedPreferences
                 getSharedPreferences("PotholeSettings", MODE_PRIVATE).edit()

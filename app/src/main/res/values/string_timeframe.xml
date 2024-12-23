@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="timeframes">
-        <item>This week</item>
-        <item>Last week</item>
-        <item>Next week</item>
+        <item>This Week</item>
+        <item>This Month</item>
     </string-array>
 </resources>
