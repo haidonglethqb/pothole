@@ -5,8 +5,6 @@ import com.example.pothole.DashboardScreen.MainActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import android.location.Location;
 
 import com.mapbox.navigation.base.formatter.DistanceFormatterOptions;
 import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter;
@@ -14,24 +12,18 @@ import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
 import com.mapbox.navigation.ui.maneuver.model.Maneuver;
 import com.mapbox.navigation.ui.maneuver.model.ManeuverError;
 import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
-import static android.content.ContentValues.TAG;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
-import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
-import kotlin.Triple;
-import android.location.Location;
+
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.view.MotionEvent;
-import android.widget.Button;
 import android.widget.CheckBox;
 
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
-import android.util.Pair;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -44,8 +36,6 @@ import static com.mapbox.navigation.base.extensions.RouteOptionsExtensions.apply
 import com.example.pothole.Other.AccelerometerService;
 import com.example.pothole.Other.PotholeData;
 import com.example.pothole.R;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.geojson.LineString;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
@@ -59,22 +49,17 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
-import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import androidx.activity.EdgeToEdge;
@@ -99,10 +84,8 @@ import android.os.IBinder;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mapbox.android.core.location.LocationEngine;
@@ -189,7 +172,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+
 import android.widget.ImageView;
 
 import kotlin.Unit;
@@ -215,7 +198,7 @@ public class mapdisplay extends AppCompatActivity {
     private boolean soundPlayed = false;
     private void showPotholeInfoDialog(Point point) {
         // Find the pothole information based on the point
-        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
+        for (DataReceiver.Quadruple<Double, Double, String, String> location : potholeLocations) {
             if (location.getFirst() == point.latitude() && location.getSecond() == point.longitude()) {
                 // Inflate the custom layout
                 View dialogView = getLayoutInflater().inflate(R.layout.dialog_pothole_info, null);
@@ -269,7 +252,7 @@ public class mapdisplay extends AppCompatActivity {
     private Point pothole;
     private Point pothole2;
     private Point pothole3;
-    private List<LocationRetriever.Quadruple<Double, Double, String, String>> potholeLocations;
+    private List<DataReceiver.Quadruple<Double, Double, String, String>> potholeLocations;
     private DatabaseReference database;
     private MapboxManeuverView maneuverView;
     private MapboxManeuverApi maneuverApi;
@@ -558,7 +541,7 @@ public class mapdisplay extends AppCompatActivity {
                     routeLineView.renderRouteLineUpdate(mapStyle, result);
                 }
                 // Check proximity to all potholes on the route
-                for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+                for (DataReceiver.Quadruple<Double, Double, String,String> location : potholeLocations) {
                     Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                     if (checkedRoute != null && isPointOnRoute2(potholePoint, checkedRoute)) {
                         checkProximityToPothole(point, potholePoint, location.getThird());
@@ -782,7 +765,7 @@ public class mapdisplay extends AppCompatActivity {
             pointAnnotationManager.deleteAll();
             boolean noFiltersSelected = selectedPotholeTypes.isEmpty();
 
-            for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
+            for (DataReceiver.Quadruple<Double, Double, String, String> location : potholeLocations) {
                 boolean shouldDisplay = noFiltersSelected || selectedPotholeTypes.contains(location.getThird());
 
                 if (selectedPotholeTypes.contains("Last 7 days")) {
@@ -807,7 +790,7 @@ public class mapdisplay extends AppCompatActivity {
             }
         });
     }
-    private boolean isWithinDistance(Location currentLocation, LocationRetriever.Quadruple<Double, Double, String, String> location, int distanceKm) {
+    private boolean isWithinDistance(Location currentLocation, DataReceiver.Quadruple<Double, Double, String, String> location, int distanceKm) {
         float[] results = new float[1];
         Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), location.getFirst(), location.getSecond(), results);
         return results[0] <= distanceKm * 1000;
@@ -941,16 +924,16 @@ public class mapdisplay extends AppCompatActivity {
             Log.d(TAG, "Firebase initialized");
         }
         potholeLocations = new ArrayList<>();
-        LocationRetriever locationRetriever = new LocationRetriever(this);
-        locationRetriever.retrieveLocations(new LocationRetriever.LocationCallback() {
+        DataReceiver dataReceiver = new DataReceiver(this);
+        dataReceiver.retrieveLocations(new DataReceiver.LocationCallback() {
             @Override
-            public void onLocationsRetrieved(List<LocationRetriever.Quadruple<Double, Double, String,String>> locations) {
+            public void onLocationsRetrieved(List<DataReceiver.Quadruple<Double, Double, String,String>> locations) {
                 // Log the retrieved locations
                 if (locations.isEmpty()) {
                     Log.d(TAG, "No locations retrieved from local storage.");
                 } else {
                     Log.d(TAG, "Retrieved " + locations.size() + " locations from local storage.");
-                    for (LocationRetriever.Quadruple<Double, Double, String,String> location : locations) {
+                    for (DataReceiver.Quadruple<Double, Double, String,String> location : locations) {
                         Log.d(TAG, "Latitude: " + location.getFirst() + ", Longitude: " + location.getSecond() + ", Severity: " + location.getThird()+ ", Date: " + location.getFourth());
                     }
                 }
@@ -1086,7 +1069,7 @@ public class mapdisplay extends AppCompatActivity {
 
                     // Gọi checkProximityToPothole mỗi 1 giây
                     if (currentTime - lastProximityCheckTimestamp > 1000) { // 1 giây
-                        for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+                        for (DataReceiver.Quadruple<Double, Double, String,String> location : potholeLocations) {
                             Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                             if (checkedRoute != null && isPointOnRoute2(potholePoint, checkedRoute)) {
                                 checkProximityToPothole(currentPoint, potholePoint, location.getThird());
@@ -1192,7 +1175,7 @@ public class mapdisplay extends AppCompatActivity {
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 pointAnnotationManager = PointAnnotationManagerKt.createPointAnnotationManager(annotationPlugin, mapView);
                 filterAndDisplayPotholes();
-                for (LocationRetriever.Quadruple<Double, Double, String,String> location : potholeLocations) {
+                for (DataReceiver.Quadruple<Double, Double, String,String> location : potholeLocations) {
                     double iconSize = 0.05;
                     Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.potholecaution);
@@ -1309,7 +1292,7 @@ public class mapdisplay extends AppCompatActivity {
 
 
     private boolean isRouteActive = false;
-    private void addPotholeIcon(LocationRetriever.Quadruple<Double, Double, String, String> location) {
+    private void addPotholeIcon(DataReceiver.Quadruple<Double, Double, String, String> location) {
         double iconSize = 0.05;
         Point point = Point.fromLngLat(location.getSecond(), location.getFirst());
         String iconName = "severe-icon"; // Default icon
@@ -1396,7 +1379,7 @@ public class mapdisplay extends AppCompatActivity {
 
         // Filter and display potholes based on selected types
         pointAnnotationManager.deleteAll();
-        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
+        for (DataReceiver.Quadruple<Double, Double, String, String> location : potholeLocations) {
             if (selectedPotholeTypes.contains(location.getThird())) {
                 Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                 if (isPointOnRoute2(potholePoint, checkedRoute)) {
@@ -1440,7 +1423,7 @@ public class mapdisplay extends AppCompatActivity {
         pointAnnotationManager.deleteAll();
 
         // Filter and display potholes based on selected types
-        for (LocationRetriever.Quadruple<Double, Double, String, String> location : potholeLocations) {
+        for (DataReceiver.Quadruple<Double, Double, String, String> location : potholeLocations) {
             if (selectedPotholeTypes.contains(location.getThird())) {
                 Point potholePoint = Point.fromLngLat(location.getSecond(), location.getFirst());
                 if (isPointOnRoute2(potholePoint, checkedRoute)) {
