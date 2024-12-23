@@ -99,7 +99,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20sp"
         android:background="@drawable/rounded_button"
-        android:text="Set Route"
+        android:text="Navigate"
         android:textSize="18dp"
         android:textColor="@color/white" />
 
