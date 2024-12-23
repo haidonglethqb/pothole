@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/edit_profile_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Edit profile"
+                        android:text="@string/edit_profile_title"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
 
@@ -133,12 +133,12 @@
                         android:src="@drawable/notifications"/>
 
                     <TextView
-                        android:id="@+id/tvNotifications"
+                        android:id="@+id/tvResetPassword"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/notifications_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Notifications"
+                        android:text="Reset Password "
                         android:textColor="@color/black"/>
                 </RelativeLayout>
 
@@ -229,12 +229,12 @@
                         android:src="@drawable/datasaver"/>
 
                     <TextView
-                        android:id="@+id/tvDataSaver"
+                        android:id="@+id/tvSupport"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/data_saver_icon"
                         android:layout_marginStart="16dp"
-                        android:text="@string/data_saver"
+                        android:text="@string/user_support"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
             </RelativeLayout>

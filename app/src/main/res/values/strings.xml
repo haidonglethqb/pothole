@@ -30,8 +30,9 @@
     <string name="add_account">Add account</string>
     <string name="log_out">Log out</string>
     <string name="free_up_space">Free up space</string>
-    <string name="data_saver">Data saver</string>
+    <string name="user_support">User support</string>
     <string name="aler_sound">Alert sound</string>
+    <string name="reset_password">Reset password</string>
 
     <!-- Dashboard -->
 

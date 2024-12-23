@@ -139,8 +139,6 @@ public class AccelerometerService extends Service implements SensorEventListener
     public void onLocationChanged(@NonNull Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-        speed = location.getSpeed(); // Tính bằng m/s
-        double speedKmH = speed * 3.6f; // Chuyển sang km/h
 
         if (lastLocation != null) {
             totalDistance += lastLocation.distanceTo(location);
@@ -167,13 +165,13 @@ public class AccelerometerService extends Service implements SensorEventListener
     private void playNotificationSound() {
         try {
             Ringtone ringtone;
-
+            // Nếu người dùng đã chọn âm thanh thông báo, sử dụng nó
             if (selectedRingtoneUri != null) {
                 ringtone = RingtoneManager.getRingtone(this, selectedRingtoneUri);
             } else {
                 ringtone = RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
             }
-
+            // Phát âm thanh thông báo
             if (ringtone != null && !ringtone.isPlaying()) {
                 ringtone.play();
             }
@@ -185,51 +183,39 @@ public class AccelerometerService extends Service implements SensorEventListener
     private void detectPothole() {
         float combinedDelta = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-        if (combinedDelta > 15) {
+        if (combinedDelta > 20) {
             long currentTime = System.currentTimeMillis();
 
             if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
                 initializeLocation();
-
                 Location currentLocation = new Location("currentLocation");
                 currentLocation.setLatitude(latitude);
                 currentLocation.setLongitude(longitude);
 
-                // Kiểm tra bán kính 10m
+                // Kiểm tra bán kính 20m
                 if (lastPotholeLocation != null) {
                     float distanceToLastPothole = lastPotholeLocation.distanceTo(currentLocation);
-                    if (distanceToLastPothole <= 10) {
-                        Log.d(TAG, "Pothole ignored as it's within 10m radius: " + distanceToLastPothole + " meters.");
-                        return; // Bỏ qua nếu trong bán kính 10m
+                    if (distanceToLastPothole <= 20) {
+                        Log.d(TAG, "Pothole ignored as it's within 20m radius: " + distanceToLastPothole + " meters.");
+                        return; // Bỏ qua nếu trong bán kính 20m
                     }
                 }
 
                 lastDetectionTime = currentTime;
 
                 // Đánh giá mức độ severity
-                if(combinedDelta >20){
-
-                if (combinedDelta < 25) {
+                if (combinedDelta < 30) {
                     severity = "Minor";
-                } else if (combinedDelta < 30) {
+                } else if (combinedDelta < 40) {
                     severity = "Medium";
                 } else {
                     severity = "Severe";
                 }
-                }
-
 
                 // Cập nhật vị trí ổ gà cuối cùng
                 lastPotholeLocation = currentLocation;
 
-                // Tăng số lượng ổ gà và cập nhật khoảng cách
-                //potholeCount++;
-                // Lưu vào SharedPreferences
-
                 saveToPreferences("totalDistance", (float) totalDistance);
-
-                // Lưu dữ liệu vào Firebase
-                //saveToFirebase(potholeCount, severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
 
                 // Phát âm thanh thông báo
                 playNotificationSound();
@@ -245,8 +231,6 @@ public class AccelerometerService extends Service implements SensorEventListener
                 intent.putExtra("combinedDelta", combinedDelta);
                 intent.putExtra("timestamp", System.currentTimeMillis());
                 intent.putExtra("dateTime", getCurrentDateTime());
-
-
                 sendBroadcast(intent);
             }
         }
@@ -279,20 +263,18 @@ public class AccelerometerService extends Service implements SensorEventListener
     }
 
     private void saveToFirebase(int potholeCount,String severity, float deltaX, float deltaY, float deltaZ, float combinedDelta, double latitude, double longitude) {
-        // Check if database reference is initialized
+        // Kiểm tra xem tham chiếu cơ sở dữ liệu có được khởi tạo
         if (databaseReference == null) {
             databaseReference = FirebaseDatabase.getInstance().getReference();
         }
-
-        // Generate a unique key for each pothole entry
+        // Tạo một khóa duy nhất cho mỗi mục ổ gà
         String potholeId = databaseReference.child("potholes").push().getKey();
 
         if (potholeId == null) {
             Log.e(TAG, "Failed to generate unique key for pothole");
             return;
         }
-
-        // Create pothole data object
+        // Tạo đối tượng dữ liệu ổ gà
         PotholeData potholeData = new PotholeData(
                 potholeCount,
                 severity,
@@ -305,7 +287,6 @@ public class AccelerometerService extends Service implements SensorEventListener
                 System.currentTimeMillis(),
                 getCurrentDateTime()
         );
-
         // Save data with error handling and completion listener
         databaseReference.child("potholes").child(potholeId).setValue(potholeData)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Pothole data saved successfully. ID: " + potholeId))

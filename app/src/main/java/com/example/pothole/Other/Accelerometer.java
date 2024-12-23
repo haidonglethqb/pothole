@@ -239,15 +239,18 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
                     // Phân loại mức độ ổ gà
                     if (combinedDelta < 20) {
                         severity = "Minor";
+
                     } else if (combinedDelta < 25) {
                         severity = "Medium";
+
                     } else {
                         severity = "Severe";
+
                     }
 
                     // Gọi phương thức để lưu dữ liệu và cập nhật giao diện
                     initializeLocation();
-                    saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
+                    //saveToFirebase(severity, deltaX, deltaY, deltaZ, combinedDelta, latitude, longitude);
                     // Play notification sound
                     playNotificationSound();
                     saveCountsToSharedPreferences();

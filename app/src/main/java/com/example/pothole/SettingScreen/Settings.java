@@ -1,7 +1,9 @@
 package com.example.pothole.SettingScreen;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -12,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.pothole.Authentication.Forgetpassword;
 import com.example.pothole.Authentication.register;
 import com.example.pothole.DashboardScreen.MainActivity;
 import com.example.pothole.MapScreen.mapdisplay;
@@ -21,7 +24,7 @@ import com.example.pothole.Other.History;
 import com.example.pothole.R;
 
 public class Settings extends BaseActivity {
-    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport,tvSound,tvAddaccount;
+    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport,tvSound,tvAddaccount, tvFreeupspace,tvSupport, tvResetPassword;
     ImageButton back_button, home_button, maps_button, history_button, settings_button;
 
     @Override
@@ -37,12 +40,14 @@ public class Settings extends BaseActivity {
 
         tvEdit = findViewById(R.id.tvEditProfile);
         tvLanguage = findViewById(R.id.tvLanguage);
-        tvNotify = findViewById(R.id.tvNotifications);
         tvlogout = findViewById(R.id.tvLogOut);
         tvReport = findViewById(R.id.tvReportProblem);
         tvSound = findViewById(R.id.tvAlertSound);
         back_button = findViewById(R.id.btnBack);
         tvAddaccount = findViewById(R.id.tvAddAccount);
+        tvFreeupspace = findViewById(R.id.tvFreeUpSpace);
+        tvSupport = findViewById(R.id.tvSupport);
+        tvResetPassword = findViewById(R.id.tvResetPassword);
 
         back_button.setOnClickListener(v -> finish());
 
@@ -74,6 +79,28 @@ public class Settings extends BaseActivity {
             Intent intent = new Intent(Settings.this, register.class);
             startActivity(intent);
             finish();
+        });
+
+        tvFreeupspace.setOnClickListener(view -> {
+            // Display the first Toast message
+            Toast.makeText(Settings.this, "Clearing cache...", Toast.LENGTH_SHORT).show();
+
+            // Use a Handler to display the second Toast message after 3 seconds
+            new Handler().postDelayed(() -> {
+                Toast.makeText(Settings.this, "Cache cleared", Toast.LENGTH_SHORT).show();
+            }, 3000); // 3000 milliseconds = 3 seconds
+        });
+
+        tvResetPassword.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, Forgetpassword.class);
+            startActivity(intent);
+        });
+
+        tvSupport.setOnClickListener(view -> {
+            String url = "https://drive.google.com/file/d/1zzHkqB4rUpn8qhXwbS-u3bPxpc_iF54Y/view?usp=sharing";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
         });
         // Find navigation bar buttons
         home_button = findViewById(R.id.home_button);

@@ -19,6 +19,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,7 @@ import com.anychart.AnyChartView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -131,12 +133,16 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
         // Đọc dữ liệu từ SharedPreferences
         SharedPreferences prefs = getSharedPreferences("PotholeData", MODE_PRIVATE);
         int savedPotholeCount = prefs.getInt("potholeCount", 0);
+        float savedTotalDistance = prefs.getFloat("totalDistance", 0.0f);
         tvpotholeCount.setText(String.format(Locale.getDefault(), "%d", savedPotholeCount));
-        loadTotalDistanceFromSharedPreferences();
-        tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
 
         // Hiển thị ảnh đại diện
         loadProfilePictureAndName();
+        loadTotalDistanceFromSharedPreferences();
+        float totalDistanceInKm = totalDistance / 1000.0f;
+        tvdistance.setText(String.format(Locale.getDefault(), "%.2f km", totalDistanceInKm));
+
+
 
         // Sự kiện click vào ảnh đại diện để chuyển đến EditProfile
         ivProfilePicture.setOnClickListener(v -> {
@@ -253,17 +259,13 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
                     Float deltaY = snapshot.child("deltay").getValue(Float.class);
                     Float deltaZ = snapshot.child("deltaz").getValue(Float.class);
                     Float combinedDeltaValue = snapshot.child("combinedDelta").getValue(Float.class);
-//                    Integer potholeCount = snapshot.child("potholeCount").getValue(Integer.class);
-                    Double totalDistance = snapshot.child("totalDistance").getValue(Double.class);
-
+//
                     // Đảm bảo giá trị không null trước khi sử dụng
                     accerleratorX.setText(deltaX != null ? String.format(Locale.getDefault(), "%.2f", deltaX) : "N/A");
                     accerleratorY.setText(deltaY != null ? String.format(Locale.getDefault(), "%.2f", deltaY) : "N/A");
                     accerleratorZ.setText(deltaZ != null ? String.format(Locale.getDefault(), "%.2f", deltaZ) : "N/A");
                     combinedDelta.setText(combinedDeltaValue != null ? String.format(Locale.getDefault(), "%.2f", combinedDeltaValue) : "N/A");
-//                    tvpotholeCount.setText(potholeCount != null ? String.format(Locale.getDefault(), "%d", potholeCount) : "0");
-                    tvdistance.setText(totalDistance != null ? String.format(Locale.getDefault(), "%.2f m", totalDistance) : "0.00 m");
-
+//
                 } else {
                     Log.w("Firebase", "No data found in Firebase.");
                 }
@@ -327,11 +329,14 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
             totalDistance += distance; // Cộng dồn vào tổng quãng đường
         }
         previousLocation = location;
+        // Save total distance to SharedPreferences
+        saveTotalDistanceToSharedPreferences();
+        float totalDistanceInKm = totalDistance / 1000.0f;
         // Hiển thị quãng đường lên giao diện
-        tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
+        tvdistance.setText(String.format(Locale.getDefault(), "%.2f km", totalDistanceInKm));
 
         Log.d(TAG, "Updated Location: Latitude: " + latitude + ", Longitude: " + longitude +
-                ",  Distance: " + totalDistance + " m");
+                ",  Distance: " + totalDistance + " km");
     }
 
     @Override
@@ -381,7 +386,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
 
                 // Cập nhật giao diện
                 TextView distanceTextView = findViewById(R.id.traveledDistance);
-                distanceTextView.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
+                distanceTextView.setText(String.format(Locale.getDefault(), "%.2f km", totalDistance));
             }
         }
     };
@@ -418,7 +423,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
                 accerleratorY.setText(String.format(Locale.getDefault(), "%.2f", deltaY));
                 accerleratorZ.setText(String.format(Locale.getDefault(), "%.2f", deltaZ));
                 MainActivity.this.combinedDelta.setText(String.format(Locale.getDefault(), "%.2f", combinedDelta));
-                tvdistance.setText(String.format(Locale.getDefault(), "%.2f m", totalDistance));
+                tvdistance.setText(String.format(Locale.getDefault(), "%.2f km", totalDistance));
             }
         }
     };
@@ -470,6 +475,22 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
     private void loadTotalDistanceFromSharedPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("PotholeData", MODE_PRIVATE);
         totalDistance = sharedPreferences.getFloat("totalDistance", 0.0f);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+            String updatedName = data.getStringExtra("name");
+            String profileImage = data.getStringExtra("profileImage");
+            if (updatedName != null) {
+                tvname.setText("Welcome back, " + updatedName);
+            }
+            if (profileImage != null) {
+                Bitmap bitmap = base64ToBitmap(profileImage);
+                ivProfilePicture.setImageBitmap(bitmap);
+            }
+        }
     }
 
     @Override

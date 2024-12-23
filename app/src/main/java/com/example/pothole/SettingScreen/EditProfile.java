@@ -137,6 +137,12 @@ public class EditProfile extends BaseActivity {
             editor.putString("profileImage", encodedImage);
             editor.apply();
 
+            // Set result to return the updated name
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("name", name);
+            resultIntent.putExtra("profileImage", encodedImage);
+            setResult(RESULT_OK, resultIntent);
+
             Toast.makeText(this, "Changes saved successfully.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Failed to save profile picture.", Toast.LENGTH_SHORT).show();
@@ -197,7 +203,7 @@ public class EditProfile extends BaseActivity {
                 ivProfilePicture.setImageBitmap(bitmap);
             }
         }
-        if (requestCode == 101 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
             String updatedName = data.getStringExtra("name");
             if (updatedName != null) {
                 etName.setText(updatedName); // tvName là TextView hiển thị tên trong MainActivity

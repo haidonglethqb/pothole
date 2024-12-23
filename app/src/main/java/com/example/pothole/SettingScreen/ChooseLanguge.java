@@ -28,27 +28,7 @@ public class ChooseLanguge extends BaseActivity {
         btBack.setOnClickListener(v -> finish());
     }
 
-    // Phương thức thay đổi ngôn ngữ
-//    private void setLocale(String languageCode) {
-//        // Thiết lập ngôn ngữ
-//        Locale locale = new Locale(languageCode);
-//        Locale.setDefault(locale);
-//        Configuration config = new Configuration();
-//        config.setLocale(locale);
-//        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-//
-//        // Cập nhật lại màn hình hiện tại
-//        Intent refresh = new Intent(this, ChooseLanguge.class);
-//        refresh.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(refresh);
-//        finish();
-//
-//        Intent intent = new Intent(this, Settings.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(intent);
-//        finish();
-//        recreate();
-//    }
+    // Phương thức cài đặt ngôn ngữ
     private void setLocale(String languageCode) {
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);

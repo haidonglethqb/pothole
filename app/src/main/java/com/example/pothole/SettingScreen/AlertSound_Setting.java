@@ -36,6 +36,7 @@ public class AlertSound_Setting extends AppCompatActivity {
         selectedRingtoneTextView = findViewById(R.id.selected_ringtone);
         selectRingtoneButton = findViewById(R.id.bt_select_ringtone);
 
+        //
         selectRingtoneButton.setOnClickListener(v -> {
             Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
@@ -53,6 +54,7 @@ public class AlertSound_Setting extends AppCompatActivity {
         }
     }
 
+    // Xử lý kết quả của hoạt động chọn nhạc chuông
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -61,7 +63,7 @@ public class AlertSound_Setting extends AppCompatActivity {
             if (selectedRingtoneUri != null) {
                 selectedRingtoneTextView.setText("Ringtone selected:" + RingtoneManager.getRingtone(this, selectedRingtoneUri).getTitle(this));
 
-                // Save the selected ringtone URI to SharedPreferences
+                // Lưu URI nhạc chuông đã chọn vào SharedPreferences
                 getSharedPreferences("PotholeSettings", MODE_PRIVATE).edit()
                         .putString("notification_ringtone", selectedRingtoneUri.toString())
                         .apply();
