@@ -132,7 +132,9 @@ public class AccelerometerService extends Service implements SensorEventListener
         lastY = event.values[1];
         lastZ = event.values[2];
 
-        detectPothole();
+        if ((deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) > 40) {
+            detectPothole();
+        }
     }
 
     @Override
@@ -183,7 +185,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     private void detectPothole() {
         float combinedDelta = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-        if (combinedDelta > 45) {
+        if (combinedDelta > 40) {
             long currentTime = System.currentTimeMillis();
 
             if (currentTime - lastDetectionTime >= DETECTION_THRESHOLD_MS) {
