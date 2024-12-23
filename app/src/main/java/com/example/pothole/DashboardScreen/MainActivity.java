@@ -253,7 +253,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
                     Float deltaY = snapshot.child("deltay").getValue(Float.class);
                     Float deltaZ = snapshot.child("deltaz").getValue(Float.class);
                     Float combinedDeltaValue = snapshot.child("combinedDelta").getValue(Float.class);
-                    Integer potholeCount = snapshot.child("potholeCount").getValue(Integer.class);
+//                    Integer potholeCount = snapshot.child("potholeCount").getValue(Integer.class);
                     Double totalDistance = snapshot.child("totalDistance").getValue(Double.class);
 
                     // Đảm bảo giá trị không null trước khi sử dụng
@@ -261,7 +261,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
                     accerleratorY.setText(deltaY != null ? String.format(Locale.getDefault(), "%.2f", deltaY) : "N/A");
                     accerleratorZ.setText(deltaZ != null ? String.format(Locale.getDefault(), "%.2f", deltaZ) : "N/A");
                     combinedDelta.setText(combinedDeltaValue != null ? String.format(Locale.getDefault(), "%.2f", combinedDeltaValue) : "N/A");
-                    tvpotholeCount.setText(potholeCount != null ? String.format(Locale.getDefault(), "%d", potholeCount) : "0");
+//                    tvpotholeCount.setText(potholeCount != null ? String.format(Locale.getDefault(), "%d", potholeCount) : "0");
                     tvdistance.setText(totalDistance != null ? String.format(Locale.getDefault(), "%.2f m", totalDistance) : "0.00 m");
 
                 } else {
