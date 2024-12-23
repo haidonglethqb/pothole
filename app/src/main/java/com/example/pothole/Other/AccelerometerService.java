@@ -207,13 +207,17 @@ public class AccelerometerService extends Service implements SensorEventListener
                 lastDetectionTime = currentTime;
 
                 // Đánh giá mức độ severity
-                if (combinedDelta < 20) {
+                if(combinedDelta >20){
+
+                if (combinedDelta < 25) {
                     severity = "Minor";
-                } else if (combinedDelta < 25) {
+                } else if (combinedDelta < 30) {
                     severity = "Medium";
                 } else {
                     severity = "Severe";
                 }
+                }
+
 
                 // Cập nhật vị trí ổ gà cuối cùng
                 lastPotholeLocation = currentLocation;
