@@ -23,10 +23,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class History extends AppCompatActivity {
 
@@ -34,8 +36,7 @@ public class History extends AppCompatActivity {
     private HistoryAdapter historyAdapter;
     private ArrayList<HistoryItem> historyList;
     private ArrayList<HistoryItem> originalList;
-    private Spinner spinnerSeverity;
-
+    private Spinner spinnerSeverity, spinnerTimeframe;
     private ImageButton home_button, maps_button, history_button, settings_button, back_button;
 
     @Override
@@ -60,8 +61,25 @@ public class History extends AppCompatActivity {
         spinnerSeverity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedSeverity = parent.getItemAtPosition(position).toString();
-                filterHistoryBySeverity(selectedSeverity);
+                filterHistory();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+
+        spinnerTimeframe = findViewById(R.id.timeframe_spinner);
+        ArrayAdapter<CharSequence> timeframeAdapter = ArrayAdapter.createFromResource(this,
+                R.array.timeframes, android.R.layout.simple_spinner_item);
+        timeframeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTimeframe.setAdapter(timeframeAdapter);
+
+        spinnerTimeframe.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterHistory();
             }
 
             @Override
@@ -71,8 +89,6 @@ public class History extends AppCompatActivity {
         });
 
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("potholes");
-        Query checkUserDB = databaseRef.orderByChild("timestamp");
-
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -85,6 +101,7 @@ public class History extends AppCompatActivity {
                             if (item != null) {
                                 historyList.add(item);
                                 originalList.add(item);
+                                Log.d("Firebase", "Item added: " + item.toString());
                             }
                         } catch (Exception e) {
                             Log.e("Firebase", "Error parsing data: ", e);
@@ -133,13 +150,64 @@ public class History extends AppCompatActivity {
         back_button.setOnClickListener(v -> finish());
     }
 
-    private void filterHistoryBySeverity(String severity) {
+    private void filterHistory() {
+        String selectedSeverity = spinnerSeverity.getSelectedItem().toString();
+        String selectedTimeframe = spinnerTimeframe.getSelectedItem().toString();
+
         ArrayList<HistoryItem> filteredList = new ArrayList<>();
         for (HistoryItem item : originalList) {
-            if (item.getSeverity().equals(severity) || severity.equals("All")) {
+            boolean matchesSeverity = item.getSeverity().equals(selectedSeverity) || selectedSeverity.equals("All");
+            boolean matchesTimeframe = selectedTimeframe.equals("All") ||
+                    (selectedTimeframe.equals("This Week") && isCurrentWeek(item.getDateTime())) ||
+                    (selectedTimeframe.equals("This Month") && isCurrentMonth(item.getDateTime()));
+
+            if (matchesSeverity && matchesTimeframe) {
                 filteredList.add(item);
             }
         }
         historyAdapter.updateList(filteredList);
+    }
+
+    private boolean isCurrentWeek(String dateTime) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+            Calendar given = Calendar.getInstance();
+            given.setTime(format.parse(dateTime));
+
+            Calendar current = Calendar.getInstance();
+            current.set(Calendar.HOUR_OF_DAY, 0);
+            current.set(Calendar.MINUTE, 0);
+            current.set(Calendar.SECOND, 0);
+            current.set(Calendar.MILLISECOND, 0);
+            current.set(Calendar.DAY_OF_WEEK, current.getFirstDayOfWeek());
+
+            given.set(Calendar.HOUR_OF_DAY, 0);
+            given.set(Calendar.MINUTE, 0);
+            given.set(Calendar.SECOND, 0);
+            given.set(Calendar.MILLISECOND, 0);
+            given.set(Calendar.DAY_OF_WEEK, given.getFirstDayOfWeek());
+
+            return given.get(Calendar.YEAR) == current.get(Calendar.YEAR) &&
+                    given.get(Calendar.WEEK_OF_YEAR) == current.get(Calendar.WEEK_OF_YEAR);
+        } catch (Exception e) {
+            Log.e("History", "Error parsing date: " + dateTime, e);
+            return false;
+        }
+    }
+
+    private boolean isCurrentMonth(String dateTime) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+            Calendar given = Calendar.getInstance();
+            given.setTime(format.parse(dateTime));
+
+            Calendar current = Calendar.getInstance();
+
+            return given.get(Calendar.YEAR) == current.get(Calendar.YEAR) &&
+                    given.get(Calendar.MONTH) == current.get(Calendar.MONTH);
+        } catch (Exception e) {
+            Log.e("History", "Error parsing date: " + dateTime, e);
+            return false;
+        }
     }
 }

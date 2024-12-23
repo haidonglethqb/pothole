@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.pothole"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.pothole"
@@ -67,6 +67,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("com.github.AnyChart:AnyChart-Android:1.1.5")
+    implementation ("com.patrykandpatrick.vico:core:1.16.0")
+    implementation ("com.patrykandpatrick.vico:views:1.16.0")
+    implementation ("com.google.firebase:firebase-firestore:24.9.1")
 
 
 
