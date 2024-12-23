@@ -50,10 +50,7 @@ public class Settings extends BaseActivity {
             Intent intent = new Intent(Settings.this, EditProfile.class);
             startActivity(intent);
         });
-        tvNotify.setOnClickListener(view -> {
-            Intent intent = new Intent(Settings.this, Notificatons_settings.class);
-            startActivity(intent);
-        });
+
         tvLanguage.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, ChooseLanguge.class);
             startActivity(intent);

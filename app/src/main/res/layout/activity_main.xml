@@ -234,7 +234,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Pothole Analysis"
+                    android:text="@string/analysis"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black" />
@@ -248,7 +248,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/showCharts"
-                    android:text="Show Charts"
+                    android:text="@string/show_charts"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/rounded_button_small"
                     android:textColor="@android:color/white"
@@ -476,7 +476,7 @@
                                 android:layout_below="@id/combinedDelta"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginTop="8dp"
-                                android:text="Magnitude"
+                                android:text="@string/magnitude"
                                 android:textColor="@android:color/black"
                                 android:textSize="12sp" />
 

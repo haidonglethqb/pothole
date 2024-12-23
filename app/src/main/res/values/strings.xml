@@ -50,6 +50,8 @@
     <string name="excellent">Excellent</string>
     <string name="details_button_description">Details button</string>
 
+    <string name="analysis">Pothole Analysis</string>
+    <string name="show_charts">Show Charts</string>
     <!-- Recent Pothole Severity -->
     <string name="recent_pothole_severity_title">Recent pothole severity</string>
     <string name="recent_pothole_image_description">Pothole severity image</string>
@@ -59,7 +61,7 @@
     <string name="accelerator_x">Accelerator X</string>
     <string name="accelerator_y">Accelerator Y</string>
     <string name="accelerator_z">Accelerator Z</string>
-    <string name="parameter_t">Magnitude</string>
+    <string name="magnitude">Magnitude</string>
     <string name="safe">Safe</string>
     <string name="danger">Danger</string>
     <string name="you_are_there">You are already on the home screen</string>
@@ -74,21 +76,6 @@
     <string name="history">History</string>
     <string name="location">Location:</string>
     <string name="timeframe">Timeframe:</string>
-
-    <!--    &lt;!&ndash; Dropdown Entries &ndash;&gt;-->
-    <!--    <string-array name="locations">-->
-    <!--        <item>All Locations</item>-->
-    <!--        <item>Location 1</item>-->
-    <!--        <item>Location 2</item>-->
-    <!--        <item>Location 3</item>-->
-    <!--    </string-array>-->
-
-    <!--    <string-array name="timeframes">-->
-    <!--        <item>All Timeframes</item>-->
-    <!--        <item>Last Week</item>-->
-    <!--        <item>Last Month</item>-->
-    <!--        <item>Last Year</item>-->
-    <!--    </string-array>-->
 
     <!-- Thời gian -->
     <string name="date_time_label">Date/Time:</string>
@@ -110,6 +97,87 @@
     <string name="desc_location_icon">Location Icon</string>
     <string name="desc_user_icon">User Icon</string>
     <string name="desc_severity_icon">Severity Icon</string>
+
+
+    <!-- Login Screen -->
+    <string name="login_title">Login here</string>
+    <string name="welcome_message1">Welcome back!\nLet us discover what you have missed!</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="create_account">Create new account</string>
+    <string name="continue_with">Or continue with</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_facebook">Sign in with Facebook</string>
+
+    <!-- Register Screen -->
+    <!-- Tiêu đề và thông điệp -->
+    <string name="register_title">Create Account</string>
+    <string name="register_message">Create an account so you can\njoin our community</string>
+
+    <!-- Nút và liên kết -->
+    <string name="sign_up">Sign up</string>
+    <string name="already_have_account">Already have an account</string>
+    <string name="create_account2">Create Account</string>
+
+    <!-- Trường nhập liệu -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+
+    <!-- Nút mạng xã hội -->
+    <string name="sign_up_google">Sign up with Google</string>
+    <string name="sign_up_facebook">Sign up with Facebook</string>
+
+    <!-- Màn hình chào mừng -->
+    <string name="welcome_image_desc">Welcome Illustration</string>
+    <string name="community_title">Become a part of our\nPOTHOLE PATROL\ncommunity</string>
+    <string name="welcome_message2">Help the others to travel around safely</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Register</string>
+
+    <!-- Màn hình xác minh OTP -->
+    <string name="otp_title">Please Verify Your Email</string>
+    <string name="otp_message">An email has been sent to your email address.</string>
+    <string name="verify_gif_desc">Verification Animation</string>
+    <string name="btn_confirm_email">Confirm Email Verified</string>
+
+    <!-- Màn hình quên mật khẩu -->
+    <string name="forgot_password_title">Forget your password?</string>
+    <string name="forgot_password_message">Type in your email to reset your password</string>
+    <string name="btn_reset_password">Reset password</string>
+
+    <string-array name="severity_levels2">
+        <item>All</item>
+        <item>Minor</item>
+        <item>Medium</item>
+        <item>Severe</item>
+    </string-array>
+
+
+    <string name="project_info">A project of NT118.P11</string>
+    <string name="welcome_title">Welcome to\nPOTHOLE PATROL by NT118</string>
+    <string name="introduction_message">An app with the ability to detect and \nreport potholes on the streets</string>
+    <string name="btn_get_started">GET STARTED</string>
+    <string name="project_logo_desc">Project Logo</string>
+    <string name="illustration_desc">Illustration of pothole detection</string>
+
+    <!-- Common Strings -->
+
+    <string name="back">Back</string>
+    <string name="navigate">Navigate</string>
+    <string name="search_here">Search here</string>
+
+    <string name="total">Total</string>
+    <string name="severe">Large</string>
+    <string name="medium">Medium</string>
+    <string name="minor">Small</string>
+    <string name="visualization">Visualization</string>
+    <string name="daily_report">Daily/Weekly Report</string>
+
+
+    <!-- Content Description -->
+    <string name="severity_filter">Severity Filter</string>
 
     <string name="web_id" translatable="false">798306032495-0kq06idn7hee59q9cil8mq3pknebmi9a.apps.googleusercontent.com</string>
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1IjoiaGllcmlzcyIsImEiOiJjbTNuZmwya3ExNnVpMmxzZG9wOGNyN24xIn0.Bnsn24Jk7ZmetYO_MxQHcA</string>

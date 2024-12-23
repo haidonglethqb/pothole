@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="Pothole Report"
+                android:text="@string/pothole_report"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/white"
                 android:textSize="28sp"
@@ -65,7 +65,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Timeframe:"
+                    android:text="@string/timeframe"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -95,7 +95,7 @@
                 android:id="@+id/daily_report_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Daily/Weekly Report"
+                android:text="@string/daily_report"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -127,7 +127,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total"
+                        android:text="@string/total"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black" />
@@ -160,7 +160,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Large"
+                        android:text="@string/severe"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black" />
@@ -193,7 +193,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Medium"
+                        android:text="@string/medium"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black" />
@@ -226,7 +226,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Small"
+                        android:text="@string/minor"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black" />
@@ -257,7 +257,7 @@
             <TextView android:id="@+id/visualization_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Visualization"
+                android:text="@string/visualization"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold" />

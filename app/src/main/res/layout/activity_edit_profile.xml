@@ -133,24 +133,6 @@
                 android:layout_marginBottom="16dp" />
 
             <!-- Password Field -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/password"
-                android:textSize="14sp"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/edit_text_background"
-                android:paddingHorizontal="16dp"
-                android:text="mayemkiaxinhthenho"
-                android:inputType="textPassword"
-                android:textSize="14sp"
-                android:layout_marginBottom="16dp" />
 
             <!-- Date of Birth Field -->
             <TextView

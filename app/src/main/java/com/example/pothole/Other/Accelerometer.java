@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -87,6 +88,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
 
         databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pothole-060104-default-rtdb.firebaseio.com/");
         loadDataFromFirebase();
+
 
         // Retrieve the saved ringtone URI from SharedPreferences
         String ringtoneUriString = getSharedPreferences("PotholeSettings", MODE_PRIVATE)
@@ -422,6 +424,7 @@ public class Accelerometer extends Activity implements SensorEventListener , Loc
 
                         // Cập nhật giao diện người dùng
                         updateUI();
+
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

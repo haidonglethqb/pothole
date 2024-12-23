@@ -36,7 +36,7 @@ public class EditProfile extends BaseActivity {
     private static final int REQUEST_CAMERA = 2;
 
     private ImageView ivBack, ivProfilePicture, ivEditProfilePicture;
-    private EditText etName, etEmail, etPhoneNumber, edDateOfBirth,etpassword;
+    private EditText etName, etEmail, etPhoneNumber, edDateOfBirth;
     private TextView tvCountryRegion;
     private Button btnSaveChanges;
     private Spinner spCountry;
@@ -68,8 +68,6 @@ public class EditProfile extends BaseActivity {
         edDateOfBirth = findViewById(R.id.edDateOfBirth);
         spCountry = findViewById(R.id.spCountry);
         btnSaveChanges = findViewById(R.id.btnSaveChanges);
-        etpassword = findViewById(R.id.etPassword);
-
 
         // Gán sự kiện cho nút Back
         ivBack.setOnClickListener(v -> finish());
@@ -91,13 +89,12 @@ public class EditProfile extends BaseActivity {
         String dateOfBirth = sharedPreferences.getString("dateOfBirth", "");
         String countryRegion = sharedPreferences.getString("countryRegion", "");
         String profileImage = sharedPreferences.getString("profileImage", null);
-        String password = sharedPreferences.getString("password", "");
+
 
         etName.setText(name);
         etEmail.setText(email);
         etPhoneNumber.setText(phoneNumber);
         edDateOfBirth.setText(dateOfBirth);
-        etpassword.setText(password);
 
 
         if (countryRegion != null) {
@@ -122,7 +119,7 @@ public class EditProfile extends BaseActivity {
         String phoneNumber = etPhoneNumber.getText().toString().trim();
         String dateOfBirth = edDateOfBirth.getText().toString().trim();
         String countryRegion = spCountry.getSelectedItem().toString();
-        String password = etpassword.getText().toString().trim();
+
 
         ivProfilePicture.setDrawingCacheEnabled(true);
         ivProfilePicture.buildDrawingCache();
@@ -138,7 +135,6 @@ public class EditProfile extends BaseActivity {
             editor.putString("dateOfBirth", dateOfBirth);
             editor.putString("countryRegion", countryRegion);
             editor.putString("profileImage", encodedImage);
-            editor.putString("password", password);
             editor.apply();
 
             Toast.makeText(this, "Changes saved successfully.", Toast.LENGTH_SHORT).show();

@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="Settings"
+            android:text="@string/setting_title"
             android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -52,7 +52,7 @@
                 android:id="@+id/account_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Account"
+                android:text="@string/account"
                 android:layout_marginTop="12dp"
                 android:layout_marginStart="16dp"
                 android:textColor="@color/black"
@@ -114,7 +114,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/language_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Language"
+                        android:text="@string/language_title"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
 
@@ -162,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/alert_sound_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Alert sound"
+                        android:text="@string/aler_sound"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
             </RelativeLayout>
@@ -172,7 +172,7 @@
                 android:id="@+id/cache_cellular_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cache &amp; cellular"
+                android:text="@string/cache"
                 android:layout_marginStart="16dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
@@ -210,7 +210,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/free_up_space_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Free up space"
+                        android:text="@string/free_up_space"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
 
@@ -234,7 +234,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/data_saver_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Data Saver"
+                        android:text="@string/data_saver"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
             </RelativeLayout>
@@ -244,7 +244,7 @@
                 android:id="@+id/actions_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Actions"
+                android:text="@string/actions"
                 android:layout_marginStart="16dp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -281,7 +281,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/report_problem_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Report a problem"
+                        android:text="@string/report_problem"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
 
@@ -305,7 +305,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/add_account_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Add account"
+                        android:text="@string/add_account"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
 
@@ -329,7 +329,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/log_out_icon"
                         android:layout_marginStart="16dp"
-                        android:text="Log out"
+                        android:text="@string/log_out"
                         android:textColor="@color/black"/>
                 </RelativeLayout>
             </RelativeLayout>

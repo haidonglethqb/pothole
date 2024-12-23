@@ -38,7 +38,7 @@
     <string name="notification_icon_description">Biểu tượng thông báo</string>
 
     <!-- User Greeting -->
-    <string name="welcome_message">Chào mừng trở lại, trapboi1003</string>
+    <string name="welcome_message">Chào mừng trở lại, </string>
     <string name="greeting_message">Rất vui được gặp bạn!</string>
 
     <!-- Fundamental Reports -->
@@ -48,17 +48,18 @@
     <string name="need_improvement">Cần cải thiện</string>
     <string name="excellent">Xuất sắc</string>
     <string name="details_button_description">Nút chi tiết</string>
-
+    <string name="analysis">Phân tích ổ gà</string>
+    <string name="show_charts">Hiển thị biểu đồ</string>
     <!-- Recent Pothole Severity -->
     <string name="recent_pothole_severity_title">Mức độ nghiêm trọng</string>
     <string name="recent_pothole_image_description">Hình ảnh mức độ nghiêm trọng của ổ gà</string>
 
     <!-- Visualization -->
-    <string name="visualization_title">Hình trực quan</string>
+    <string name="visualization_title">Thông số gia tốc</string>
     <string name="accelerator_x">Gia tốc X</string>
     <string name="accelerator_y">Gia tốc Y</string>
     <string name="accelerator_z">Gia tốc Z</string>
-    <string name="parameter_t">Tham số tổng hợp</string>
+    <string name="magnitude">Mức giao động</string>
     <string name="safe">An toàn</string>
     <string name="danger">Nguy hiểm</string>
 
@@ -73,21 +74,6 @@
     <string name="history">Lịch sử</string>
     <string name="location">Địa điểm:</string>
     <string name="timeframe">Khung thời gian:</string>
-
-<!--    &lt;!&ndash; Dropdown Entries &ndash;&gt;-->
-<!--    <string-array name="locations">-->
-<!--        <item>Tất cả địa điểm</item>-->
-<!--        <item>Địa điểm 1</item>-->
-<!--        <item>Địa điểm 2</item>-->
-<!--        <item>Địa điểm 3</item>-->
-<!--    </string-array>-->
-
-<!--    <string-array name="timeframes">-->
-<!--        <item>Tất cả</item>-->
-<!--        <item>Tuần trước</item>-->
-<!--        <item>Tuần này</item>-->
-<!--        <item>Tuần tiếp theo</item>-->
-<!--    </string-array>-->
 
     <!-- Thời gian -->
     <string name="date_time_lable">Ngày/Giờ:</string>
@@ -110,4 +96,88 @@
     <string name="desc_location_icon">Biểu tượng địa điểm</string>
     <string name="desc_user_icon">Biểu tượng người dùng</string>
     <string name="desc_severity_icon">Biểu tượng mức độ nghiêm trọng</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Đăng nhập tại đây</string>
+    <string name="welcome_message1">Chào mừng bạn quay lại!\nHãy khám phá những gì bạn đã bỏ lỡ!</string>
+    <string name="password_hint">Mật khẩu</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="sign_in">Đăng nhập</string>
+    <string name="create_account">Tạo tài khoản mới</string>
+
+    <!-- Register Screen -->
+    <string name="sign_in_with_google">Đăng nhập bằng Google</string>
+    <string name="sign_in_with_facebook">Đăng nhập bằng Facebook</string>
+    <string name="create_account2">Tạo tài khoản</string>
+    <!-- Tiêu đề và thông điệp -->
+    <string name="register_title">Tạo tài khoản</string>
+    <string name="register_message">Tạo tài khoản để bạn có thể\ntham gia cộng đồng của chúng tôi</string>
+
+    <!-- Nút và liên kết -->
+    <string name="sign_up">Đăng ký</string>
+    <string name="already_have_account">Đã có tài khoản</string>
+    <string name="continue_with">Hoặc tiếp tục với</string>
+
+    <!-- Trường nhập liệu -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="hint_confirm_password">Xác nhận mật khẩu</string>
+
+    <!-- Nút mạng xã hội -->
+    <string name="sign_up_google">Đăng ký bằng Google</string>
+    <string name="sign_up_facebook">Đăng ký bằng Facebook</string>
+    <!-- Màn hình chào mừng -->
+    <string name="welcome_image_desc">Minh họa chào mừng</string>
+    <string name="community_title">Trở thành một phần của\ncộng đồng PATROL POTHOLE\ncủa chúng tôi</string>
+    <string name="welcome_message2">Giúp người khác di chuyển an toàn</string>
+    <string name="btn_login">Đăng nhập</string>
+    <string name="btn_register">Đăng ký</string>
+
+    <!-- Màn hình xác minh OTP -->
+    <string name="otp_title">Vui lòng xác minh email của bạn</string>
+    <string name="otp_message">Một email đã được gửi đến địa chỉ của bạn.</string>
+    <string name="verify_gif_desc">Hoạt ảnh xác minh</string>
+    <string name="btn_confirm_email">Xác nhận email đã được xác minh</string>
+
+    <!-- Màn hình quên mật khẩu -->
+    <string name="forgot_password_title">Quên mật khẩu?</string>
+    <string name="forgot_password_message">Nhập email của bạn để đặt lại mật khẩu</string>
+    <string name="btn_reset_password">Đặt lại mật khẩu</string>
+
+    <string-array name="severity_levels2">
+        <item>Tất cả</item>
+        <item>Nhẹ</item>
+        <item>Trung bình</item>
+        <item>Nghiêm trọng</item>
+    </string-array>
+    <string name="project_info">Một dự án của NT118.P11</string>
+    <string name="welcome_title">Chào mừng đến với\nPOTHOLE PATROL của NT118</string>
+    <string name="introduction_message">Ứng dụng với khả năng phát hiện và \nbáo cáo ổ gà trên đường phố</string>
+    <string name="btn_get_started">BẮT ĐẦU</string>
+    <string name="project_logo_desc">Logo Dự Án</string>
+    <string name="illustration_desc">Minh họa phát hiện ổ gà</string>
+
+    <!-- Common Strings -->
+
+    <string name="back">Quay Lại</string>
+    <string name="navigate">Điều Hướng</string>
+    <string name="search_here">Tìm kiếm ở đây</string>
+
+    <string name="total">Tổng Cộng</string>
+    <string name="severe">Lớn</string>
+    <string name="medium">Vừa</string>
+    <string name="minor">Nhỏ</string>
+    <string name="visualization">Hình Minh Họa</string>
+    <string name="daily_report">Báo Cáo Hằng Ngày/Tuần</string>
+
+    <!-- Spinner Entries -->
+    <string-array name="timeframes">
+        <item>Hôm Nay</item>
+        <item>Tuần Trước</item>
+        <item>Tháng Trước</item>
+    </string-array>
+
+    <!-- Content Description -->
+    <string name="severity_filter">Bộ Lọc Mức Độ Nghiêm Trọng</string>
+
 </resources>
