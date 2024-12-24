@@ -46,52 +46,12 @@
                     android:textStyle="bold" />
             </RelativeLayout>
 
-            <!-- Bộ lọc Vị trí và Thời gian -->
-            <LinearLayout
-                android:id="@+id/filters_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/toolbar"
-                android:layout_marginTop="24dp"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp">
-
-                <!-- Timeframe Filter -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/rounded_input_field"
-                    android:padding="8dp"
-                    android:paddingVertical="16dp"
-                    android:layout_marginTop="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/timeframe"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-
-                    <Spinner
-                        android:id="@+id/timeframe_spinner"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:entries="@array/timeframes" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Tóm tắt Báo cáo Hằng ngày  -->
+            <!-- Tóm tắt Báo cáo Hằng ngày -->
             <LinearLayout
                 android:id="@+id/daily_report_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/filters_layout"
+                android:layout_below="@id/toolbar"
                 android:layout_marginTop="24dp"
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp">
@@ -100,7 +60,7 @@
                     android:id="@+id/daily_report_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/daily_report"
+                    android:text="All-time Report"
                     android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -182,7 +142,7 @@
                                 android:textColor="@android:color/black" />
 
                             <TextView
-                                android:id="@+id/road_quality"
+                                android:id="@+id/large_potholes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="6"
@@ -225,7 +185,7 @@
                                 android:textColor="@android:color/black" />
 
                             <TextView
-                                android:id="@+id/large_potholes"
+                                android:id="@+id/medium_potholes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="6"
@@ -260,7 +220,7 @@
                                 android:textColor="@android:color/black" />
 
                             <TextView
-                                android:id="@+id/medium_small_potholes"
+                                android:id="@+id/small_potholes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="1"
@@ -271,6 +231,7 @@
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
             </LinearLayout>
+
 
             <!-- Hình ảnh minh họa -->
             <LinearLayout
@@ -289,6 +250,34 @@
                     android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
+
+                <!-- Timeframe Filter -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/rounded_input_field"
+                    android:padding="8dp"
+                    android:paddingVertical="16dp"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/timeframe"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <Spinner
+                        android:id="@+id/timeframe_spinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:entries="@array/timeframes" />
+
+                </LinearLayout>
 
                 <com.anychart.AnyChartView
                     android:id="@+id/line_chart_view"
