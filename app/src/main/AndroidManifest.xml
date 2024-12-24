@@ -68,7 +68,7 @@
             android:name=".Authentication.WelcomeScreen"
             android:exported="false" />
         <activity
-            android:name=".DashboardScreen.MainActivity"
+            android:name=".Authentication.IntroductionScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -92,7 +92,7 @@
             android:name=".Other.History"
             android:exported="false" />
         <activity
-            android:name=".Authentication.IntroductionScreen"
+            android:name=".DashboardScreen.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
