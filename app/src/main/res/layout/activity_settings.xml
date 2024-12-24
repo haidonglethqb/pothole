@@ -214,7 +214,7 @@
                         android:textColor="@color/black"/>
                 </RelativeLayout>
 
-                <!-- Data Saver -->
+                <!-- User sp -->
                 <RelativeLayout
                     android:id="@+id/data_saver_layout"
                     android:layout_width="match_parent"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +25,10 @@ import com.example.pothole.Other.History;
 import com.example.pothole.R;
 
 public class Settings extends BaseActivity {
-    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport,tvSound,tvAddaccount, tvFreeupspace,tvSupport, tvResetPassword;
+    TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport, tvSound, tvAddaccount, tvFreeupspace, tvSupport, tvResetPassword;
     ImageButton back_button, home_button, maps_button, history_button, settings_button;
+    RelativeLayout edit_profile_layout, language_layout, notifications_layout, alert_sound_layout, add_account_layout, log_out_layout;
+    RelativeLayout free_up_space_layout, data_usage_layout, report_problem_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,46 +52,68 @@ public class Settings extends BaseActivity {
         tvSupport = findViewById(R.id.tvSupport);
         tvResetPassword = findViewById(R.id.tvResetPassword);
 
+        edit_profile_layout = findViewById(R.id.edit_profile_layout);
+        language_layout = findViewById(R.id.language_layout);
+        notifications_layout = findViewById(R.id.notifications_layout);
+        alert_sound_layout = findViewById(R.id.alert_sound_layout);
+        free_up_space_layout = findViewById(R.id.free_up_space_layout);
+        data_usage_layout = findViewById(R.id.data_saver_layout);
+        add_account_layout = findViewById(R.id.add_account_layout);
+        log_out_layout = findViewById(R.id.log_out_layout);
+        report_problem_layout = findViewById(R.id.report_problem_layout); // Ensure this ID matches your XML
+
         back_button.setOnClickListener(v -> finish());
 
-        tvEdit.setOnClickListener(view -> {
+        edit_profile_layout.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, EditProfile.class);
             startActivity(intent);
         });
 
-        tvLanguage.setOnClickListener(view -> {
+        language_layout.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, ChooseLanguge.class);
             startActivity(intent);
         });
-        tvlogout.setOnClickListener(view -> {
+
+        notifications_layout.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, login.class);
             startActivity(intent);
             finish();
         });
-        tvReport.setOnClickListener(view -> {
+
+        report_problem_layout.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, Accelerometer.class);
             startActivity(intent);
         });
 
-        tvSound.setOnClickListener(view -> {
+        alert_sound_layout.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, AlertSound_Setting.class);
             startActivity(intent);
         });
 
-        tvAddaccount.setOnClickListener(view -> {
+        add_account_layout.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.this, register.class);
             startActivity(intent);
             finish();
         });
 
-        tvFreeupspace.setOnClickListener(view -> {
-            // Display the first Toast message
-            Toast.makeText(Settings.this, "Clearing cache...", Toast.LENGTH_SHORT).show();
+        log_out_layout.setOnClickListener(view -> {
+            Intent intent = new Intent(Settings.this, login.class);
+            startActivity(intent);
+            finish();
+        });
 
-            // Use a Handler to display the second Toast message after 3 seconds
+        free_up_space_layout.setOnClickListener(view -> {
+            Toast.makeText(Settings.this, "Clearing cache...", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(() -> {
                 Toast.makeText(Settings.this, "Cache cleared", Toast.LENGTH_SHORT).show();
-            }, 3000); // 3000 milliseconds = 3 seconds
+            }, 3000);
+        });
+
+        data_usage_layout.setOnClickListener(view -> {
+            String url = "https://drive.google.com/file/d/1zzHkqB4rUpn8qhXwbS-u3bPxpc_iF54Y/view?usp=sharing";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
         });
 
         tvResetPassword.setOnClickListener(view -> {
@@ -96,45 +121,31 @@ public class Settings extends BaseActivity {
             startActivity(intent);
         });
 
-        tvSupport.setOnClickListener(view -> {
-            String url = "https://drive.google.com/file/d/1zzHkqB4rUpn8qhXwbS-u3bPxpc_iF54Y/view?usp=sharing";
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            startActivity(intent);
-        });
-        // Find navigation bar buttons
         home_button = findViewById(R.id.home_button);
         maps_button = findViewById(R.id.maps_button);
         history_button = findViewById(R.id.history_button);
         settings_button = findViewById(R.id.settings_button);
 
-        // Set click listeners for navigation bar buttons
         home_button.setOnClickListener(view -> {
-            // Handle home button click
             Intent intent = new Intent(Settings.this, MainActivity.class);
             startActivity(intent);
             finish();
         });
 
         maps_button.setOnClickListener(view -> {
-            // Handle maps button click
             Intent intent = new Intent(Settings.this, mapdisplay.class);
             startActivity(intent);
             finish();
         });
 
         history_button.setOnClickListener(view -> {
-            // Handle history button click
             Intent intent = new Intent(Settings.this, History.class);
             startActivity(intent);
             finish();
         });
 
         settings_button.setOnClickListener(view -> {
-            // Handle settings button click
             Toast.makeText(Settings.this, "You are already on the settings screen", Toast.LENGTH_SHORT).show();
         });
-
-
     }
 }

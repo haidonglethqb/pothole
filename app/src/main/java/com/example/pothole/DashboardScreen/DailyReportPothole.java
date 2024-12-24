@@ -76,7 +76,6 @@ public class DailyReportPothole extends AppCompatActivity {
         medium_potholes = findViewById(R.id.medium_potholes);
         small_potholes = findViewById(R.id.small_potholes);
 
-
         // Initialize the chart once
         cartesian = AnyChart.line();
         cartesian.title("Pothole Count");
@@ -127,7 +126,6 @@ public class DailyReportPothole extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
 
         // Lấy dữ liệu từ Firebase và thiết lập biểu đồ
         fetchPotholeDataFromFirebase();
@@ -187,24 +185,21 @@ public class DailyReportPothole extends AppCompatActivity {
         Map<String, Integer> weeklyData = new HashMap<>();
         String[] daysOfWeek = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
-        // Khởi tạo giá trị mặc định
+        // Initialize default values
         for (String day : daysOfWeek) {
             weeklyData.put(day, 0);
         }
 
         processDataPoints(dataSnapshot, weeklyData, true);
 
-        // Tạo dữ liệu cho biểu đồ
+        // Create data for the chart
         List<DataEntry> chartData = new ArrayList<>();
         String currentDay = getDayOfWeek(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
                 .format(Calendar.getInstance().getTime()));
 
         for (String day : daysOfWeek) {
-            if (day.equals(currentDay)) {
-                chartData.add(new CustomDataEntry(day, weeklyData.get(day), "#FF0000"));
-            } else {
-                chartData.add(new CustomDataEntry(day, weeklyData.get(day), "#000000"));
-            }
+            String color = day.equals(currentDay) ? "#FF0000" : "#000000";
+            chartData.add(new CustomDataEntry(day, weeklyData.get(day), color));
         }
 
         setupLineChart(chartData, "Weekly Pothole Count", "Weekdays");
@@ -220,41 +215,18 @@ public class DailyReportPothole extends AppCompatActivity {
             monthlyData.put(String.format("%02d", i), 0); // Ensure 2-digit format for the day
         }
 
-        // Process data for each day of the month
-        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            try {
-                String dateTime = snapshot.child("dateTime").getValue(String.class);
-                if (dateTime == null) continue;
-
-                // Check if the data belongs to the current month
-                if (!isCurrentMonth(dateTime)) continue;
-
-                // Get the day from dateTime
-                SimpleDateFormat dayFormat = new SimpleDateFormat("dd", Locale.ENGLISH);
-                String dayKey = dayFormat.format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(dateTime));
-
-                if (monthlyData.containsKey(dayKey)) {
-                    monthlyData.put(dayKey, monthlyData.get(dayKey) + 1);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error processing monthly data point", e);
-            }
-        }
+        processDataPoints(dataSnapshot, monthlyData, false);
 
         // Create data for the chart
         List<DataEntry> chartData = new ArrayList<>();
         String currentDay = String.format("%02d", Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 
-        // Create entries for the chart
         for (int i = 1; i <= daysInMonth; i++) {
             String dayKey = String.format("%02d", i);
-            if (dayKey.equals(currentDay)) {
-                chartData.add(new CustomDataEntry(dayKey, monthlyData.get(dayKey), "#FF0000"));
-            } else {
-                chartData.add(new CustomDataEntry(dayKey, monthlyData.get(dayKey), "#000000"));
-            }
+            String color = dayKey.equals(currentDay) ? "#FF0000" : "#000000";
+            chartData.add(new CustomDataEntry(dayKey, monthlyData.get(dayKey), color));
         }
-// Update the chart with the new data
+
         setupMonthlyChart(chartData);
     }
 
@@ -404,6 +376,7 @@ public class DailyReportPothole extends AppCompatActivity {
 class CustomDataEntry extends ValueDataEntry {
     CustomDataEntry(String x, Number value, String color) {
         super(x, value);
-        setValue("fill", "#FF0000");
+        setValue("html", true);
+        setValue("fill", color.equals("#FF0000") ? "#FFCDD2" : color);
     }
 }

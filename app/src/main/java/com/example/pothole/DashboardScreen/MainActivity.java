@@ -39,6 +39,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -106,7 +107,6 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
         initializeLocation();
         anyChartView = findViewById(R.id.any_chart_view);
         CardView magnitudeCard = findViewById(R.id.magnitudeCard);
-        TextView combinedDelta = findViewById(R.id.combinedDelta);
 
         // Đăng ký BroadcastReceiver để nhận thông báo khi phát hiện pothole
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
@@ -142,18 +142,17 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
 
         // Assuming the value is set dynamically, here we use a hardcoded value for demonstration
         float value = Float.parseFloat(combinedDelta.getText().toString());
-
-        if (value > 30) {
-            magnitudeCard.setCardBackgroundColor(getResources().getColor(R.color.light_red));
+        if (value > 15) {
+            magnitudeCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.light_red));
+        } else {
+            magnitudeCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white));
         }
 
-        // Hiển thị ảnh đại diện 
+        // Hiển thị ảnh đại diện
         loadProfilePictureAndName();
         loadTotalDistanceFromSharedPreferences();
         float totalDistanceInKm = totalDistance / 1000.0f;
         tvdistance.setText(String.format(Locale.getDefault(), "%.2f km", totalDistanceInKm));
-
-
 
         // Sự kiện click vào ảnh đại diện để chuyển đến EditProfile
         ivProfilePicture.setOnClickListener(v -> {
@@ -178,7 +177,6 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
             Intent intent = new Intent(MainActivity.this, com.example.pothole.Other.History.class);
             startActivity(intent);
         });
-
 
         // Sự kiện click vào biểu đồ
         showCharts.setOnClickListener(v -> {
@@ -266,13 +264,19 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
                     Float deltaY = snapshot.child("deltay").getValue(Float.class);
                     Float deltaZ = snapshot.child("deltaz").getValue(Float.class);
                     Float combinedDeltaValue = snapshot.child("combinedDelta").getValue(Float.class);
-//
+
                     // Đảm bảo giá trị không null trước khi sử dụng
                     accerleratorX.setText(deltaX != null ? String.format(Locale.getDefault(), "%.2f", deltaX) : "N/A");
                     accerleratorY.setText(deltaY != null ? String.format(Locale.getDefault(), "%.2f", deltaY) : "N/A");
                     accerleratorZ.setText(deltaZ != null ? String.format(Locale.getDefault(), "%.2f", deltaZ) : "N/A");
                     combinedDelta.setText(combinedDeltaValue != null ? String.format(Locale.getDefault(), "%.2f", combinedDeltaValue) : "N/A");
-//
+
+                    // Update card color based on combinedDeltaValue
+                    if (combinedDeltaValue != null && combinedDeltaValue > 15) {
+                        magnitudeCard.setCardBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.light_red));
+                    } else {
+                        magnitudeCard.setCardBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                    }
                 } else {
                     Log.w("Firebase", "No data found in Firebase.");
                 }
@@ -283,7 +287,6 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
                 Log.e("Firebase", "Database error: " + error.getMessage(), error.toException());
             }
         });
-
     }
 
     private void fetchPotholeCountFromFirebase() {
@@ -292,11 +295,9 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int totalPotholes = 0;
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     totalPotholes++;
                 }
-
                 // Update the TextView with the total count
                 tvpotholeCount.setText(String.valueOf(totalPotholes));
             }
