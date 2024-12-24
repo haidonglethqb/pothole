@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +51,7 @@ public class DailyReportPothole extends AppCompatActivity {
     private Spinner timeframe_spinner;
     private AnyChartView lineChartView;
     private Cartesian cartesian;
+    private TextView total_potholes, large_potholes, medium_potholes, small_potholes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,10 @@ public class DailyReportPothole extends AppCompatActivity {
         settings_button = findViewById(R.id.settings_button);
         lineChartView = findViewById(R.id.line_chart_view);
         timeframe_spinner = findViewById(R.id.timeframe_spinner);
+        total_potholes = findViewById(R.id.total_potholes);
+        large_potholes = findViewById(R.id.large_potholes);
+        medium_potholes = findViewById(R.id.medium_potholes);
+        small_potholes = findViewById(R.id.small_potholes);
 
 
         // Initialize the chart once
@@ -132,6 +138,35 @@ public class DailyReportPothole extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int totalPotholes = 0;
+                int largePotholes = 0;
+                int mediumPotholes = 0;
+                int smallPotholes = 0;
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    totalPotholes++;
+                    String severity = snapshot.child("severity").getValue(String.class);
+                    if (severity != null) {
+                        switch (severity) {
+                            case "Severe":
+                                largePotholes++;
+                                break;
+                            case "Medium":
+                                mediumPotholes++;
+                                break;
+                            case "Minor":
+                                smallPotholes++;
+                                break;
+                        }
+                    }
+                }
+
+                total_potholes.setText(String.valueOf(totalPotholes));
+                large_potholes.setText(String.valueOf(largePotholes));
+                medium_potholes.setText(String.valueOf(mediumPotholes));
+                small_potholes.setText(String.valueOf(smallPotholes));
+
                 String selectedTimeframe = timeframe_spinner.getSelectedItem().toString();
 
                 if (selectedTimeframe.equals(WEEK_VIEW)) {
@@ -219,8 +254,7 @@ public class DailyReportPothole extends AppCompatActivity {
                 chartData.add(new CustomDataEntry(dayKey, monthlyData.get(dayKey), "#000000"));
             }
         }
-
-        // Update the chart with the new data
+// Update the chart with the new data
         setupMonthlyChart(chartData);
     }
 
@@ -365,7 +399,7 @@ public class DailyReportPothole extends AppCompatActivity {
         // Set chart to view
         lineChartView.setChart(cartesian);
     }
-    }
+}
 
 class CustomDataEntry extends ValueDataEntry {
     CustomDataEntry(String x, Number value, String color) {

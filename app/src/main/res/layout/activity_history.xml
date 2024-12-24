@@ -2,42 +2,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
 
-    <!-- Header (Phần tiêu đề) -->
-    <LinearLayout
-        android:id="@+id/headerContainer"
+    <!-- Header -->
+    <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_blue"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:background="#1F41BB"
         android:padding="16dp"
         android:layout_alignParentTop="true">
 
-        <!-- Nút Back -->
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
-            android:layout_height="26dp"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
             android:padding="8dp"
             android:src="@drawable/out" />
 
-        <!-- Tiêu đề -->
         <TextView
-            android:id="@+id/tvHeader"
-            android:layout_width="0dp"
+            android:id="@+id/tvSettingsTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="@string/history"
+            android:text="History"
             android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <!-- Dropdown Filters -->
     <LinearLayout
@@ -47,7 +44,7 @@
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingVertical="24dp"
-        android:layout_below="@id/headerContainer">
+        android:layout_below="@id/header">
 
         <!-- Location Filter -->
         <LinearLayout
