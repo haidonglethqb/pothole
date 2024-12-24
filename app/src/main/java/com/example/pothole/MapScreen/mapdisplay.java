@@ -1130,7 +1130,7 @@ public class mapdisplay extends AppCompatActivity {
             }
         });
 
-        mapView.getMapboxMap().loadStyleUri(Style.TRAFFIC_NIGHT, new Style.OnStyleLoaded() {
+        mapView.getMapboxMap().loadStyleUri(Style.TRAFFIC_DAY, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 mapStyle = style;

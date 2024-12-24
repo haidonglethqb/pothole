@@ -145,12 +145,7 @@
     <string name="forgot_password_message">Nhập email của bạn để đặt lại mật khẩu</string>
     <string name="btn_reset_password">Đặt lại mật khẩu</string>
 
-    <string-array name="severity_levels2">
-        <item>Tất cả</item>
-        <item>Nhẹ</item>
-        <item>Trung bình</item>
-        <item>Nghiêm trọng</item>
-    </string-array>
+
     <string name="project_info">Một dự án của NT118.P11</string>
     <string name="welcome_title">Chào mừng đến với\nPOTHOLE PATROL của NT118</string>
     <string name="introduction_message">Ứng dụng với khả năng phát hiện và \nbáo cáo ổ gà trên đường phố</string>
@@ -172,11 +167,7 @@
     <string name="daily_report">Báo Cáo Hằng Ngày/Tuần</string>
 
     <!-- Spinner Entries -->
-    <string-array name="timeframes">
-        <item>Hôm Nay</item>
-        <item>Tuần Trước</item>
-        <item>Tháng Trước</item>
-    </string-array>
+    
 
     <!-- Content Description -->
     <string name="severity_filter">Bộ Lọc Mức Độ Nghiêm Trọng</string>
