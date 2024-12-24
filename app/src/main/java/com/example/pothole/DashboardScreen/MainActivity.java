@@ -138,7 +138,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
         // Lấy dữ liệu từ Firebase
         fetchPotholeCountFromFirebase();
 
-        // Hiển thị ảnh đại diện
+        // Hiển thị ảnh đại diện 
         loadProfilePictureAndName();
         loadTotalDistanceFromSharedPreferences();
         float totalDistanceInKm = totalDistance / 1000.0f;

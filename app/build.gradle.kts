@@ -69,9 +69,7 @@ dependencies {
     implementation ("com.github.AnyChart:AnyChart-Android:1.1.5")
     implementation ("com.patrykandpatrick.vico:core:1.16.0")
     implementation ("com.patrykandpatrick.vico:views:1.16.0")
-    implementation ("com.google.firebase:firebase-firestore:24.9.1")
-
-
+    implementation ("com.google.firebase:firebase-firestore:25.1.1")
 
 
 

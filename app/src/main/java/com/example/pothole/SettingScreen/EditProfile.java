@@ -26,7 +26,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.pothole.Other.UserProfile;
 import com.example.pothole.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,7 +45,7 @@ public class EditProfile extends BaseActivity {
     private Spinner spCountry;
 
     private SharedPreferences sharedPreferences;
-
+    private DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +57,7 @@ public class EditProfile extends BaseActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         // Khởi tạo SharedPreferences
         sharedPreferences = getSharedPreferences("UserProfile", MODE_PRIVATE);
 
@@ -114,13 +117,17 @@ public class EditProfile extends BaseActivity {
     }
 
     private void saveProfileData() {
+        // Lấy userId từ SharedPreferences hoặc tạo giá trị mặc định
+        String userId = sharedPreferences.getString("userId", "defaultUserId");
+
+        // Lấy thông tin từ các trường nhập liệu
         String name = etName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String phoneNumber = etPhoneNumber.getText().toString().trim();
         String dateOfBirth = edDateOfBirth.getText().toString().trim();
         String countryRegion = spCountry.getSelectedItem().toString();
 
-
+        // Lấy ảnh đại diện từ ImageView
         ivProfilePicture.setDrawingCacheEnabled(true);
         ivProfilePicture.buildDrawingCache();
         Bitmap bitmap = ivProfilePicture.getDrawingCache();
@@ -128,6 +135,7 @@ public class EditProfile extends BaseActivity {
         if (bitmap != null) {
             String encodedImage = bitmapToBase64(bitmap);
 
+            // Lưu dữ liệu vào SharedPreferences
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("name", name);
             editor.putString("email", email);
@@ -137,17 +145,32 @@ public class EditProfile extends BaseActivity {
             editor.putString("profileImage", encodedImage);
             editor.apply();
 
-            // Set result to return the updated name
+            // Lưu dữ liệu lên Firebase Realtime Database
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(userId);
+
+            // Tạo đối tượng chứa dữ liệu người dùng
+            UserProfile userProfile = new UserProfile(name, email, phoneNumber, dateOfBirth, countryRegion);
+
+            databaseReference.setValue(userProfile)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(this, "Changes saved", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Failed to save changes", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+            // Trả về kết quả cho Activity gọi
             Intent resultIntent = new Intent();
             resultIntent.putExtra("name", name);
             resultIntent.putExtra("profileImage", encodedImage);
             setResult(RESULT_OK, resultIntent);
 
-            Toast.makeText(this, "Changes saved successfully.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Failed to save profile picture.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void openImageOptions() {
         String[] options = {"Choose from Gallery", "Take a Photo"};

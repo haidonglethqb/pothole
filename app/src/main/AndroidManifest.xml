@@ -56,9 +56,6 @@
             android:value="your_api_key_here" />
 
         <activity
-            android:name=".SettingScreen.Notificatons_settings"
-            android:exported="false" />
-        <activity
             android:name=".Other.LanguageEnglish"
             android:exported="false" />
         <activity
