@@ -186,10 +186,9 @@ import com.bumptech.glide.Glide;
 public class mapdisplay extends AppCompatActivity {
 
     // UI elements
-    private ImageButton btnBack;
 
     private long lastUpdateTimestamp = 0; // Lưu thời gian lần cập nhật cuối
-    private Point lastUpdatePoint; // Lưu vị trí lần cập nhật cuối
+    private Point lastUpdatePoint; //ìn Lưu vị trí lần cập nhật cuối
     private TextView tvSpeed;
     private TextView tvDistance;
     private double totalDistance = 0.0;
@@ -701,11 +700,11 @@ public class mapdisplay extends AppCompatActivity {
         checkboxMedium.setChecked(selectedPotholeTypes.contains("Medium"));
         checkboxSevere.setChecked(selectedPotholeTypes.contains("Severe"));
 
-        if (selectedPotholeTypes.contains("Last 7 days")) {
+        if (selectedPotholeTypes.contains("7 days")) {
             radio7Days.setChecked(true);
-        } else if (selectedPotholeTypes.contains("Last 14 days")) {
+        } else if (selectedPotholeTypes.contains("14 days")) {
             radio14Days.setChecked(true);
-        } else if (selectedPotholeTypes.contains("Last 30 days")) {
+        } else if (selectedPotholeTypes.contains("30 days")) {
             radio30Days.setChecked(true);
         }
 
@@ -732,11 +731,11 @@ public class mapdisplay extends AppCompatActivity {
                 }
                 int selectedDateRangeId = radioGroupDateRange.getCheckedRadioButtonId();
                 if (selectedDateRangeId == R.id.radio_7_days) {
-                    selectedPotholeTypes.add("Last 7 days");
+                    selectedPotholeTypes.add("7 days");
                 } else if (selectedDateRangeId == R.id.radio_14_days) {
-                    selectedPotholeTypes.add("Last 14 days");
+                    selectedPotholeTypes.add("14 days");
                 } else if (selectedDateRangeId == R.id.radio_30_days) {
-                    selectedPotholeTypes.add("Last 30 days");
+                    selectedPotholeTypes.add("30 days");
                 }
                 int selectedDistanceId = radioGroupDistance.getCheckedRadioButtonId();
                 if (selectedDistanceId == R.id.radio_1_km) {
@@ -768,11 +767,11 @@ public class mapdisplay extends AppCompatActivity {
             for (DataReceiver.Quadruple<Double, Double, String, String> location : potholeLocations) {
                 boolean shouldDisplay = noFiltersSelected || selectedPotholeTypes.contains(location.getThird());
 
-                if (selectedPotholeTypes.contains("Last 7 days")) {
+                if (selectedPotholeTypes.contains("7 days")) {
                     shouldDisplay = shouldDisplay && isWithinDays(location.getFourth(), 7);
-                } else if (selectedPotholeTypes.contains("Last 14 days")) {
+                } else if (selectedPotholeTypes.contains("14 days")) {
                     shouldDisplay = shouldDisplay && isWithinDays(location.getFourth(), 14);
-                } else if (selectedPotholeTypes.contains("Last 30 days")) {
+                } else if (selectedPotholeTypes.contains("30 days")) {
                     shouldDisplay = shouldDisplay && isWithinDays(location.getFourth(), 30);
                 }
 
@@ -849,10 +848,6 @@ public class mapdisplay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_mapdisplay);
-
-        // Set up the back button
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
