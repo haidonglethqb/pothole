@@ -159,12 +159,13 @@ public class Settings extends BaseActivity {
             long freedSpace = sizeBefore - sizeAfter;
 
             Toast.makeText(Settings.this,
-                    "Đã giải phóng " + formatSize(freedSpace) + " bộ nhớ đệm",
+                    "Freed " + formatSize(freedSpace) + " of cache",
                     Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(Settings.this, "Không thể xóa bộ nhớ đệm", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Lỗi khi xóa cache", e);
+            Toast.makeText(Settings.this, "Unable to clear cache", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error clearing cache", e);
         }
+
     }
 
     private long getDirSize(File dir) {
