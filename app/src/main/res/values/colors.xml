@@ -8,6 +8,7 @@
     <color name="route_inactive">#808080</color>
     <color name="primary_blue">#1F41BB</color>
     <color name="light_primary_blue">#E4E6FF</color>
+    <color name="light_red">#FFCDD2</color>
 
     <color name="severity_minor">#DFF5E1</color> <!-- Green -->
     <color name="severity_medium">#FFF7D6</color> <!-- Yellow -->

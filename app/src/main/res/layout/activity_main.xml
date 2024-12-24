@@ -26,14 +26,6 @@
             android:layout_alignParentStart="true"
             tools:ignore="DuplicateIds" />
 
-        <ImageView
-            android:id="@+id/notification_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/bell"
-            app:tint="@android:color/white" />
     </RelativeLayout>
 
     <ScrollView
@@ -134,7 +126,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentTop="true"
                                 android:layout_centerHorizontal="true"
-                                android:layout_marginTop="6dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginBottom="8dp"
                                 android:text="@string/pothole_report"
                                 android:gravity="center"
                                 android:textColor="@android:color/black"
@@ -326,7 +319,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/acceleratorXLabel"
                                 android:layout_centerHorizontal="true"
-                                android:text="Safe"
+                                android:text=""
                                 android:textColor="#666666"
                                 android:textSize="12sp" />
                         </RelativeLayout>
@@ -376,7 +369,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/acceleratorYLabel"
                                 android:layout_centerHorizontal="true"
-                                android:text="Safe"
+                                android:text=""
                                 android:textColor="#666666"
                                 android:textSize="12sp" />
                         </RelativeLayout>
@@ -435,7 +428,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/acceleratorZLabel"
                                 android:layout_centerHorizontal="true"
-                                android:text="Danger"
+                                android:text=""
                                 android:textColor="#666666"
                                 android:textSize="12sp" />
                         </RelativeLayout>
@@ -443,6 +436,7 @@
 
                     <!-- Magnitude Card - Reduced size -->
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/magnitudeCard"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -485,7 +479,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/magnitudeLabel"
                                 android:layout_centerHorizontal="true"
-                                android:text="Danger"
+                                android:text=""
                                 android:textColor="#666666"
                                 android:textSize="12sp" />
                         </RelativeLayout>

@@ -38,6 +38,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -104,7 +105,8 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
         tvname = findViewById(R.id.user_welcome_message);
         initializeLocation();
         anyChartView = findViewById(R.id.any_chart_view);
-
+        CardView magnitudeCard = findViewById(R.id.magnitudeCard);
+        TextView combinedDelta = findViewById(R.id.combinedDelta);
 
         // Đăng ký BroadcastReceiver để nhận thông báo khi phát hiện pothole
         IntentFilter filter = new IntentFilter("com.example.pothole.POTHOLE_DETECTED");
@@ -137,6 +139,13 @@ public class MainActivity extends BaseActivity implements LocationListener, Sens
 
         // Lấy dữ liệu từ Firebase
         fetchPotholeCountFromFirebase();
+
+        // Assuming the value is set dynamically, here we use a hardcoded value for demonstration
+        float value = Float.parseFloat(combinedDelta.getText().toString());
+
+        if (value > 30) {
+            magnitudeCard.setCardBackgroundColor(getResources().getColor(R.color.light_red));
+        }
 
         // Hiển thị ảnh đại diện 
         loadProfilePictureAndName();
