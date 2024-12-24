@@ -106,7 +106,7 @@
                         android:id="@+id/language_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/language"/>
+                        android:src="@drawable/ic_language"/>
 
                     <TextView
                         android:id="@+id/tvLanguage"
@@ -130,7 +130,7 @@
                         android:id="@+id/notifications_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/notifications"/>
+                        android:src="@drawable/password"/>
 
                     <TextView
                         android:id="@+id/tvResetPassword"
@@ -226,7 +226,7 @@
                         android:id="@+id/data_saver_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/datasaver"/>
+                        android:src="@drawable/ic_support"/>
 
                     <TextView
                         android:id="@+id/tvSupport"
