@@ -3,7 +3,7 @@ package com.example.pothole.SettingScreen;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -24,7 +24,11 @@ import com.example.pothole.Authentication.login;
 import com.example.pothole.Other.History;
 import com.example.pothole.R;
 
+import java.io.File;
+
 public class Settings extends BaseActivity {
+    private static final String TAG = "Settings"; // Add this line
+
     TextView tvEdit, tvLanguage, tvNotify, tvlogout, tvReport, tvSound, tvAddaccount, tvFreeupspace, tvSupport, tvResetPassword;
     ImageButton back_button, home_button, maps_button, history_button, settings_button;
     RelativeLayout edit_profile_layout, language_layout, notifications_layout, alert_sound_layout, add_account_layout, log_out_layout;
@@ -103,10 +107,7 @@ public class Settings extends BaseActivity {
         });
 
         free_up_space_layout.setOnClickListener(view -> {
-            Toast.makeText(Settings.this, "Clearing cache...", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(() -> {
-                Toast.makeText(Settings.this, "Cache cleared", Toast.LENGTH_SHORT).show();
-            }, 3000);
+            clearAppCache();
         });
 
         data_usage_layout.setOnClickListener(view -> {
@@ -147,5 +148,60 @@ public class Settings extends BaseActivity {
         settings_button.setOnClickListener(view -> {
             Toast.makeText(Settings.this, "You are already on the settings screen", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void clearAppCache() {
+        try {
+            File cacheDir = getCacheDir();
+            long sizeBefore = getDirSize(cacheDir);
+            deleteDir(cacheDir);
+            long sizeAfter = getDirSize(cacheDir);
+            long freedSpace = sizeBefore - sizeAfter;
+
+            Toast.makeText(Settings.this,
+                    "Đã giải phóng " + formatSize(freedSpace) + " bộ nhớ đệm",
+                    Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(Settings.this, "Không thể xóa bộ nhớ đệm", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Lỗi khi xóa cache", e);
+        }
+    }
+
+    private long getDirSize(File dir) {
+        long size = 0;
+        if (dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
+                size += getDirSize(file);
+            }
+        } else {
+            size = dir.length();
+        }
+        return size;
+    }
+
+    private String formatSize(long size) {
+        if (size <= 0) return "0 B";
+        final String[] units = new String[] { "B", "KB", "MB", "GB" };
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return String.format("%.1f %s",
+                size / Math.pow(1024, digitGroups),
+                units[digitGroups]);
+    }
+
+    private boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String child : children) {
+                boolean success = deleteDir(new File(dir, child));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if (dir != null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
     }
 }
